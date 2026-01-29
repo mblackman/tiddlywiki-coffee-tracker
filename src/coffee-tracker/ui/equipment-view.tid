@@ -1,0 +1,15 @@
+title: $:/plugins/mblackman/coffee-tracker/ui/equipment/view
+tags: $:/tags/ViewTemplate
+type: text/vnd.tiddlywiki
+
+<$list filter="[all[current]tag[Equipment]]">
+    <h2>{{!!equipment-name}}</h2>
+    <$button>
+        <$action-navigate $to=<<currentTiddler>> $mode="edit"/>
+        Edit
+    </$button>
+    <p><strong>Type:</strong> {{!!equipment-type}}</p>
+    <p><strong>Manufacturer:</strong> {{!!equipment-manufacturer}}</p>
+    <p><strong>My Notes:</strong></p>
+    <div>{{!!my-notes}}</div>
+</$list>

@@ -1,0 +1,340 @@
+/* Dashboard Styles */
+.ct-dashboard-container {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: <<colour foreground>>;
+}
+
+.ct-dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid <<colour tiddler-editor-border>>;
+    padding-bottom: 10px;
+}
+
+.ct-dashboard-title {
+    margin: 0;
+    font-size: 1.8em;
+    color: <<colour tiddler-title-foreground>>;
+}
+
+.ct-dashboard-date {
+    font-size: 0.9em;
+    color: <<colour tiddler-subtitle-foreground>>;
+}
+
+.ct-action-toolbar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+    background: <<colour message-background>>;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid <<colour message-border>>;
+}
+
+.ct-btn {
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    font-size: 0.95em;
+}
+
+.ct-btn:active {
+    transform: translateY(1px);
+}
+
+.ct-btn-primary {
+    background-color: <<colour primary>>;
+    color: <<colour tiddler-background>>;
+    border-color: <<colour primary>>;
+}
+
+.ct-btn-primary:hover {
+    opacity: 0.9;
+}
+
+.ct-btn-secondary {
+    background-color: <<colour tiddler-background>>;
+    color: <<colour foreground>>;
+    border-color: <<colour tiddler-editor-border>>;
+}
+
+.ct-btn-secondary:hover {
+    background-color: <<colour tiddler-editor-background>>;
+    border-color: <<colour primary>>;
+}
+
+.ct-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.ct-section-title {
+    border-bottom: 1px solid <<colour tiddler-editor-border>>;
+    padding-bottom: 5px;
+    margin-top: 0;
+    color: <<colour tiddler-title-foreground>>;
+}
+
+.ct-card {
+    background: <<colour tiddler-background>>;
+    border: 1px solid <<colour tiddler-editor-border>>;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.2s;
+}
+
+.ct-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.ct-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+
+.ct-card-title {
+    margin: 0 0 10px 0;
+    font-size: 1.1em;
+}
+
+.ct-tag {
+    font-size: 0.8em;
+    background: <<colour tag-background>>;
+    color: <<colour tag-foreground>>;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.ct-card-subtitle {
+    color: <<colour tiddler-subtitle-foreground>>;
+    font-size: 0.9em;
+    margin-bottom: 10px;
+}
+
+.ct-card-action-btn {
+    width: 100%;
+    text-align: center;
+    background: <<colour message-background>>;
+    color: <<colour primary>>;
+    padding: 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.ct-card-action-btn:hover {
+    background: <<colour tiddler-editor-background>>;
+}
+
+.ct-table-wrapper {
+    overflow-x: auto;
+}
+
+.ct-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+}
+
+.ct-table-header {
+    background: <<colour table-header-background>>;
+    text-align: left;
+}
+
+.ct-table th {
+    padding: 8px;
+    border-bottom: 2px solid <<colour table-border>>;
+}
+
+.ct-table td {
+    padding: 8px;
+    border-bottom: 1px solid <<colour table-border>>;
+}
+
+.ct-inventory-grid {
+    margin-top: 30px;
+    display: flex;
+    gap: 20px;
+}
+
+.ct-inventory-column {
+    flex: 1;
+}
+
+.ct-inventory-title {
+    font-size: 1em;
+    color: <<colour tiddler-subtitle-foreground>>;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.ct-inventory-list {
+    font-size: 0.9em;
+}
+
+/* Brew Log View Styles */
+.ct-brew-log-container {
+    max-width: 800px;
+    margin: 0 auto;
+    font-family: sans-serif;
+    color: <<colour foreground>>;
+}
+
+.ct-form-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.ct-form-group {
+    flex: 1;
+}
+
+.ct-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: <<colour tiddler-subtitle-foreground>>;
+}
+
+.ct-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid <<colour tiddler-editor-border>>;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background: <<colour tiddler-background>>;
+    color: <<colour foreground>>;
+}
+
+.ct-section {
+    background: <<colour message-background>>;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid <<colour message-border>>;
+    margin-bottom: 20px;
+}
+
+.ct-section-white {
+    background: <<colour tiddler-background>>;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid <<colour tiddler-editor-border>>;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.ct-section-header {
+    margin-top: 0;
+    color: <<colour tiddler-title-foreground>>;
+    border-bottom: 1px solid <<colour tiddler-editor-border>>;
+    padding-bottom: 10px;
+}
+
+.ct-setup-row {
+    margin-bottom: 15px;
+}
+
+.ct-flex-gap {
+    display: flex;
+    gap: 10px;
+}
+
+.ct-setup-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.ct-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 20px;
+}
+
+.ct-metric-item {
+    text-align: center;
+}
+
+.ct-metric-input {
+    width: 100%;
+    font-size: 1.2em;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid <<colour tiddler-editor-border>>;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background: <<colour tiddler-background>>;
+    color: <<colour foreground>>;
+}
+
+.ct-sensory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px 30px;
+}
+
+.ct-sensory-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ct-sensory-label {
+    text-transform: capitalize;
+    font-weight: 500;
+}
+
+.ct-sensory-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ct-rating-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: <<colour tiddler-title-foreground>>;
+    color: <<colour tiddler-background>>;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.ct-rating-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.ct-rating-value {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.ct-textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid <<colour tiddler-editor-border>>;
+    border-radius: 4px;
+    font-family: inherit;
+    box-sizing: border-box;
+    background: <<colour tiddler-background>>;
+    color: <<colour foreground>>;
+}

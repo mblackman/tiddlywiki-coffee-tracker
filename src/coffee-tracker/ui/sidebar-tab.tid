@@ -1,0 +1,10 @@
+title: $:/plugins/mblackman/coffee-tracker/ui/sidebar-tab
+tags: $:/tags/SideBar
+caption: Coffee
+description: "Access the Coffee Tracker Dashboard"
+
+<$link to="$:/plugins/mblackman/coffee-tracker/ui/dashboard">Coffee Tracker</$link>
+<hr>
+<<list-links "[tag[Roaster]]">>
+<hr>
+<<list-links "[tag[CoffeeBag]]">>

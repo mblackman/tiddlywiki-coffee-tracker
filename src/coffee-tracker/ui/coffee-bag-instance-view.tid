@@ -1,0 +1,44 @@
+title: $:/plugins/mblackman/coffee-tracker/ui/coffee-bag-instance/view
+tags: $:/tags/ViewTemplate
+type: text/vnd.tiddlywiki
+
+<$list filter="[all[current]tag[CoffeeBagInstance]]">
+    <h3>Instance of <$link to={{!!coffee-bag}}>{{!!coffee-bag}}</$link></h3>
+    <$button>
+        <$action-navigate $to=<<currentTiddler>> $mode="edit"/>
+        Edit
+    </$button>
+    <p><strong>Purchase Date:</strong> {{!!purchase-date}}</p>
+    <p><strong>Roast Date:</strong> {{!!roast-date}}</p>
+    <p><strong>Cost:</strong> {{!!cost}}</p>
+    <p><strong>Weight:</strong> {{!!weight}}</p>
+    <p><strong>My Thoughts:</strong></p>
+    <div>{{!!my-thoughts}}</div>
+
+    <hr>
+    
+    <h3>Brew History</h3>
+    
+    <$button>
+        <$action-createtiddler 
+            $basetitle=<<now "Brew Log: YYYY-0MM-0DD 0hh:0mm">>
+            tags="BrewLog"
+            coffee-bag-instance=<<currentTiddler>>
+            brew-date=<<now "YYYY-0MM-0DD">>
+            brew-time=<<now "0hh:0mm">>
+            $savetitle="$:/temp/new-brew-log-bag"
+        />
+        <$action-navigate $to={{$:/temp/new-brew-log-bag}}/>
+        Add New Brew Log
+    </$button>
+
+    <ul>
+    <$list filter="[tag[BrewLog]coffee-bag-instance<currentTiddler>!sort[brew-date]]">
+        <li>
+            <$link to=<<currentTiddler>>><$view field="brew-date"/></$link> - 
+            {{!!brew-method}} 
+            (Rating: {{!!overall-rating}})
+        </li>
+    </$list>
+    </ul>
+</$list>

@@ -1,0 +1,122 @@
+title: $:/plugins/mblackman/coffee-tracker/ui/brew-log/view
+tags: $:/tags/ViewTemplate
+type: text/vnd.tiddlywiki
+
+<$list filter="[all[current]tag[BrewLog]]">
+<div class="ct-brew-log-container">
+
+    <!-- Header Section -->
+    <div class="ct-form-row">
+        <div class="ct-form-group">
+            <label class="ct-label">Date</label>
+            <$edit-text field="brew-date" type="date" class="tc-edit-texteditor ct-input"/>
+        </div>
+        <div class="ct-form-group">
+            <label class="ct-label">Time</label>
+            <$edit-text field="brew-time" type="time" class="tc-edit-texteditor ct-input"/>
+        </div>
+    </div>
+
+    <!-- Setup Section -->
+    <div class="ct-section">
+        <h3 class="ct-section-header">Setup</h3>
+        
+        <div class="ct-setup-row">
+            <label class="ct-label">Coffee</label>
+            <div class="ct-flex-gap">
+                <$select field="coffee-bag-instance" class="tc-edit-texteditor ct-input">
+                    <option value="">-- Select Coffee --</option>
+                    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]sort[title]]">
+                        <option value=<<currentTiddler>>><$view field="title"/></option>
+                    </$list>
+                </$select>
+                <$button class="tc-btn-invisible" style="padding: 8px;" tooltip="Open Bag">
+                    <$action-navigate $to={{!!coffee-bag-instance}}/>
+                    🔗
+                </$button>
+            </div>
+        </div>
+
+        <div class="ct-setup-grid">
+            <div>
+                <label class="ct-label">Brewer</label>
+                <$select field="brewer" class="tc-edit-texteditor ct-input" style="margin-bottom: 10px;" actions="""<$action-setfield brew-method={{{ [<actionValue>get[method]] }}}/>""">
+                    <option value="">-- Select Brewer --</option>
+                    <$list filter="[tag[Equipment]equipment-type[Brewer]sort[title]]">
+                        <option value=<<currentTiddler>>><$view field="title"/></option>
+                    </$list>
+                </$select>
+                
+                <label class="ct-label">Grinder</label>
+                <$select field="grinder" class="tc-edit-texteditor ct-input">
+                    <option value="">-- Select Grinder --</option>
+                    <$list filter="[tag[Equipment]equipment-type[Grinder]sort[title]]">
+                        <option value=<<currentTiddler>>><$view field="title"/></option>
+                    </$list>
+                </$select>
+            </div>
+            <div>
+                <label class="ct-label">Method</label>
+                <$edit-text field="brew-method" placeholder="e.g. Pour Over" class="ct-input"/>
+            </div>
+        </div>
+    </div>
+
+    <!-- Metrics Section -->
+    <div class="ct-section-white">
+        <h3 class="ct-section-header">Brew Metrics</h3>
+        <div class="ct-metrics-grid">
+            <div class="ct-metric-item">
+                <label class="ct-label">Dose (g)</label>
+                <$edit-text field="dose" size="5" class="ct-metric-input"/>
+            </div>
+            <div class="ct-metric-item">
+                <label class="ct-label">Water (g)</label>
+                <$edit-text field="water" size="5" class="ct-metric-input"/>
+            </div>
+            <div class="ct-metric-item">
+                <label class="ct-label">Yield (g)</label>
+                <$edit-text field="yield" size="5" class="ct-metric-input"/>
+            </div>
+            <div class="ct-metric-item">
+                <label class="ct-label">Time (mm:ss)</label>
+                <$edit-text field="brew-time-seconds" size="5" placeholder="00:00" class="ct-metric-input"/>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sensory Section -->
+    <div class="ct-section">
+        <h3 class="ct-section-header">Tasting Profile</h3>
+        
+        <div class="ct-sensory-grid">
+            <$list filter="aroma flavor acidity body sweetness aftertaste" variable="attribute">
+                <$vars fieldName={{{ [[rating-]addsuffix<attribute>] }}}>
+                    <div class="ct-sensory-row">
+                        <span class="ct-sensory-label"><<attribute>></span>
+                        <div class="ct-sensory-controls">
+                            <$range field=<<fieldName>> min="0" max="10" increment="0.5" default="0" style="width: 100px;"/>
+                            <span style="width: 30px; text-align: right; font-weight: bold;"><$text text={{{ [all[current]get<fieldName>!is[blank]else[0]] }}}/></span>
+                        </div>
+                    </div>
+                </$vars>
+            </$list>
+        </div>
+    </div>
+
+    <!-- Overall & Notes -->
+    <div style="margin-bottom: 20px;">
+        <div class="ct-rating-box">
+            <span class="ct-rating-value">Overall Rating</span>
+            <div class="ct-rating-controls">
+                <$range field="overall-rating" min="0" max="10" increment="0.5" default="0" style="width: 150px;"/>
+                <span class="ct-rating-value"><$text text={{{ [{!!overall-rating}!is[blank]else[0]] }}}/></span>
+            </div>
+        </div>
+
+        <label class="ct-label">Notes</label>
+        <$edit-text field="notes" class="tc-edit-texteditor ct-textarea" min-height="100px" placeholder="Describe the nuances..."/>
+    </div>
+
+</div>
+</$list>

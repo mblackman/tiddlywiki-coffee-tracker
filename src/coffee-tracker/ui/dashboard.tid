@@ -1,0 +1,111 @@
+title: $:/plugins/mblackman/coffee-tracker/ui/dashboard
+
+<div class="ct-dashboard-container">
+
+<div class="ct-dashboard-header">
+    <h1 class="ct-dashboard-title">☕ Coffee Dashboard</h1>
+    <div class="ct-dashboard-date">
+        <$text text=<<now "DDth MMM YYYY">>/>
+    </div>
+</div>
+
+<!-- Quick Actions Toolbar -->
+<div class="ct-action-toolbar">
+    <$button class="tc-btn-invisible ct-btn ct-btn-primary">
+        <$action-setfield $tiddler="$:/state/new-brew-log-modal" $field="title" $value="$:/plugins/mblackman/coffee-tracker/modal/brew-log"/>
+        + Log Brew
+    </$button>
+    <$button class="tc-btn-invisible ct-btn ct-btn-secondary">
+        <$action-setfield $tiddler="$:/state/new-coffee-bag-instance-modal" $field="title" $value="$:/plugins/mblackman/coffee-tracker/modal/coffee-bag-instance"/>
+        + New Bag
+    </$button>
+    <$button class="tc-btn-invisible ct-btn ct-btn-secondary">
+        <$action-setfield $tiddler="$:/state/new-coffee-bag-modal" $field="title" $value="$:/plugins/mblackman/coffee-tracker/modal/coffee-bag"/>
+        + Coffee Type
+    </$button>
+    <$button class="tc-btn-invisible ct-btn ct-btn-secondary">
+        <$action-setfield $tiddler="$:/state/new-roaster-modal" $field="title" $value="$:/plugins/mblackman/coffee-tracker/modal/roaster"/>
+        + Roaster
+    </$button>
+    <$button class="tc-btn-invisible ct-btn ct-btn-secondary">
+        <$action-setfield $tiddler="$:/state/new-equipment-modal" $field="title" $value="$:/plugins/mblackman/coffee-tracker/modal/equipment"/>
+        + Equipment
+    </$button>
+</div>
+
+<div class="ct-dashboard-grid">
+
+    <!-- Left Column: Active Bags -->
+    <div>
+        <h2 class="ct-section-title">Active Bags</h2>
+        
+        <$list filter="[tag[CoffeeBagInstance]!tag[Finished]!sort[purchase-date]]" emptyMessage="//No active coffee bags. Time to buy more!//">
+        <div class="ct-card">
+            <div class="ct-card-header">
+                <h3 class="ct-card-title"><$link to=<<currentTiddler>>><$view field="title"/></$link></h3>
+                <span class="ct-tag"><$view field="roast-date"/></span>
+            </div>
+            <div class="ct-card-subtitle">
+                <$link to={{!!coffee-bag}}><$view field="coffee-bag"/></$link>
+            </div>
+            
+            <$button class="tc-btn-invisible ct-card-action-btn">
+                <$action-createtiddler 
+                    $basetitle=<<now "Brew Log: YYYY-0MM-0DD 0hh:0mm">>
+                    tags="BrewLog"
+                    coffee-bag-instance=<<currentTiddler>>
+                    brew-date=<<now "YYYY-0MM-0DD">>
+                    brew-time=<<now "0hh:0mm">>
+                    $savetitle="$:/temp/new-brew-log-dash"
+                />
+                <$action-navigate $to={{$:/temp/new-brew-log-dash}}/>
+                ☕ Log Brew
+            </$button>
+        </div>
+        </$list>
+    </div>
+
+    <!-- Right Column: Recent Activity & Inventory -->
+    <div>
+        <h2 class="ct-section-title">Recent Brews</h2>
+        <div class="ct-table-wrapper">
+            <table class="ct-table">
+            <thead>
+            <tr class="ct-table-header">
+            <th>Date</th>
+            <th>Coffee</th>
+            <th>Method</th>
+            <th>Rating</th>
+            </tr>
+            </thead>
+            <tbody>
+            <$list filter="[tag[BrewLog]!sort[brew-date]limit[10]]">
+            <tr>
+            <td style="padding: 8px;"><$link to=<<currentTiddler>>><$text text={{{ [{!!brew-date}split[-]join[]format:date[0MM/0DD/YY]] }}}/></$link></td>
+            <td style="padding: 8px;"><$link to={{!!coffee-bag-instance}}><$view field="coffee-bag-instance"/></$link></td>
+            <td style="padding: 8px;">{{!!brew-method}}</td>
+            <td style="padding: 8px; font-weight: bold;">{{!!overall-rating}}</td>
+            </tr>
+            </$list>
+            </tbody>
+            </table>
+        </div>
+
+        <div class="ct-inventory-grid">
+            <div class="ct-inventory-column">
+                <h3 class="ct-inventory-title">Roasters</h3>
+                <div class="ct-inventory-list">
+                    <<list-links "[tag[Roaster]]">>
+                </div>
+            </div>
+            <div class="ct-inventory-column">
+                <h3 class="ct-inventory-title">Equipment</h3>
+                <div class="ct-inventory-list">
+                    <<list-links "[tag[Equipment]]">>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>

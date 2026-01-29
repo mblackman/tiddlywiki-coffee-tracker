@@ -1,0 +1,13 @@
+title: $:/plugins/mblackman/coffee-tracker/ui/roaster/view
+tags: $:/tags/ViewTemplate
+type: text/vnd.tiddlywiki
+
+<$list filter="[all[current]tag[Roaster]]">
+    <h2>{{!!roaster-name}}</h2>
+    <$button>
+        <$action-navigate $to=<<currentTiddler>> $mode="edit"/>
+        Edit
+    </$button>
+    <p><strong>Location:</strong> {{!!roaster-location}}</p>
+    <p><strong>Website:</strong> <$link to={{!!roaster-website}} external="yes">{{!!roaster-website}}</$link></p>
+</$list>

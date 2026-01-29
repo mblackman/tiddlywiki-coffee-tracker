@@ -1,0 +1,23 @@
+title: $:/plugins/mblackman/coffee-tracker/ui/coffee-bag/view
+tags: $:/tags/ViewTemplate
+type: text/vnd.tiddlywiki
+
+<$list filter="[all[current]tag[CoffeeBag]]">
+    <h2>{{!!coffee-name}}</h2>
+    <$button>
+        <$action-navigate $to=<<currentTiddler>> $mode="edit"/>
+        Edit
+    </$button>
+    <p><strong>Roaster:</strong> <$link to={{!!roaster}}>{{!!roaster}}</$link></p>
+    <p><strong>Origin:</strong> {{!!coffee-origin}}</p>
+    <p><strong>Roast Level:</strong> {{!!coffee-roast-level}}</p>
+    <p><strong>Varietal:</strong> {{!!coffee-varietal}}</p>
+    <p><strong>Processing:</strong> {{!!coffee-processing}}</p>
+    <p><strong>Tasting Notes:</strong></p>
+    <div>{{!!coffee-tasting-notes}}</div>
+
+    <h3>Purchased Bags</h3>
+    <$list filter="[tag[CoffeeBagInstance]coffee-bag<currentTiddler>]">
+        <div><$link to=<<currentTiddler>>><<currentTiddler>></$link></div>
+    </$list>
+</$list>
