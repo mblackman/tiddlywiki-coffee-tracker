@@ -1,0 +1,6 @@
+title: $:/plugins/mblackman/coffee-tracker/config/freshness/
+type: application/x-tiddler-dictionary
+
+peak-start: 7
+peak-end: 21
+optimal-end: 60

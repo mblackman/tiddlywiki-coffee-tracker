@@ -100,7 +100,29 @@ type: text/vnd.tiddlywiki
                 <label class="ct-label">Time (mm:ss)</label>
                 <$edit-text field="brew-time-seconds" size="5" placeholder="00:00" class="ct-metric-input"/>
             </div>
+            <div class="ct-metric-item">
+                <label class="ct-label">Water Temp (°C)</label>
+                <$edit-text field="water-temp" size="5" placeholder="93" class="ct-metric-input"/>
+            </div>
+            <div class="ct-metric-item">
+                <label class="ct-label">Grind Size</label>
+                <$edit-text field="grind-size" size="5" placeholder="e.g. 20" class="ct-metric-input"/>
+            </div>
         </div>
+
+        <!-- Calculated Metrics -->
+        <$let
+            dose={{{ [{!!dose}] }}}
+            water={{{ [{!!water}] }}}
+            ratio={{{ [<dose>!is[blank]] [<water>!is[blank]] +[then<water>divide<dose>round:2]else[]] }}}
+        >
+        <$list filter="[<ratio>!is[blank]]" variable="ignore">
+            <div style="margin-top: 15px; padding: 10px; background: #f0f8ff; border-radius: 4px; text-align: center;">
+                <span style="font-weight: bold; color: #666;">Brew Ratio:</span>
+                <span style="font-size: 1.3em; font-weight: bold; color: #0366d6; margin-left: 10px;">1:<$text text=<<ratio>>/></span>
+            </div>
+        </$list>
+        </$let>
     </div>
 
     <!-- Sensory Section -->

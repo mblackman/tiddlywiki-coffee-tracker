@@ -4,53 +4,103 @@ title: $:/plugins/mblackman/coffee-tracker/ui/dashboard
 
 <div class="ct-dashboard-header">
     <h1 class="ct-dashboard-title">☕ Coffee Dashboard</h1>
-    <div class="ct-dashboard-date">
-        <$text text=<<now "DDth MMM YYYY">>/>
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <$button class="tc-btn-invisible ct-theme-button">
+            <$action-navigate $to="$:/plugins/mblackman/coffee-tracker/ui/all-lists"/>
+            📋 Browse All
+        </$button>
+        <div class="ct-dashboard-date">
+            <$text text=<<now "DDth MMM YYYY">>/>
+        </div>
     </div>
 </div>
 
-<!-- Quick Actions Toolbar -->
-<div class="ct-action-toolbar">
-    <$button class="tc-btn-invisible ct-btn ct-btn-primary">
-        <$action-setfield $tiddler="$:/state/new-brew-log-modal" $field="title" $value="$:/plugins/mblackman/coffee-tracker/modal/brew-log"/>
-        + Log Brew
-    </$button>
-    <$button class="tc-btn-invisible ct-btn ct-btn-secondary">
-        <$action-setfield $tiddler="$:/state/new-coffee-bag-instance-modal" $field="title" $value="$:/plugins/mblackman/coffee-tracker/modal/coffee-bag-instance"/>
-        + New Bag
-    </$button>
-    <$button class="tc-btn-invisible ct-btn ct-btn-secondary">
-        <$action-setfield $tiddler="$:/state/new-coffee-bag-modal" $field="title" $value="$:/plugins/mblackman/coffee-tracker/modal/coffee-bag"/>
-        + Coffee Type
-    </$button>
-    <$button class="tc-btn-invisible ct-btn ct-btn-secondary">
-        <$action-setfield $tiddler="$:/state/new-roaster-modal" $field="title" $value="$:/plugins/mblackman/coffee-tracker/modal/roaster"/>
-        + Roaster
-    </$button>
-    <$button class="tc-btn-invisible ct-btn ct-btn-secondary">
-        <$action-setfield $tiddler="$:/state/new-equipment-modal" $field="title" $value="$:/plugins/mblackman/coffee-tracker/modal/equipment"/>
-        + Equipment
-    </$button>
+<!-- Statistics Overview -->
+<$let
+    total-brews={{{ [tag[BrewLog]count[]] }}}
+    active-bags={{{ [tag[CoffeeBagInstance]!tag[Finished]count[]] }}}
+    total-coffee-types={{{ [tag[CoffeeBag]count[]] }}}
+    avg-rating={{{ [tag[BrewLog]get[overall-rating]average[]round[1]] }}}
+>
+<div class="ct-stats-grid">
+    <div class="ct-stat-card">
+        <div class="ct-stat-value"><$text text=<<total-brews>>/></div>
+        <div class="ct-stat-label">Total Brews</div>
+    </div>
+    <div class="ct-stat-card">
+        <div class="ct-stat-value"><$text text=<<active-bags>>/></div>
+        <div class="ct-stat-label">Active Bags</div>
+    </div>
+    <div class="ct-stat-card">
+        <div class="ct-stat-value"><$text text=<<total-coffee-types>>/></div>
+        <div class="ct-stat-label">Coffee Types</div>
+    </div>
+    <$list filter="[<avg-rating>!is[blank]]" variable="ignore">
+        <div class="ct-stat-card">
+            <div class="ct-stat-value"><$text text=<<avg-rating>>/> /10</div>
+            <div class="ct-stat-label">Avg Rating</div>
+        </div>
+    </$list>
 </div>
+</$let>
 
 <div class="ct-dashboard-grid">
 
     <!-- Left Column: Active Bags -->
     <div>
-        <h2 class="ct-section-title">Active Bags</h2>
-        
-        <$list filter="[tag[CoffeeBagInstance]!tag[Finished]!sort[purchase-date]]" emptyMessage="//No active coffee bags. Time to buy more!//">
+        <div class="ct-flex-row ct-mb-md">
+            <h2 class="ct-section-title ct-section-title-clean">Active Coffee</h2>
+            <$button class="tc-btn-invisible ct-link ct-text-sm">
+                <$action-navigate $to="$:/plugins/mblackman/coffee-tracker/ui/all-lists"/>
+                View All →
+            </$button>
+        </div>
+
+        <$list filter="[tag[CoffeeBagInstance]!tag[Finished]!sort[purchase-date]limit[5]]" emptyMessage="<div class='ct-empty-state'><div class='ct-empty-state-icon'>📦</div><div class='ct-empty-state-text'>No active coffee bags</div><div class='ct-mt-sm'><$button class='tc-btn-invisible ct-btn ct-btn-primary'><$action-sendmessage $message='tm-modal' $param='$:/plugins/mblackman/coffee-tracker/modal/coffee-bag-instance'/>+ Purchase Coffee</$button></div></div>">
         <div class="ct-card">
             <div class="ct-card-header">
                 <h3 class="ct-card-title"><$link to=<<currentTiddler>>><$view field="title"/></$link></h3>
-                <span class="ct-tag"><$view field="roast-date"/></span>
+                <$let
+                    roast-date={{!!roast-date}}
+                    peak-start={{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-start}}
+                    peak-end={{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-end}}
+                    optimal-end={{$:/plugins/mblackman/coffee-tracker/config/freshness/optimal-end}}
+                >
+                <$list filter="[<roast-date>!is[blank]]" variable="ignore">
+                    <$let
+                        roast-year={{{ [{!!roast-date}split[-]first[]] }}}
+                        roast-month={{{ [{!!roast-date}split[-]nth[2]] }}}
+                        roast-day={{{ [{!!roast-date}split[-]last[]] }}}
+                        today-year=<<now "YYYY">>
+                        today-month=<<now "0MM">>
+                        today-day=<<now "0DD">>
+                        year-days={{{ [<today-year>subtract<roast-year>multiply[365]] }}}
+                        month-days={{{ [<today-month>subtract<roast-month>multiply[30]] }}}
+                        day-diff={{{ [<today-day>subtract<roast-day>] }}}
+                        roast-days={{{ [<year-days>add<month-days>add<day-diff>] }}}
+                    >
+                    <$list filter="[<roast-days>compare:number:lt<peak-start>]" variable="ignore">
+                        <span class="ct-tag ct-badge-success">Fresh</span>
+                    </$list>
+                    <$list filter="[<roast-days>compare:number:gteq<peak-start>compare:number:lt<peak-end>]" variable="ignore">
+                        <span class="ct-tag ct-badge-warning">Peak</span>
+                    </$list>
+                    <$list filter="[<roast-days>compare:number:gteq<peak-end>compare:number:lt<optimal-end>]" variable="ignore">
+                        <span class="ct-tag ct-badge-warning">Good</span>
+                    </$list>
+                    <$list filter="[<roast-days>compare:number:gteq<optimal-end>]" variable="ignore">
+                        <span class="ct-tag ct-badge-danger">Aging</span>
+                    </$list>
+                    </$let>
+                </$list>
+                </$let>
             </div>
             <div class="ct-card-subtitle">
                 <$link to={{!!coffee-bag}}><$view field="coffee-bag"/></$link>
             </div>
-            
+
             <$button class="tc-btn-invisible ct-card-action-btn">
-                <$action-createtiddler 
+                <$action-createtiddler
                     $basetitle=<<now "Brew Log: YYYY-0MM-0DD 0hh:0mm">>
                     tags="BrewLog"
                     coffee-bag-instance=<<currentTiddler>>
@@ -65,45 +115,62 @@ title: $:/plugins/mblackman/coffee-tracker/ui/dashboard
         </$list>
     </div>
 
-    <!-- Right Column: Recent Activity & Inventory -->
+    <!-- Right Column: Recent Activity -->
     <div>
-        <h2 class="ct-section-title">Recent Brews</h2>
-        <div class="ct-table-wrapper">
-            <table class="ct-table">
-            <thead>
-            <tr class="ct-table-header">
-            <th>Date</th>
-            <th>Coffee</th>
-            <th>Method</th>
-            <th>Rating</th>
-            </tr>
-            </thead>
-            <tbody>
-            <$list filter="[tag[BrewLog]!sort[brew-date]limit[10]]">
-            <tr>
-            <td style="padding: 8px;"><$link to=<<currentTiddler>>><$text text={{{ [{!!brew-date}split[-]join[]format:date[0MM/0DD/YY]] }}}/></$link></td>
-            <td style="padding: 8px;"><$link to={{!!coffee-bag-instance}}><$view field="coffee-bag-instance"/></$link></td>
-            <td style="padding: 8px;">{{!!brew-method}}</td>
-            <td style="padding: 8px; font-weight: bold;">{{!!overall-rating}}</td>
-            </tr>
-            </$list>
-            </tbody>
-            </table>
+        <div class="ct-flex-row ct-mb-md">
+            <h2 class="ct-section-title ct-section-title-clean">Recent Brews</h2>
         </div>
 
-        <div class="ct-inventory-grid">
-            <div class="ct-inventory-column">
-                <h3 class="ct-inventory-title">Roasters</h3>
-                <div class="ct-inventory-list">
-                    <<list-links "[tag[Roaster]]">>
+        <$list filter="[tag[BrewLog]!sort[brew-date]limit[5]]" emptyMessage="<div class='ct-empty-state'><div class='ct-empty-state-icon'>☕</div><div class='ct-empty-state-text'>No brews logged yet</div><div class='ct-mt-sm'><$button class='tc-btn-invisible ct-btn ct-btn-primary'><$action-sendmessage $message='tm-modal' $param='$:/plugins/mblackman/coffee-tracker/modal/brew-log'/>☕ Log Your First Brew</$button></div></div>">
+            <div class="ct-card ct-flex-row">
+                <div class="ct-flex-1">
+                    <div class="ct-text-bold ct-mb-xs">
+                        <$link to=<<currentTiddler>>>
+                            <$text text={{{ [{!!brew-date}split[-]join[]format:date[DDth MMM]] }}}/>
+                        </$link>
+                    </div>
+                    <div class="ct-card-subtitle ct-m-0">
+                        <$link to={{!!coffee-bag-instance}}><$view field="coffee-bag-instance"/></$link>
+                    </div>
+                    <div class="ct-card-subtitle">
+                        {{!!brew-method}}
+                    </div>
+                </div>
+                <div class="ct-text-lg ct-text-bold ct-pl-md" style="color: <<colour primary>>;">
+                    <$text text={{{ [{!!overall-rating}!is[blank]else[—]] }}}/>
                 </div>
             </div>
-            <div class="ct-inventory-column">
-                <h3 class="ct-inventory-title">Equipment</h3>
-                <div class="ct-inventory-list">
-                    <<list-links "[tag[Equipment]]">>
+        </$list>
+
+        <!-- Quick Stats -->
+        <div class="ct-quick-stats">
+            <h3 class="ct-quick-stats-title">Quick Stats</h3>
+            <$let
+                total-roasters={{{ [tag[Roaster]count[]] }}}
+                total-equipment={{{ [tag[Equipment]count[]] }}}
+                finished-bags={{{ [tag[CoffeeBagInstance]tag[Finished]count[]] }}}
+            >
+            <div class="ct-quick-stats-grid">
+                <div>
+                    <div class="ct-quick-stat-value"><$text text=<<total-roasters>>/></div>
+                    <div class="ct-quick-stat-label">Roasters</div>
+                </div>
+                <div>
+                    <div class="ct-quick-stat-value"><$text text=<<total-equipment>>/></div>
+                    <div class="ct-quick-stat-label">Equipment</div>
+                </div>
+                <div>
+                    <div class="ct-quick-stat-value"><$text text=<<finished-bags>>/></div>
+                    <div class="ct-quick-stat-label">Finished Bags</div>
+                </div>
+                <div>
+                    <$button class="tc-btn-invisible ct-theme-button" style="width: 100%; text-align: center;">
+                        <$action-navigate $to="$:/plugins/mblackman/coffee-tracker/ui/all-lists"/>
+                        Browse All
+                    </$button>
                 </div>
             </div>
+            </$let>
         </div>
     </div>
 

@@ -1,0 +1,103 @@
+title: $:/plugins/mblackman/coffee-tracker/modal/brew-log
+subtitle: Quick Log Brew
+tags: $:/tags/Modal
+type: text/vnd.tiddlywiki
+
+\define save-actions()
+<$let
+    brew-date={{{ [{$:/temp/new-brew-log!!brew-date}] }}}
+    brew-time={{{ [{$:/temp/new-brew-log!!brew-time}] }}}
+    title={{{ [[Brew Log: ]addsuffix<brew-date>addsuffix[ ]addsuffix<brew-time>] }}}
+>
+<$action-createtiddler
+    $basetitle=<<title>>
+    tags="BrewLog"
+    coffee-bag-instance={{$:/temp/new-brew-log!!coffee-bag-instance}}
+    brew-date={{$:/temp/new-brew-log!!brew-date}}
+    brew-time={{$:/temp/new-brew-log!!brew-time}}
+    brewer={{$:/temp/new-brew-log!!brewer}}
+    brew-method={{$:/temp/new-brew-log!!brew-method}}
+    overall-rating={{$:/temp/new-brew-log!!overall-rating}}
+    $savetitle="$:/temp/created-brew-log"
+/>
+</$let>
+<$action-deletetiddler $tiddler="$:/temp/new-brew-log"/>
+<$action-sendmessage $message="tm-close-tiddler"/>
+<$action-navigate $to={{$:/temp/created-brew-log}}/>
+\end
+
+<div class="tc-modal-body">
+
+<div style="margin-bottom: 15px;">
+    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Coffee *</label>
+    <$select tiddler="$:/temp/new-brew-log" field="coffee-bag-instance" class="tc-edit-texteditor" style="width: 100%;">
+        <option value="">-- Select Coffee --</option>
+        <$list filter="[tag[CoffeeBagInstance]!tag[Finished]sort[title]]">
+            <option value=<<currentTiddler>>><$view field="title"/></option>
+        </$list>
+    </$select>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+    <div>
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Date</label>
+        <$edit-text tiddler="$:/temp/new-brew-log" field="brew-date" type="date" class="tc-edit-texteditor" style="width: 100%;" default=<<now "YYYY-0MM-0DD">>/>
+    </div>
+
+    <div>
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Time</label>
+        <$edit-text tiddler="$:/temp/new-brew-log" field="brew-time" type="time" class="tc-edit-texteditor" style="width: 100%;" default=<<now "0hh:0mm">>/>
+    </div>
+</div>
+
+<div style="margin-bottom: 15px;">
+    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Brewer</label>
+    <$select tiddler="$:/temp/new-brew-log" field="brewer" class="tc-edit-texteditor" style="width: 100%;" actions="""
+        <$vars brewer={{{ [<actionValue>] }}}>
+        <$let count={{{ [<brewer>get[brew-methods]enlist-input[]count[]] }}}>
+            <$action-setfield $tiddler="$:/temp/new-brew-log" brew-method={{{ [<count>match[1]then<brewer>get[brew-methods]enlist-input[]else[]] }}}/>
+        </$let>
+        </$vars>
+    """>
+        <option value="">-- Select Brewer --</option>
+        <$list filter="[tag[Equipment]equipment-type[Brewer]sort[title]]">
+            <option value=<<currentTiddler>>><$view field="title"/></option>
+        </$list>
+    </$select>
+</div>
+
+<div style="margin-bottom: 15px;">
+    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Method</label>
+    <$set name="brewer" value={{$:/temp/new-brew-log!!brewer}}>
+    <$set name="count" value={{{ [<brewer>get[brew-methods]enlist-input[]count[]] }}}>
+        <$list filter="[<count>compare:number:gt[1]]" variable="ignore">
+            <$select tiddler="$:/temp/new-brew-log" field="brew-method" class="tc-edit-texteditor" style="width: 100%;">
+                <option value="">-- Select Method --</option>
+                <$list filter="[<brewer>get[brew-methods]enlist-input[]]"><option value=<<currentTiddler>>><<currentTiddler>></option></$list>
+            </$select>
+        </$list>
+        <$list filter="[<count>!compare:number:gt[1]]" variable="ignore">
+            <$edit-text tiddler="$:/temp/new-brew-log" field="brew-method" placeholder={{{ [<count>match[1]then<brewer>get[brew-methods]enlist-input[]else[e.g. Pour Over]] }}} class="tc-edit-texteditor" style="width: 100%;" disabled={{{ [<count>match[1]then[yes]else[no]] }}}/>
+        </$list>
+    </$set>
+    </$set>
+</div>
+
+<div style="margin-bottom: 15px;">
+    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Quick Rating (0-10)</label>
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <$range tiddler="$:/temp/new-brew-log" field="overall-rating" min="0" max="10" increment="0.5" default="0" style="flex: 1;"/>
+        <span style="font-size: 1.5em; font-weight: bold; width: 50px;"><$text text={{{ [{$:/temp/new-brew-log!!overall-rating}!is[blank]else[0]] }}}/></span>
+    </div>
+    <div style="margin-top: 5px; font-size: 0.9em; color: <<colour muted-foreground>>;">
+        You can add detailed metrics and tasting notes after creating the log
+    </div>
+</div>
+
+</div>
+
+<div class="tc-modal-footer">
+    <$button class="tc-btn-invisible" actions=<<save-actions>>>
+        ✓ Create Brew Log
+    </$button>
+</div>

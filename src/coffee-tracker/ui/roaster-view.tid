@@ -4,6 +4,32 @@ type: text/vnd.tiddlywiki
 
 <$list filter="[all[current]tag[Roaster]]">
     <h2>{{!!roaster-name}}</h2>
-    <p><strong>Location:</strong> {{!!roaster-location}}</p>
-    <p><strong>Website:</strong> <$link to={{!!roaster-website}} external="yes">{{!!roaster-website}}</$link></p>
+
+    <div class="ct-grid-2col ct-info-box ct-mb-md">
+        <div><strong>Location:</strong> {{!!roaster-location}}</div>
+        <div>
+            <strong>Website:</strong>
+            <$list filter="[all[current]has[roaster-website]]" variable="ignore">
+                <$link to={{!!roaster-website}} target="_blank" rel="noopener noreferrer">Visit Website</$link>
+            </$list>
+        </div>
+    </div>
+
+    <hr>
+
+    <h3>Coffee Types</h3>
+    <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-w-full ct-mb-md">
+        <$action-setfield $tiddler="$:/temp/new-coffee-bag" roaster=<<currentTiddler>>/>
+        <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/coffee-bag"/>
+        + Add Coffee Type
+    </$button>
+
+    <$list filter="[tag[CoffeeBag]roaster<currentTiddler>sort[title]]" emptyMessage="<div class='ct-empty-state'>No coffee types added yet</div>">
+        <div class="ct-card">
+            <$link to=<<currentTiddler>> class="ct-text-bold" style="font-size: 1.1em;"><$view field="coffee-name"/></$link>
+            <div class="ct-card-subtitle">
+                <$view field="coffee-origin"/> • <$view field="coffee-roast-level"/>
+            </div>
+        </div>
+    </$list>
 </$list>

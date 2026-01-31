@@ -1,0 +1,56 @@
+title: $:/plugins/mblackman/coffee-tracker/modal/equipment
+subtitle: Add New Equipment
+tags: $:/tags/Modal
+type: text/vnd.tiddlywiki
+
+\define save-actions()
+<$action-createtiddler
+    $basetitle={{$:/temp/new-equipment!!equipment-name}}
+    tags="Equipment"
+    equipment-name={{$:/temp/new-equipment!!equipment-name}}
+    equipment-type={{$:/temp/new-equipment!!equipment-type}}
+    equipment-manufacturer={{$:/temp/new-equipment!!equipment-manufacturer}}
+    my-notes={{$:/temp/new-equipment!!my-notes}}
+    $savetitle="$:/temp/created-equipment"
+/>
+<$action-deletetiddler $tiddler="$:/temp/new-equipment"/>
+<$action-sendmessage $message="tm-close-tiddler"/>
+<$action-navigate $to={{$:/temp/created-equipment}}/>
+\end
+
+<div class="tc-modal-body">
+
+<div style="margin-bottom: 15px;">
+    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Equipment Name *</label>
+    <$edit-text tiddler="$:/temp/new-equipment" field="equipment-name" placeholder="e.g. Hario V60" class="tc-edit-texteditor" style="width: 100%;"/>
+</div>
+
+<div style="margin-bottom: 15px;">
+    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Type *</label>
+    <$select tiddler="$:/temp/new-equipment" field="equipment-type" class="tc-edit-texteditor" style="width: 100%;">
+        <option value="">-- Select Type --</option>
+        <option value="Brewer">Brewer</option>
+        <option value="Grinder">Grinder</option>
+        <option value="Scale">Scale</option>
+        <option value="Kettle">Kettle</option>
+        <option value="Other">Other</option>
+    </$select>
+</div>
+
+<div style="margin-bottom: 15px;">
+    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Manufacturer</label>
+    <$edit-text tiddler="$:/temp/new-equipment" field="equipment-manufacturer" placeholder="e.g. Hario" class="tc-edit-texteditor" style="width: 100%;"/>
+</div>
+
+<div style="margin-bottom: 15px;">
+    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Notes</label>
+    <$edit-text tiddler="$:/temp/new-equipment" field="my-notes" placeholder="Any additional notes..." class="tc-edit-texteditor" style="width: 100%; min-height: 80px;"/>
+</div>
+
+</div>
+
+<div class="tc-modal-footer">
+    <$button class="tc-btn-invisible" actions=<<save-actions>>>
+        ✓ Create Equipment
+    </$button>
+</div>

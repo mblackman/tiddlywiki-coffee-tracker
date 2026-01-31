@@ -1,0 +1,158 @@
+title: $:/plugins/mblackman/coffee-tracker/ui/all-lists
+caption: Coffee Tracker - All Lists
+
+<div class="ct-dashboard-container">
+
+<div class="ct-dashboard-header">
+    <h1 class="ct-dashboard-title">☕ Coffee Tracker - Browse All</h1>
+    <$button class="tc-btn-invisible ct-btn ct-btn-primary">
+        <$action-navigate $to="$:/plugins/mblackman/coffee-tracker/ui/dashboard"/>
+        Back to Dashboard
+    </$button>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; margin-top: 30px;">
+
+    <!-- Active Coffee Bags -->
+    <div>
+        <h2 class="ct-section-title">Active Coffee Bags</h2>
+        <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-w-full ct-mb-sm">
+            <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/coffee-bag-instance"/>
+            + Purchase Coffee Bag
+        </$button>
+        <$list filter="[tag[CoffeeBagInstance]!tag[Finished]!sort[purchase-date]]" emptyMessage="<div class='ct-empty-state'>No active bags</div>">
+            <div class="ct-card">
+                <h3 class="ct-card-title"><$link to=<<currentTiddler>>><$view field="title"/></$link></h3>
+                <div class="ct-card-subtitle">
+                    <$link to={{!!coffee-bag}}><$view field="coffee-bag"/></$link>
+                </div>
+                <div class="ct-card-subtitle">
+                    Roast: <$view field="roast-date"/>
+                </div>
+            </div>
+        </$list>
+    </div>
+
+    <!-- All Coffee Types -->
+    <div>
+        <h2 class="ct-section-title">Coffee Types</h2>
+        <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-w-full ct-mb-sm">
+            <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/coffee-bag"/>
+            + New Coffee Type
+        </$button>
+        <$list filter="[tag[CoffeeBag]sort[title]]" emptyMessage="<div class='ct-empty-state'>No coffee types</div>">
+            <div class="ct-card">
+                <h3 class="ct-card-title"><$link to=<<currentTiddler>>><$view field="coffee-name"/></$link></h3>
+                <div class="ct-card-subtitle">
+                    <$link to={{!!roaster}}><$view field="roaster"/></$link>
+                </div>
+                <div style="font-size: 0.85em; color: #666;">
+                    <$view field="coffee-origin"/> • <$view field="coffee-roast-level"/>
+                </div>
+            </div>
+        </$list>
+    </div>
+
+    <!-- Equipment -->
+    <div>
+        <h2 class="ct-section-title">Equipment</h2>
+        <$button class="tc-btn-invisible ct-btn ct-btn-secondary" style="width: 100%; margin-bottom: 10px;">
+            <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/equipment"/>
+            + New Equipment
+        </$button>
+
+        <h4 style="margin: 15px 0 5px 0; color: #666; font-size: 0.9em; text-transform: uppercase;">Brewers</h4>
+        <$list filter="[tag[Equipment]equipment-type[Brewer]sort[title]]" emptyMessage="<div style='padding: 10px; color: #999; font-size: 0.9em;'>No brewers</div>">
+            <div class="ct-card">
+                <h3 class="ct-card-title"><$link to=<<currentTiddler>>><$view field="equipment-name"/></$link></h3>
+                <div class="ct-card-subtitle">{{!!equipment-manufacturer}}</div>
+            </div>
+        </$list>
+
+        <h4 style="margin: 15px 0 5px 0; color: #666; font-size: 0.9em; text-transform: uppercase;">Grinders</h4>
+        <$list filter="[tag[Equipment]equipment-type[Grinder]sort[title]]" emptyMessage="<div style='padding: 10px; color: #999; font-size: 0.9em;'>No grinders</div>">
+            <div class="ct-card">
+                <h3 class="ct-card-title"><$link to=<<currentTiddler>>><$view field="equipment-name"/></$link></h3>
+                <div class="ct-card-subtitle">{{!!equipment-manufacturer}}</div>
+            </div>
+        </$list>
+
+        <h4 style="margin: 15px 0 5px 0; color: #666; font-size: 0.9em; text-transform: uppercase;">Other</h4>
+        <$list filter="[tag[Equipment]!equipment-type[Brewer]!equipment-type[Grinder]sort[title]]" emptyMessage="<div style='padding: 10px; color: #999; font-size: 0.9em;'>No other equipment</div>">
+            <div class="ct-card">
+                <h3 class="ct-card-title"><$link to=<<currentTiddler>>><$view field="equipment-name"/></$link></h3>
+                <div class="ct-card-subtitle">{{!!equipment-type}} • {{!!equipment-manufacturer}}</div>
+            </div>
+        </$list>
+    </div>
+
+    <!-- Roasters -->
+    <div>
+        <h2 class="ct-section-title">Roasters</h2>
+        <$button class="tc-btn-invisible ct-btn ct-btn-secondary" style="width: 100%; margin-bottom: 10px;">
+            <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/roaster"/>
+            + New Roaster
+        </$button>
+        <$list filter="[tag[Roaster]sort[title]]" emptyMessage="<div style='padding: 20px; text-align: center; color: #999; background: #f5f5f5; border-radius: 8px;'>No roasters</div>">
+            <div class="ct-card">
+                <h3 class="ct-card-title"><$link to=<<currentTiddler>>><$view field="roaster-name"/></$link></h3>
+                <div class="ct-card-subtitle">{{!!roaster-location}}</div>
+                <$let coffee-count={{{ [tag[CoffeeBag]roaster<currentTiddler>count[]] }}}>
+                    <div style="font-size: 0.85em; color: #666;">
+                        <$text text=<<coffee-count>>/> coffee types
+                    </div>
+                </$let>
+            </div>
+        </$list>
+    </div>
+
+    <!-- Recent Brew Logs -->
+    <div>
+        <h2 class="ct-section-title">Recent Brew Logs</h2>
+        <$button class="tc-btn-invisible ct-btn ct-btn-primary" style="width: 100%; margin-bottom: 10px;">
+            <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/brew-log"/>
+            + Log Brew
+        </$button>
+        <$list filter="[tag[BrewLog]!sort[brew-date]limit[20]]" emptyMessage="<div style='padding: 20px; text-align: center; color: #999; background: #f5f5f5; border-radius: 8px;'>No brew logs</div>">
+            <div class="ct-card">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <div>
+                        <$link to=<<currentTiddler>> style="font-weight: bold;">
+                            <$text text={{{ [{!!brew-date}split[-]join[]format:date[0MM/0DD/YY]] }}}/>
+                        </$link>
+                        <div class="ct-card-subtitle">
+                            <$link to={{!!coffee-bag-instance}}><$view field="coffee-bag-instance"/></$link>
+                        </div>
+                        <div style="font-size: 0.85em; color: #666;">
+                            {{!!brew-method}}
+                        </div>
+                    </div>
+                    <div style="font-size: 1.3em; font-weight: bold; color: #0366d6;">
+                        {{!!overall-rating}}
+                    </div>
+                </div>
+            </div>
+        </$list>
+    </div>
+
+    <!-- Finished Bags -->
+    <div>
+        <h2 class="ct-section-title">Finished Coffee Bags</h2>
+        <$list filter="[tag[CoffeeBagInstance]tag[Finished]!sort[purchase-date]]" emptyMessage="<div style='padding: 20px; text-align: center; color: #999; background: #f5f5f5; border-radius: 8px;'>No finished bags</div>">
+            <div class="ct-card" style="opacity: 0.7;">
+                <h3 class="ct-card-title"><$link to=<<currentTiddler>>><$view field="title"/></$link></h3>
+                <div class="ct-card-subtitle">
+                    <$link to={{!!coffee-bag}}><$view field="coffee-bag"/></$link>
+                </div>
+                <$let brew-count={{{ [tag[BrewLog]coffee-bag-instance<currentTiddler>count[]] }}}>
+                    <div style="font-size: 0.85em; color: #666;">
+                        <$text text=<<brew-count>>/> brews
+                    </div>
+                </$let>
+            </div>
+        </$list>
+    </div>
+
+</div>
+
+</div>

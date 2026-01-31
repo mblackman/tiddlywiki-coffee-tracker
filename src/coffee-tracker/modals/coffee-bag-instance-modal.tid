@@ -1,0 +1,83 @@
+title: $:/plugins/mblackman/coffee-tracker/modal/coffee-bag-instance
+subtitle: Add New Coffee Bag
+tags: $:/tags/Modal
+type: text/vnd.tiddlywiki
+
+\define save-actions()
+<$let
+    bag-name={{{ [{$:/temp/new-coffee-bag-instance!!coffee-bag}] }}}
+    purchase-date={{{ [{$:/temp/new-coffee-bag-instance!!purchase-date}] }}}
+    title={{{ [<bag-name>addprefix[ - ]addprefix<purchase-date>] }}}
+>
+<$action-createtiddler
+    $basetitle=<<title>>
+    tags="CoffeeBagInstance"
+    coffee-bag={{$:/temp/new-coffee-bag-instance!!coffee-bag}}
+    purchase-date={{$:/temp/new-coffee-bag-instance!!purchase-date}}
+    roast-date={{$:/temp/new-coffee-bag-instance!!roast-date}}
+    cost={{$:/temp/new-coffee-bag-instance!!cost}}
+    weight={{$:/temp/new-coffee-bag-instance!!weight}}
+    my-thoughts={{$:/temp/new-coffee-bag-instance!!my-thoughts}}
+    $savetitle="$:/temp/created-coffee-bag-instance"
+/>
+</$let>
+<$action-deletetiddler $tiddler="$:/temp/new-coffee-bag-instance"/>
+<$action-sendmessage $message="tm-close-tiddler"/>
+<$action-navigate $to={{$:/temp/created-coffee-bag-instance}}/>
+\end
+
+<div class="tc-modal-body">
+
+<div style="margin-bottom: 15px;">
+    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Coffee Type *</label>
+    <$select tiddler="$:/temp/new-coffee-bag-instance" field="coffee-bag" class="tc-edit-texteditor" style="width: 100%;">
+        <option value="">-- Select Coffee --</option>
+        <$list filter="[tag[CoffeeBag]sort[title]]">
+            <option value=<<currentTiddler>>><$view field="coffee-name"/></option>
+        </$list>
+    </$select>
+    <div style="margin-top: 5px; font-size: 0.9em; color: <<colour muted-foreground>>;">
+        Don't see your coffee? <$button class="tc-btn-invisible ct-link" style="padding: 0; text-decoration: underline;">
+            <$action-sendmessage $message="tm-close-tiddler"/>
+            <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/coffee-bag"/>
+            Add a new coffee type first
+        </$button>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+    <div>
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Purchase Date *</label>
+        <$edit-text tiddler="$:/temp/new-coffee-bag-instance" field="purchase-date" type="date" class="tc-edit-texteditor" style="width: 100%;" default=<<now "YYYY-0MM-0DD">>/>
+    </div>
+
+    <div>
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Roast Date</label>
+        <$edit-text tiddler="$:/temp/new-coffee-bag-instance" field="roast-date" type="date" class="tc-edit-texteditor" style="width: 100%;"/>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+    <div>
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Cost</label>
+        <$edit-text tiddler="$:/temp/new-coffee-bag-instance" field="cost" placeholder="$0.00" class="tc-edit-texteditor" style="width: 100%;"/>
+    </div>
+
+    <div>
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Weight</label>
+        <$edit-text tiddler="$:/temp/new-coffee-bag-instance" field="weight" placeholder="e.g. 340g" class="tc-edit-texteditor" style="width: 100%;"/>
+    </div>
+</div>
+
+<div style="margin-bottom: 15px;">
+    <label style="display: block; font-weight: bold; margin-bottom: 5px;">My Thoughts</label>
+    <$edit-text tiddler="$:/temp/new-coffee-bag-instance" field="my-thoughts" placeholder="Initial impressions, notes..." class="tc-edit-texteditor" style="width: 100%; min-height: 80px;"/>
+</div>
+
+</div>
+
+<div class="tc-modal-footer">
+    <$button class="tc-btn-invisible" actions=<<save-actions>>>
+        ✓ Purchase Bag
+    </$button>
+</div>

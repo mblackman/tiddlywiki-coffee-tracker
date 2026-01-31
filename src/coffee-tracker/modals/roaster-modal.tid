@@ -1,0 +1,43 @@
+title: $:/plugins/mblackman/coffee-tracker/modal/roaster
+subtitle: Add New Roaster
+tags: $:/tags/Modal
+type: text/vnd.tiddlywiki
+
+\define save-actions()
+<$action-createtiddler
+    $basetitle={{$:/temp/new-roaster!!roaster-name}}
+    tags="Roaster"
+    roaster-name={{$:/temp/new-roaster!!roaster-name}}
+    roaster-location={{$:/temp/new-roaster!!roaster-location}}
+    roaster-website={{$:/temp/new-roaster!!roaster-website}}
+    $savetitle="$:/temp/created-roaster"
+/>
+<$action-deletetiddler $tiddler="$:/temp/new-roaster"/>
+<$action-sendmessage $message="tm-close-tiddler"/>
+<$action-navigate $to={{$:/temp/created-roaster}}/>
+\end
+
+<div class="tc-modal-body">
+
+<div style="margin-bottom: 15px;">
+    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Roaster Name *</label>
+    <$edit-text tiddler="$:/temp/new-roaster" field="roaster-name" placeholder="e.g. Blue Bottle Coffee" class="tc-edit-texteditor" style="width: 100%;"/>
+</div>
+
+<div style="margin-bottom: 15px;">
+    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Location</label>
+    <$edit-text tiddler="$:/temp/new-roaster" field="roaster-location" placeholder="e.g. Oakland, CA" class="tc-edit-texteditor" style="width: 100%;"/>
+</div>
+
+<div style="margin-bottom: 15px;">
+    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Website</label>
+    <$edit-text tiddler="$:/temp/new-roaster" field="roaster-website" placeholder="https://" class="tc-edit-texteditor" style="width: 100%;"/>
+</div>
+
+</div>
+
+<div class="tc-modal-footer">
+    <$button class="tc-btn-invisible" actions=<<save-actions>>>
+        ✓ Create Roaster
+    </$button>
+</div>

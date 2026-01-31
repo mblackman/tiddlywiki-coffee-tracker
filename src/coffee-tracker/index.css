@@ -338,3 +338,310 @@
     background: <<colour tiddler-background>>;
     color: <<colour foreground>>;
 }
+
+/* Statistics Grid */
+.ct-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.ct-stat-card {
+    padding: 20px;
+    background: <<colour message-background>>;
+    border: 2px solid <<colour primary>>;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.ct-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.ct-stat-value {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: <<colour primary>>;
+    margin-bottom: 5px;
+}
+
+.ct-stat-label {
+    font-size: 0.9em;
+    color: <<colour muted-foreground>>;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Theme-aware link colors */
+.ct-link {
+    color: <<colour primary>>;
+    text-decoration: none;
+}
+
+.ct-link:hover {
+    text-decoration: underline;
+}
+
+/* Theme-aware button */
+.ct-theme-button {
+    background: <<colour tiddler-background>>;
+    color: <<colour foreground>>;
+    border: 1px solid <<colour tiddler-editor-border>>;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.ct-theme-button:hover {
+    background: <<colour tiddler-editor-background>>;
+    border-color: <<colour primary>>;
+}
+
+/* Empty state styling */
+.ct-empty-state {
+    padding: 30px;
+    text-align: center;
+    background: <<colour tiddler-editor-background>>;
+    border-radius: 8px;
+    color: <<colour muted-foreground>>;
+}
+
+.ct-empty-state-icon {
+    font-size: 3em;
+    margin-bottom: 10px;
+    opacity: 0.5;
+}
+
+.ct-empty-state-text {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+}
+
+/* Quick stats widget */
+.ct-quick-stats {
+    margin-top: 30px;
+    padding: 20px;
+    background: <<colour message-background>>;
+    border: 1px solid <<colour message-border>>;
+    border-radius: 12px;
+}
+
+.ct-quick-stats-title {
+    margin: 0 0 15px 0;
+    color: <<colour tiddler-title-foreground>>;
+    font-size: 1.1em;
+}
+
+.ct-quick-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.ct-quick-stat-value {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: <<colour primary>>;
+}
+
+.ct-quick-stat-label {
+    font-size: 0.85em;
+    color: <<colour muted-foreground>>;
+}
+
+/* Sidebar Styles */
+.ct-sidebar-section {
+    margin-bottom: 10px;
+}
+
+.ct-sidebar-link {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.ct-sidebar-heading {
+    margin: 5px 0;
+    color: <<colour muted-foreground>>;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ct-sidebar-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.ct-sidebar-button {
+    padding: 5px;
+    text-align: left;
+    background: <<colour message-background>>;
+    border: 1px solid <<colour message-border>>;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.ct-sidebar-button:hover {
+    background: <<colour tiddler-editor-background>>;
+}
+
+.ct-sidebar-list {
+    font-size: 0.9em;
+}
+
+.ct-sidebar-list-item {
+    margin-bottom: 3px;
+}
+
+/* Common Layout Patterns */
+.ct-flex-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ct-flex-start {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+
+.ct-grid-2col {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.ct-grid-auto {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.ct-info-box {
+    padding: 15px;
+    background: <<colour tiddler-editor-background>>;
+    border: 1px solid <<colour tiddler-editor-border>>;
+    border-radius: 8px;
+}
+
+.ct-highlight-box {
+    padding: 10px;
+    background: <<colour message-background>>;
+    border-left: 4px solid <<colour primary>>;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.ct-text-box {
+    margin-top: 5px;
+    padding: 10px;
+    background: <<colour tiddler-editor-background>>;
+    border-radius: 4px;
+    min-height: 40px;
+    border: 1px solid <<colour tiddler-editor-border>>;
+}
+
+.ct-emphasis-text {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: <<colour primary>>;
+}
+
+.ct-muted-text {
+    color: <<colour muted-foreground>>;
+}
+
+.ct-section-margin {
+    margin-bottom: 15px;
+}
+
+.ct-section-margin-lg {
+    margin-bottom: 20px;
+}
+
+/* Flex utilities */
+.ct-flex-gap {
+    display: flex;
+    gap: 20px;
+}
+
+.ct-flex-1 {
+    flex: 1;
+}
+
+/* Width utilities */
+.ct-w-full {
+    width: 100%;
+}
+
+/* Badge colors */
+.ct-badge-success {
+    background: <<colour positive-alert-banner-background>> !important;
+    color: <<colour positive-alert-banner-foreground>> !important;
+}
+
+.ct-badge-warning {
+    background: <<colour alert-banner-background>> !important;
+    color: <<colour alert-banner-foreground>> !important;
+}
+
+.ct-badge-danger {
+    background: <<colour dirty-indicator>> !important;
+    color: <<colour background>> !important;
+}
+
+/* Section header without border */
+.ct-section-title-clean {
+    margin: 0;
+    border: none;
+    padding: 0;
+}
+
+/* Text utilities */
+.ct-text-bold {
+    font-weight: bold;
+}
+
+.ct-text-sm {
+    font-size: 0.9em;
+}
+
+.ct-text-lg {
+    font-size: 1.8em;
+}
+
+/* Margin utilities */
+.ct-mb-xs {
+    margin-bottom: 5px;
+}
+
+.ct-mb-sm {
+    margin-bottom: 10px;
+}
+
+.ct-mb-md {
+    margin-bottom: 15px;
+}
+
+.ct-mt-sm {
+    margin-top: 10px;
+}
+
+.ct-m-0 {
+    margin: 0;
+}
+
+/* Padding utilities */
+.ct-pl-md {
+    padding-left: 15px;
+}

@@ -3,8 +3,35 @@ tags: $:/tags/SideBar
 caption: Coffee
 description: "Access the Coffee Tracker Dashboard"
 
-<$link to="$:/plugins/mblackman/coffee-tracker/ui/dashboard">Coffee Tracker</$link>
+<div class="ct-sidebar-section">
+<$link to="$:/plugins/mblackman/coffee-tracker/ui/dashboard" class="ct-sidebar-link">☕ Dashboard</$link>
+</div>
+
+<div class="ct-sidebar-section">
+<$link to="$:/plugins/mblackman/coffee-tracker/ui/all-lists" style="font-weight: bold;">📋 Browse All</$link>
+</div>
+
 <hr>
-<<list-links "[tag[Roaster]]">>
+
+<h4 class="ct-sidebar-heading">Quick Actions</h4>
+<div class="ct-sidebar-actions">
+    <$button class="tc-btn-invisible ct-sidebar-button">
+        <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/brew-log"/>
+        + Log Brew
+    </$button>
+    <$button class="tc-btn-invisible ct-sidebar-button">
+        <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/coffee-bag-instance"/>
+        + New Bag
+    </$button>
+</div>
+
 <hr>
-<<list-links "[tag[CoffeeBag]]">>
+
+<h4 class="ct-sidebar-heading">Active Coffee</h4>
+<div class="ct-sidebar-list">
+<$list filter="[tag[CoffeeBagInstance]!tag[Finished]sort[title]limit[5]]" emptyMessage="<div class='ct-muted-text ct-sidebar-list-item'>No active bags</div>">
+    <div class="ct-sidebar-list-item">
+        <$link to=<<currentTiddler>>><$view field="title"/></$link>
+    </div>
+</$list>
+</div>

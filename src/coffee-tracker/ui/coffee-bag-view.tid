@@ -4,16 +4,77 @@ type: text/vnd.tiddlywiki
 
 <$list filter="[all[current]tag[CoffeeBag]]">
     <h2>{{!!coffee-name}}</h2>
-    <p><strong>Roaster:</strong> <$link to={{!!roaster}}>{{!!roaster}}</$link></p>
-    <p><strong>Origin:</strong> {{!!coffee-origin}}</p>
-    <p><strong>Roast Level:</strong> {{!!coffee-roast-level}}</p>
-    <p><strong>Varietal:</strong> {{!!coffee-varietal}}</p>
-    <p><strong>Processing:</strong> {{!!coffee-processing}}</p>
-    <p><strong>Tasting Notes:</strong></p>
-    <div>{{!!coffee-tasting-notes}}</div>
+
+    <div class="ct-grid-2col ct-info-box ct-section-margin-lg">
+        <div><strong>Roaster:</strong> <$link to={{!!roaster}}><$text text={{!!roaster}}/></$link></div>
+        <div><strong>Origin:</strong> {{!!coffee-origin}}</div>
+        <div><strong>Roast Level:</strong> {{!!coffee-roast-level}}</div>
+        <div><strong>Varietal:</strong> {{!!coffee-varietal}}</div>
+        <div><strong>Processing:</strong> {{!!coffee-processing}}</div>
+    </div>
+
+    <div class="ct-section-margin-lg">
+        <strong>Tasting Notes:</strong>
+        <div class="ct-highlight-box">
+            <$view field="coffee-tasting-notes"><em class="ct-muted-text">No tasting notes</em></$view>
+        </div>
+    </div>
+
+    <hr>
+
+    <h3>Statistics</h3>
+    <$let
+        total-bags={{{ [tag[CoffeeBagInstance]coffee-bag<currentTiddler>count[]] }}}
+        active-bags={{{ [tag[CoffeeBagInstance]coffee-bag<currentTiddler>!tag[Finished]count[]] }}}
+        total-brews={{{ [tag[CoffeeBagInstance]coffee-bag<currentTiddler>] :map[tag[BrewLog]coffee-bag-instance<currentTiddler>] +[count[]] }}}
+        avg-rating={{{ [tag[CoffeeBagInstance]coffee-bag<currentTiddler>] :map[tag[BrewLog]coffee-bag-instance<currentTiddler>get[overall-rating]] +[average[]round[1]] }}}
+    >
+    <div class="ct-stats-grid">
+        <div class="ct-stat-card">
+            <div class="ct-stat-value"><$text text=<<total-bags>>/></div>
+            <div class="ct-stat-label">Total Bags</div>
+        </div>
+        <div class="ct-stat-card">
+            <div class="ct-stat-value"><$text text=<<active-bags>>/></div>
+            <div class="ct-stat-label">Active Bags</div>
+        </div>
+        <div class="ct-stat-card">
+            <div class="ct-stat-value"><$text text=<<total-brews>>/></div>
+            <div class="ct-stat-label">Total Brews</div>
+        </div>
+        <$list filter="[<avg-rating>!is[blank]]" variable="ignore">
+            <div class="ct-stat-card">
+                <div class="ct-stat-value"><$text text=<<avg-rating>>/> /10</div>
+                <div class="ct-stat-label">Avg Rating</div>
+            </div>
+        </$list>
+    </div>
+    </$let>
 
     <h3>Purchased Bags</h3>
-    <$list filter="[tag[CoffeeBagInstance]coffee-bag<currentTiddler>]">
-        <div><$link to=<<currentTiddler>>><<currentTiddler>></$link></div>
+
+    <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-w-full ct-mb-md">
+        <$action-setfield $tiddler="$:/temp/new-coffee-bag-instance" coffee-bag=<<currentTiddler>>/>
+        <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/coffee-bag-instance"/>
+        + Purchase New Bag
+    </$button>
+
+    <$list filter="[tag[CoffeeBagInstance]coffee-bag<currentTiddler>!sort[purchase-date]]" emptyMessage="<div class='ct-empty-state'>No bags purchased yet</div>">
+        <div class="ct-card">
+            <div class="ct-flex-row">
+                <div>
+                    <$link to=<<currentTiddler>> class="ct-text-bold" style="font-size: 1.1em;"><$view field="title"/></$link>
+                    <$list filter="[all[current]tag[Finished]]" variable="ignore">
+                        <span class="ct-tag ct-badge-danger" style="margin-left: 10px;">FINISHED</span>
+                    </$list>
+                </div>
+                <div style="text-align: right;">
+                    <div class="ct-card-subtitle">Purchased: <$view field="purchase-date"/></div>
+                    <$let brew-count={{{ [tag[BrewLog]coffee-bag-instance<currentTiddler>count[]] }}}>
+                        <div class="ct-card-subtitle"><$text text=<<brew-count>>/> brews</div>
+                    </$let>
+                </div>
+            </div>
+        </div>
     </$list>
 </$list>

@@ -6,4 +6,21 @@ A TiddlyWiki plugin to help track your coffee habits.
 
 ---
 
+!! Coffee Freshness Indicators
+
+Configure when coffee is considered at peak freshness:
+
+|!Setting |!Days After Roast |
+|Peak Freshness Starts |<$edit-text tiddler="$:/plugins/mblackman/coffee-tracker/config/freshness/peak-start" tag="input" default="7"/> days |
+|Peak Freshness Ends |<$edit-text tiddler="$:/plugins/mblackman/coffee-tracker/config/freshness/peak-end" tag="input" default="21"/> days |
+|Still Good Until |<$edit-text tiddler="$:/plugins/mblackman/coffee-tracker/config/freshness/optimal-end" tag="input" default="60"/> days |
+
+''Guidelines:''
+* ''Very Fresh'' (< {{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-start}} days): Coffee is still degassing
+* ''Peak'' ({{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-start}}-{{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-end}} days): Optimal flavor development
+* ''Good'' ({{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-end}}-{{$:/plugins/mblackman/coffee-tracker/config/freshness/optimal-end}} days): Still enjoyable
+* ''Aging'' (> {{$:/plugins/mblackman/coffee-tracker/config/freshness/optimal-end}} days): Flavor declining
+
+---
+
 !! Plugin Configs

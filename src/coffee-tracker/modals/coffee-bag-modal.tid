@@ -1,0 +1,92 @@
+title: $:/plugins/mblackman/coffee-tracker/modal/coffee-bag
+subtitle: Add New Coffee Type
+tags: $:/tags/Modal
+type: text/vnd.tiddlywiki
+
+\define save-actions()
+<$action-createtiddler
+    $basetitle={{$:/temp/new-coffee-bag!!coffee-name}}
+    tags="CoffeeBag"
+    coffee-name={{$:/temp/new-coffee-bag!!coffee-name}}
+    roaster={{$:/temp/new-coffee-bag!!roaster}}
+    coffee-origin={{$:/temp/new-coffee-bag!!coffee-origin}}
+    coffee-roast-level={{$:/temp/new-coffee-bag!!coffee-roast-level}}
+    coffee-varietal={{$:/temp/new-coffee-bag!!coffee-varietal}}
+    coffee-processing={{$:/temp/new-coffee-bag!!coffee-processing}}
+    coffee-tasting-notes={{$:/temp/new-coffee-bag!!coffee-tasting-notes}}
+    $savetitle="$:/temp/created-coffee-bag"
+/>
+<$action-deletetiddler $tiddler="$:/temp/new-coffee-bag"/>
+<$action-sendmessage $message="tm-close-tiddler"/>
+<$action-navigate $to={{$:/temp/created-coffee-bag}}/>
+\end
+
+<div class="tc-modal-body">
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+    <div>
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Coffee Name *</label>
+        <$edit-text tiddler="$:/temp/new-coffee-bag" field="coffee-name" placeholder="e.g. Ethiopia Yirgacheffe" class="tc-edit-texteditor" style="width: 100%;"/>
+    </div>
+
+    <div>
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Roaster *</label>
+        <$select tiddler="$:/temp/new-coffee-bag" field="roaster" class="tc-edit-texteditor" style="width: 100%;">
+            <option value="">-- Select Roaster --</option>
+            <$list filter="[tag[Roaster]sort[title]]">
+                <option value=<<currentTiddler>>><$view field="roaster-name"/></option>
+            </$list>
+        </$select>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+    <div>
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Origin</label>
+        <$edit-text tiddler="$:/temp/new-coffee-bag" field="coffee-origin" placeholder="e.g. Ethiopia" class="tc-edit-texteditor" style="width: 100%;"/>
+    </div>
+
+    <div>
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Roast Level</label>
+        <$select tiddler="$:/temp/new-coffee-bag" field="coffee-roast-level" class="tc-edit-texteditor" style="width: 100%;">
+            <option value="">-- Select --</option>
+            <option value="Light">Light</option>
+            <option value="Medium-Light">Medium-Light</option>
+            <option value="Medium">Medium</option>
+            <option value="Medium-Dark">Medium-Dark</option>
+            <option value="Dark">Dark</option>
+        </$select>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+    <div>
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Varietal</label>
+        <$edit-text tiddler="$:/temp/new-coffee-bag" field="coffee-varietal" placeholder="e.g. Heirloom" class="tc-edit-texteditor" style="width: 100%;"/>
+    </div>
+
+    <div>
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Processing</label>
+        <$select tiddler="$:/temp/new-coffee-bag" field="coffee-processing" class="tc-edit-texteditor" style="width: 100%;">
+            <option value="">-- Select --</option>
+            <option value="Washed">Washed</option>
+            <option value="Natural">Natural</option>
+            <option value="Honey">Honey</option>
+            <option value="Anaerobic">Anaerobic</option>
+            <option value="Other">Other</option>
+        </$select>
+    </div>
+</div>
+
+<div style="margin-bottom: 15px;">
+    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Tasting Notes</label>
+    <$edit-text tiddler="$:/temp/new-coffee-bag" field="coffee-tasting-notes" placeholder="e.g. Floral, berry, citrus..." class="tc-edit-texteditor" style="width: 100%; min-height: 80px;"/>
+</div>
+
+</div>
+
+<div class="tc-modal-footer">
+    <$button class="tc-btn-invisible" actions=<<save-actions>>>
+        ✓ Create Coffee Type
+    </$button>
+</div>
