@@ -26,6 +26,11 @@ type: text/vnd.tiddlywiki
 <$action-navigate $to={{$:/temp/created-coffee-bag-instance}}/>
 \end
 
+<!-- Initialize default values -->
+<$list filter="[{$:/temp/new-coffee-bag-instance!!purchase-date}is[blank]]" variable="ignore">
+    <$action-setfield $tiddler="$:/temp/new-coffee-bag-instance" purchase-date=<<now "YYYY-0MM-0DD">>/>
+</$list>
+
 <div class="tc-modal-body">
 
 <div style="margin-bottom: 15px;">
@@ -48,7 +53,7 @@ type: text/vnd.tiddlywiki
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
     <div>
         <label style="display: block; font-weight: bold; margin-bottom: 5px;">Purchase Date *</label>
-        <$edit-text tiddler="$:/temp/new-coffee-bag-instance" field="purchase-date" type="date" class="tc-edit-texteditor" style="width: 100%;" default=<<now "YYYY-0MM-0DD">>/>
+        <$edit-text tiddler="$:/temp/new-coffee-bag-instance" field="purchase-date" type="date" class="tc-edit-texteditor" style="width: 100%;"/>
     </div>
 
     <div>
@@ -77,19 +82,7 @@ type: text/vnd.tiddlywiki
 </div>
 
 <div class="tc-modal-footer">
-    <$let
-        has-coffee={{{ [{$:/temp/new-coffee-bag-instance!!coffee-bag}!is[blank]then[yes]else[no]] }}}
-        has-date={{{ [{$:/temp/new-coffee-bag-instance!!purchase-date}!is[blank]then[yes]else[no]] }}}
-        can-save={{{ [<has-coffee>match[yes]] [<has-date>match[yes]] +[count[]match[2]then[yes]else[no]] }}}
-    >
-    <$list filter="[<can-save>match[no]]" variable="ignore">
-        <div style="color: <<colour dirty-indicator>>; margin-bottom: 10px; font-size: 0.9em;">
-            <$list filter="[<has-coffee>match[no]]" variable="ignore">Please select a coffee type<br/></$list>
-            <$list filter="[<has-date>match[no]]" variable="ignore">Please enter a purchase date</$list>
-        </div>
-    </$list>
-    <$button class="tc-btn-invisible" actions=<<save-actions>> disabled={{{ [<can-save>match[no]then[yes]else[no]] }}}>
+    <$button class="tc-btn-invisible" actions=<<save-actions>>>
         ✓ Purchase Bag
     </$button>
-    </$let>
 </div>

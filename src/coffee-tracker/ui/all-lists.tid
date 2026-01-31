@@ -17,6 +17,7 @@ caption: Coffee Tracker - All Lists
     <div>
         <h2 class="ct-section-title">Active Coffee Bags</h2>
         <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-w-full ct-mb-sm" aria-label="Purchase a new coffee bag">
+            <$action-setfield $tiddler="$:/temp/new-coffee-bag-instance" purchase-date=<<now 'YYYY-0MM-0DD'>>/>
             <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/coffee-bag-instance"/>
             + Purchase Coffee Bag
         </$button>
@@ -110,6 +111,7 @@ caption: Coffee Tracker - All Lists
     <div>
         <h2 class="ct-section-title">Recent Brew Logs</h2>
         <$button class="tc-btn-invisible ct-btn ct-btn-primary" style="width: 100%; margin-bottom: 10px;" aria-label="Log a new brew">
+            <$action-setfield $tiddler="$:/temp/new-brew-log" brew-date=<<now 'YYYY-0MM-0DD'>> brew-time=<<now '0hh:0mm'>>/>
             <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/brew-log"/>
             + Log Brew
         </$button>

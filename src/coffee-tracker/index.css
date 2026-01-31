@@ -502,6 +502,65 @@
     margin-bottom: 3px;
 }
 
+/* Sidebar Alert Styles */
+.ct-sidebar-alerts {
+    font-size: 0.9em;
+}
+
+.ct-sidebar-alert {
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 6px;
+    border-left: 3px solid;
+}
+
+.ct-sidebar-alert.ct-alert-success {
+    background: <<colour positive-alert-banner-background>>;
+    border-left-color: <<colour positive-alert-banner-foreground>>;
+}
+
+.ct-sidebar-alert.ct-alert-info {
+    background: <<colour message-background>>;
+    border-left-color: <<colour primary>>;
+}
+
+.ct-sidebar-alert.ct-alert-warning {
+    background: <<colour alert-banner-background>>;
+    border-left-color: <<colour dirty-indicator>>;
+}
+
+.ct-sidebar-alert-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 0.95em;
+}
+
+.ct-sidebar-alert-item {
+    padding: 3px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+}
+
+.ct-sidebar-alert-detail {
+    font-size: 0.85em;
+    color: <<colour muted-foreground>>;
+    white-space: nowrap;
+}
+
+.ct-sidebar-alert-empty {
+    padding: 15px 10px;
+    text-align: center;
+}
+
+.ct-sidebar-button-highlight {
+    background: <<colour message-background>> !important;
+    border: 1px solid <<colour primary>> !important;
+    color: <<colour primary>> !important;
+    font-weight: bold;
+}
+
 /* Common Layout Patterns */
 .ct-flex-row {
     display: flex;

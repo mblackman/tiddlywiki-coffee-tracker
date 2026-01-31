@@ -26,9 +26,9 @@ type: text/vnd.tiddlywiki
     <$let
         total-bags={{{ [tag[CoffeeBagInstance]coffee-bag<currentTiddler>count[]] }}}
         active-bags={{{ [tag[CoffeeBagInstance]coffee-bag<currentTiddler>!tag[Finished]count[]] }}}
-        total-brews={{{ [tag[BrewLog]:filter[get[coffee-bag-instance]get[coffee-bag]match<currentTiddler>]count[]] }}}
-        avg-rating={{{ [tag[BrewLog]:filter[get[coffee-bag-instance]get[coffee-bag]match<currentTiddler>]get[overall-rating]average[]round[1]] }}}
+        total-brews={{{ [tag[CoffeeBagInstance]coffee-bag<currentTiddler>] :map[tag[BrewLog]coffee-bag-instance<currentTiddler>] +[count[]] }}}
     >
+    <$wikify name="avg-rating" text="""<$macrocall $name="coffee-bag-avg-of-avgs" coffeeBag=<<currentTiddler>>/>""">
     <div class="ct-stats-grid">
         <div class="ct-stat-card">
             <div class="ct-stat-value"><$text text=<<total-bags>>/></div>
@@ -49,12 +49,13 @@ type: text/vnd.tiddlywiki
             </div>
         </$list>
     </div>
+    </$wikify>
     </$let>
 
     <h3>Purchased Bags</h3>
 
     <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-w-full ct-mb-md" aria-label="Purchase a new bag of this coffee">
-        <$action-setfield $tiddler="$:/temp/new-coffee-bag-instance" coffee-bag=<<currentTiddler>>/>
+        <$action-setfield $tiddler="$:/temp/new-coffee-bag-instance" coffee-bag=<<currentTiddler>> purchase-date=<<now 'YYYY-0MM-0DD'>>/>
         <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/coffee-bag-instance"/>
         + Purchase New Bag
     </$button>

@@ -1,4 +1,5 @@
 title: $:/plugins/mblackman/coffee-tracker/ui/dashboard
+caption: Coffee Dashboard
 
 <div class="ct-dashboard-container">
 
@@ -56,7 +57,7 @@ title: $:/plugins/mblackman/coffee-tracker/ui/dashboard
             </$button>
         </div>
 
-        <$list filter="[tag[CoffeeBagInstance]!tag[Finished]!sort[purchase-date]limit[5]]" emptyMessage="<div class='ct-empty-state'><div class='ct-empty-state-icon'>📦</div><div class='ct-empty-state-text'>No active coffee bags</div><div class='ct-mt-sm'><$button class='tc-btn-invisible ct-btn ct-btn-primary'><$action-sendmessage $message='tm-modal' $param='$:/plugins/mblackman/coffee-tracker/modal/coffee-bag-instance'/>+ Purchase Coffee</$button></div></div>">
+        <$list filter="[tag[CoffeeBagInstance]!tag[Finished]!sort[purchase-date]limit[5]]" emptyMessage="<div class='ct-empty-state'><div class='ct-empty-state-icon'>📦</div><div class='ct-empty-state-text'>No active coffee bags</div><div class='ct-mt-sm'><$button class='tc-btn-invisible ct-btn ct-btn-primary'><$action-setfield $tiddler='$:/temp/new-coffee-bag-instance' purchase-date=<<now 'YYYY-0MM-0DD'>>/><$action-sendmessage $message='tm-modal' $param='$:/plugins/mblackman/coffee-tracker/modal/coffee-bag-instance'/>+ Purchase Coffee</$button></div></div>">
         <div class="ct-card">
             <div class="ct-card-header">
                 <h3 class="ct-card-title"><$link to=<<currentTiddler>>><$view field="title"/></$link></h3>
@@ -98,7 +99,7 @@ title: $:/plugins/mblackman/coffee-tracker/ui/dashboard
             <h2 class="ct-section-title ct-section-title-clean">Recent Brews</h2>
         </div>
 
-        <$list filter="[tag[BrewLog]!sort[brew-date]limit[5]]" emptyMessage="<div class='ct-empty-state'><div class='ct-empty-state-icon'>☕</div><div class='ct-empty-state-text'>No brews logged yet</div><div class='ct-mt-sm'><$button class='tc-btn-invisible ct-btn ct-btn-primary'><$action-sendmessage $message='tm-modal' $param='$:/plugins/mblackman/coffee-tracker/modal/brew-log'/>☕ Log Your First Brew</$button></div></div>">
+        <$list filter="[tag[BrewLog]!sort[brew-date]limit[5]]" emptyMessage="<div class='ct-empty-state'><div class='ct-empty-state-icon'>☕</div><div class='ct-empty-state-text'>No brews logged yet</div><div class='ct-mt-sm'><$button class='tc-btn-invisible ct-btn ct-btn-primary'><$action-setfield $tiddler='$:/temp/new-brew-log' brew-date=<<now 'YYYY-0MM-0DD'>> brew-time=<<now '0hh:0mm'>>/><$action-sendmessage $message='tm-modal' $param='$:/plugins/mblackman/coffee-tracker/modal/brew-log'/>☕ Log Your First Brew</$button></div></div>">
             <div class="ct-card ct-flex-row">
                 <div class="ct-flex-1">
                     <div class="ct-text-bold ct-mb-xs">
