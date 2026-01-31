@@ -1,7 +1,179 @@
 title: $:/plugins/mblackman/coffee-tracker/readme
 
-! Coffee Tracker
+! ☕ Coffee Tracker Plugin
 
-[[GitHub Repository|https://github.com/mblackman/tiddlywiki-coffee-tracker]]
+A comprehensive TiddlyWiki plugin for tracking your coffee journey - from roasters and beans to brewing techniques and tasting notes.
 
-A TiddlyWiki plugin to help track your coffee habits.
+[[GitHub Repository|https://github.com/mblackman/tiddlywiki-coffee-tracker]] | [[Report Issues|https://github.com/mblackman/tiddlywiki-coffee-tracker/issues]]
+
+---
+
+!! Features
+
+!!! 📊 Dashboard Overview
+* Real-time statistics showing total brews, active bags, coffee types, and average ratings
+* Quick access to active coffee bags with automatic freshness indicators
+* Recent brew log activity feed
+* One-click navigation to browse all your coffee data
+
+!!! 🗂️ Comprehensive Tracking
+* ''Roasters'': Track your favorite coffee roasters with location, website, and notes
+* ''Coffee Types'': Document coffee details including origin, varietal, processing method, roast level, and tasting notes
+* ''Coffee Bags'': Manage individual bag purchases with roast dates, purchase dates, weight, and price
+* ''Equipment'': Catalog your brewing equipment (brewers, grinders, scales, kettles)
+* ''Brew Logs'': Record detailed brewing sessions with parameters, ratings, and notes
+
+!!! ⏰ Freshness Tracking
+Automatic freshness indicators based on roast date:
+
+* ''Peak'' (7-21 days): Optimal flavor development
+* ''Optimal'' (21-60 days): Prime drinking window
+* ''Aging'' (60+ days): Still usable but past peak
+* Visual badges and helpful status messages
+
+!!! 📈 Analytics & Statistics
+* Average ratings calculated per coffee bag
+* Total brew counts and usage statistics
+* Equipment usage tracking across brew logs
+* Rating trends to track your skill progression
+
+---
+
+!! Quick Start Guide
+
+!!! Getting Started
+
+# Click the ''☕ Coffee'' tab in the sidebar to open the dashboard
+# Add your first roaster using ''+ New Roaster''
+# Create a coffee type using ''+ New Coffee Type''
+# Track a bag purchase with ''+ Purchase Bag''
+# Log your first brew with ''+ Log Brew''
+
+!!! Understanding the Data Types
+
+The plugin uses five main data types organized in a hierarchy:
+
+```
+Roaster
+  └─ Coffee Type (the coffee product/blend)
+      └─ Coffee Bag Instance (specific bag you purchased)
+          └─ Brew Log (individual brewing sessions)
+
+Equipment (used in Brew Logs)
+```
+
+''Roaster'' → Companies or roasters that produce coffee (e.g., "Counter Culture Coffee")
+
+''Coffee Type'' (tagged as `CoffeeBag`) → The specific coffee product including origin, processing, roast level (e.g., "Ethiopia Yirgacheffe Natural")
+
+''Coffee Bag Instance'' (tagged as `CoffeeBagInstance`) → Individual purchases of coffee types with specific roast and purchase dates (e.g., "Ethiopia Yirgacheffe - Jan 2026")
+
+''Equipment'' → Your brewing tools categorized by type: Brewer, Grinder, Scale, Kettle
+
+''Brew Log'' → Individual brewing sessions with complete parameters and ratings
+
+---
+
+!! Using the Plugin
+
+!!! Dashboard
+
+The Coffee Dashboard is your home base showing:
+
+* ''Statistics Cards'': Quick overview of your coffee tracking activity
+* ''Active Coffee Bags'': All bags currently in use with freshness indicators
+* ''Recent Brew Logs'': Your latest brewing sessions
+* ''Quick Actions'': Buttons to add new entries or browse all data
+
+!!! Browse All
+
+Click "📋 Browse All" to see organized lists of:
+
+* All roasters
+* All coffee types
+* All coffee bag instances (active and finished)
+* All equipment
+* All brew logs
+
+Perfect for finding specific entries or getting an overview of your collection.
+
+!!! Viewing Records
+
+Click any entry to see its detailed view:
+
+* ''Coffee Bag Views'' show associated brew logs, statistics, and average ratings
+* ''Coffee Type Views'' list all bag instances purchased
+* ''Roaster Views'' show all coffees from that roaster
+* ''Equipment Views'' display usage statistics and recent brews
+* ''Brew Log Views'' show complete brewing details
+
+---
+
+!! Tips for Best Results
+
+!!! Data Entry Best Practices
+
+# ''Add roasters first'' before creating coffee types - they'll appear in the dropdown
+# ''Use accurate roast dates'' for meaningful freshness tracking
+# ''Record complete brew parameters'' to identify patterns and improve your technique
+# ''Be consistent with ratings'' - use the same scale (recommend 1-10) for useful averages
+# ''Add detailed notes'' to capture what worked or what you'd change next time
+# ''Mark bags as finished'' when empty to keep your active bags list clean
+
+!!! Freshness Tracking Tips
+
+The plugin automatically calculates freshness based on the `bag-roast-date`:
+
+* ''Peak'': 7-21 days after roast - flavors are developed and vibrant
+* ''Optimal'': 21-60 days after roast - well-integrated flavors, still excellent
+* ''Aging'': 60+ days after roast - past prime but still usable
+
+Different coffees peak at different times:
+
+* Light roasts often need more rest (10-21 days)
+* Dark roasts peak earlier (7-14 days)
+* Natural/anaerobic processed coffees may age differently
+
+!!! Brewing Parameter Guidelines
+
+Track these key parameters for repeatability:
+
+* ''Dose'': Amount of coffee used (grams)
+* ''Yield'': Amount of brewed coffee (grams or ml)
+* ''Ratio'': Calculated from dose/yield (e.g., 1:15 = 20g dose, 300g yield)
+* ''Water Temperature'': Usually 88-96°C depending on roast level
+* ''Grind Setting'': Note your grinder's setting for consistency
+* ''Brew Time'': Total contact time (varies by method)
+
+!!! Rating System Suggestions
+
+Use a consistent 1-10 scale:
+
+* ''9-10'': Exceptional, memorable cup
+* ''7-8'': Great daily drinker, very enjoyable
+* ''5-6'': Decent, drinkable but room for improvement
+* ''3-4'': Underwhelming, needs adjustment
+* ''1-2'': Poor extraction or off flavors
+
+---
+
+!! Support & Contributing
+
+!!! Getting Help
+
+* ''Report Issues'': [[GitHub Issues|https://github.com/mblackman/tiddlywiki-coffee-tracker/issues]]
+* ''View Source'': [[GitHub Repository|https://github.com/mblackman/tiddlywiki-coffee-tracker]]
+* ''TiddlyWiki Help'': [[TiddlyWiki Documentation|https://tiddlywiki.com]]
+
+---
+
+!! Technical Details
+
+* ''Version'': 0.0.1 (Experimental)
+* ''Requires'': TiddlyWiki >= 5.1.22
+* ''Author'': mblackman
+* ''License'': MIT
+
+---
+
+''Happy brewing! ☕''
