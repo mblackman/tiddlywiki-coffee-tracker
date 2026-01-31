@@ -4,12 +4,30 @@ type: text/vnd.tiddlywiki
 
 <$list filter="[all[current]tag[Equipment]]">
     <h2>{{!!equipment-name}}</h2>
-    <$button>
-        <$action-navigate $to=<<currentTiddler>> $mode="edit"/>
-        Edit
-    </$button>
     <p><strong>Type:</strong> {{!!equipment-type}}</p>
     <p><strong>Manufacturer:</strong> {{!!equipment-manufacturer}}</p>
     <p><strong>My Notes:</strong></p>
     <div>{{!!my-notes}}</div>
+
+    <hr>
+    
+    <h3>Supported Methods</h3>
+    <ul>
+    <$list filter="[list[!!brew-methods]]">
+        <li>
+            <<currentTiddler>>
+            <$button class="tc-btn-invisible" style="color: #d9534f; margin-left: 10px; font-weight: bold;" tooltip="Remove method">
+                × <$action-listops $field="brew-methods" $subfilter="-[<currentTiddler>]"/>
+            </$button>
+        </li>
+    </$list>
+    </ul>
+    <div style="display: flex; gap: 10px; align-items: center;">
+        <$edit-text tiddler="$:/temp/new-method" tag="input" placeholder="Add method (e.g. Pour Over)" class="tc-edit-texteditor" style="padding: 6px;"/>
+        <$button>
+            <$action-listops $field="brew-methods" $subfilter="[{$:/temp/new-method}]"/>
+            <$action-deletefield $tiddler="$:/temp/new-method" $field="text"/>
+            Add
+        </$button>
+    </div>
 </$list>

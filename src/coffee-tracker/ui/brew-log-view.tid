@@ -40,7 +40,13 @@ type: text/vnd.tiddlywiki
         <div class="ct-setup-grid">
             <div>
                 <label class="ct-label">Brewer</label>
-                <$select field="brewer" class="tc-edit-texteditor ct-input" style="margin-bottom: 10px;" actions="""<$action-setfield brew-method={{{ [<actionValue>get[method]] }}}/>""">
+                <$select field="brewer" class="tc-edit-texteditor ct-input" style="margin-bottom: 10px;" actions="""
+                    <$vars brewer={{{ [<actionValue>] }}}>
+                    <$let count={{{ [<brewer>get[brew-methods]enlist-input[]count[]] }}}>
+                        <$action-setfield brew-method={{{ [<count>match[1]then<brewer>get[brew-methods]enlist-input[]else[]] }}}/>
+                    </$let>
+                    </$vars>
+                """>
                     <option value="">-- Select Brewer --</option>
                     <$list filter="[tag[Equipment]equipment-type[Brewer]sort[title]]">
                         <option value=<<currentTiddler>>><$view field="title"/></option>
@@ -57,7 +63,19 @@ type: text/vnd.tiddlywiki
             </div>
             <div>
                 <label class="ct-label">Method</label>
-                <$edit-text field="brew-method" placeholder="e.g. Pour Over" class="ct-input"/>
+                <$set name="brewer" value={{!!brewer}}>
+                <$set name="count" value={{{ [<brewer>get[brew-methods]enlist-input[]count[]] }}}>
+                    <$list filter="[<count>compare:number:gt[1]]" variable="ignore">
+                        <$select field="brew-method" class="tc-edit-texteditor ct-input">
+                            <option value="">-- Select Method --</option>
+                            <$list filter="[<brewer>get[brew-methods]enlist-input[]]"><option value=<<currentTiddler>>><<currentTiddler>></option></$list>
+                        </$select>
+                    </$list>
+                    <$list filter="[<count>!compare:number:gt[1]]" variable="ignore">
+                        <$edit-text field="brew-method" placeholder={{{ [<count>match[1]then<brewer>get[brew-methods]enlist-input[]else[e.g. Pour Over]] }}} class="ct-input" disabled={{{ [<count>match[1]then[yes]else[no]] }}}/>
+                    </$list>
+                </$set>
+                </$set>
             </div>
         </div>
     </div>

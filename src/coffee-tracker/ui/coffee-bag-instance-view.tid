@@ -4,10 +4,6 @@ type: text/vnd.tiddlywiki
 
 <$list filter="[all[current]tag[CoffeeBagInstance]]">
     <h3>Instance of <$link to={{!!coffee-bag}}>{{!!coffee-bag}}</$link></h3>
-    <$button>
-        <$action-navigate $to=<<currentTiddler>> $mode="edit"/>
-        Edit
-    </$button>
     <p><strong>Purchase Date:</strong> {{!!purchase-date}}</p>
     <p><strong>Roast Date:</strong> {{!!roast-date}}</p>
     <p><strong>Cost:</strong> {{!!cost}}</p>
