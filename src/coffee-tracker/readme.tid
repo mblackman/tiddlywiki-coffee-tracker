@@ -169,7 +169,7 @@ Use a consistent 1-10 scale:
 
 !! Technical Details
 
-* ''Version'': 0.0.1 (Experimental)
+* ''Version'': 0.0.1
 * ''Requires'': TiddlyWiki >= 5.1.22
 * ''Author'': mblackman
 * ''License'': MIT
