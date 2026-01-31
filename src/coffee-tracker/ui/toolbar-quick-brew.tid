@@ -1,0 +1,10 @@
+title: $:/plugins/mblackman/coffee-tracker/ui/toolbar-quick-brew
+tags: $:/tags/PageControls
+caption: Quick Brew
+description: Log a brew for the last used coffee
+
+\define quickBrewButton()
+<$let lastBrew={{{ [tag[BrewLog]!sort[brew-date]first[]] }}}><$list filter="[<lastBrew>!is[blank]]" variable="ignore"><$let lastBag={{{ [<lastBrew>get[coffee-bag-instance]] }}}><$list filter="[<lastBag>!is[blank]!tag[Finished]]" variable="ignore"><$let newTitle=<<now "Brew Log: YYYY-0MM-0DD 0hh:0mm">>><$button class=<<tv-config-toolbar-class>>><$action-createtiddler $basetitle=<<newTitle>> tags="BrewLog" coffee-bag-instance=<<lastBag>> brew-date=<<now "YYYY-0MM-0DD">> brew-time=<<now "0hh:0mm">>/><$action-navigate $to=<<newTitle>>/><$list filter="[<tv-config-toolbar-icons>match[yes]]">{{$:/plugins/mblackman/coffee-tracker/images/coffee_icon.svg}}</$list><$list filter="[<tv-config-toolbar-text>match[yes]]"><span class="tc-btn-text"><$text text="Quick Brew"/></span></$list></$button></$let></$list></$let></$list></$let>
+\end
+
+<<quickBrewButton>>
