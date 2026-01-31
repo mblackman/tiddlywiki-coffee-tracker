@@ -67,31 +67,7 @@ title: $:/plugins/mblackman/coffee-tracker/ui/dashboard
                     optimal-end={{$:/plugins/mblackman/coffee-tracker/config/freshness/optimal-end}}
                 >
                 <$list filter="[<roast-date>!is[blank]]" variable="ignore">
-                    <$let
-                        roast-year={{{ [{!!roast-date}split[-]first[]] }}}
-                        roast-month={{{ [{!!roast-date}split[-]nth[2]] }}}
-                        roast-day={{{ [{!!roast-date}split[-]last[]] }}}
-                        today-year=<<now "YYYY">>
-                        today-month=<<now "0MM">>
-                        today-day=<<now "0DD">>
-                        year-days={{{ [<today-year>subtract<roast-year>multiply[365]] }}}
-                        month-days={{{ [<today-month>subtract<roast-month>multiply[30]] }}}
-                        day-diff={{{ [<today-day>subtract<roast-day>] }}}
-                        roast-days={{{ [<year-days>add<month-days>add<day-diff>] }}}
-                    >
-                    <$list filter="[<roast-days>compare:number:lt<peak-start>]" variable="ignore">
-                        <span class="ct-tag ct-badge-success">Fresh</span>
-                    </$list>
-                    <$list filter="[<roast-days>compare:number:gteq<peak-start>compare:number:lt<peak-end>]" variable="ignore">
-                        <span class="ct-tag ct-badge-warning">Peak</span>
-                    </$list>
-                    <$list filter="[<roast-days>compare:number:gteq<peak-end>compare:number:lt<optimal-end>]" variable="ignore">
-                        <span class="ct-tag ct-badge-warning">Good</span>
-                    </$list>
-                    <$list filter="[<roast-days>compare:number:gteq<optimal-end>]" variable="ignore">
-                        <span class="ct-tag ct-badge-danger">Aging</span>
-                    </$list>
-                    </$let>
+                    <$macrocall $name="coffee-freshness-badge" roastDate=<<roast-date>>/>
                 </$list>
                 </$let>
             </div>

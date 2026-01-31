@@ -37,7 +37,17 @@ type: text/vnd.tiddlywiki
 </div>
 
 <div class="tc-modal-footer">
-    <$button class="tc-btn-invisible" actions=<<save-actions>>>
+    <$let
+        has-name={{{ [{$:/temp/new-roaster!!roaster-name}!is[blank]then[yes]else[no]] }}}
+        can-save={{{ [<has-name>match[yes]then[yes]else[no]] }}}
+    >
+    <$list filter="[<can-save>match[no]]" variable="ignore">
+        <div style="color: <<colour dirty-indicator>>; margin-bottom: 10px; font-size: 0.9em;">
+            Please enter a roaster name
+        </div>
+    </$list>
+    <$button class="tc-btn-invisible" actions=<<save-actions>> disabled={{{ [<can-save>match[no]then[yes]else[no]] }}}>
         ✓ Create Roaster
     </$button>
+    </$let>
 </div>

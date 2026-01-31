@@ -26,8 +26,8 @@ type: text/vnd.tiddlywiki
     <$let
         total-bags={{{ [tag[CoffeeBagInstance]coffee-bag<currentTiddler>count[]] }}}
         active-bags={{{ [tag[CoffeeBagInstance]coffee-bag<currentTiddler>!tag[Finished]count[]] }}}
-        total-brews={{{ [tag[CoffeeBagInstance]coffee-bag<currentTiddler>] :map[tag[BrewLog]coffee-bag-instance<currentTiddler>] +[count[]] }}}
-        avg-rating={{{ [tag[CoffeeBagInstance]coffee-bag<currentTiddler>] :map[tag[BrewLog]coffee-bag-instance<currentTiddler>get[overall-rating]] +[average[]round[1]] }}}
+        total-brews={{{ [tag[BrewLog]:filter[get[coffee-bag-instance]get[coffee-bag]match<currentTiddler>]count[]] }}}
+        avg-rating={{{ [tag[BrewLog]:filter[get[coffee-bag-instance]get[coffee-bag]match<currentTiddler>]get[overall-rating]average[]round[1]] }}}
     >
     <div class="ct-stats-grid">
         <div class="ct-stat-card">

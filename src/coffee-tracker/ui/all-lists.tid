@@ -46,7 +46,7 @@ caption: Coffee Tracker - All Lists
                 <div class="ct-card-subtitle">
                     <$link to={{!!roaster}}><$view field="roaster"/></$link>
                 </div>
-                <div style="font-size: 0.85em; color: #666;">
+                <div class="ct-text-sm ct-text-secondary">
                     <$view field="coffee-origin"/> • <$view field="coffee-roast-level"/>
                 </div>
             </div>
@@ -93,12 +93,12 @@ caption: Coffee Tracker - All Lists
             <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/roaster"/>
             + New Roaster
         </$button>
-        <$list filter="[tag[Roaster]sort[title]]" emptyMessage="<div style='padding: 20px; text-align: center; color: #999; background: #f5f5f5; border-radius: 8px;'>No roasters</div>">
+        <$list filter="[tag[Roaster]sort[title]]" emptyMessage="<div class='ct-empty-state'>No roasters</div>">
             <div class="ct-card">
                 <h3 class="ct-card-title"><$link to=<<currentTiddler>>><$view field="roaster-name"/></$link></h3>
                 <div class="ct-card-subtitle">{{!!roaster-location}}</div>
                 <$let coffee-count={{{ [tag[CoffeeBag]roaster<currentTiddler>count[]] }}}>
-                    <div style="font-size: 0.85em; color: #666;">
+                    <div class="ct-text-sm ct-text-secondary">
                         <$text text=<<coffee-count>>/> coffee types
                     </div>
                 </$let>
@@ -113,7 +113,7 @@ caption: Coffee Tracker - All Lists
             <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/brew-log"/>
             + Log Brew
         </$button>
-        <$list filter="[tag[BrewLog]!sort[brew-date]limit[20]]" emptyMessage="<div style='padding: 20px; text-align: center; color: #999; background: #f5f5f5; border-radius: 8px;'>No brew logs</div>">
+        <$list filter="[tag[BrewLog]!sort[brew-date]limit[20]]" emptyMessage="<div class='ct-empty-state'>No brew logs</div>">
             <div class="ct-card">
                 <div style="display: flex; justify-content: space-between; align-items: start;">
                     <div>
@@ -123,11 +123,11 @@ caption: Coffee Tracker - All Lists
                         <div class="ct-card-subtitle">
                             <$link to={{!!coffee-bag-instance}}><$view field="coffee-bag-instance"/></$link>
                         </div>
-                        <div style="font-size: 0.85em; color: #666;">
+                        <div class="ct-text-sm ct-text-secondary">
                             {{!!brew-method}}
                         </div>
                     </div>
-                    <div style="font-size: 1.3em; font-weight: bold; color: #0366d6;">
+                    <div class="ct-text-lg ct-text-bold ct-text-primary">
                         {{!!overall-rating}}
                     </div>
                 </div>
@@ -138,14 +138,14 @@ caption: Coffee Tracker - All Lists
     <!-- Finished Bags -->
     <div>
         <h2 class="ct-section-title">Finished Coffee Bags</h2>
-        <$list filter="[tag[CoffeeBagInstance]tag[Finished]!sort[purchase-date]]" emptyMessage="<div style='padding: 20px; text-align: center; color: #999; background: #f5f5f5; border-radius: 8px;'>No finished bags</div>">
+        <$list filter="[tag[CoffeeBagInstance]tag[Finished]!sort[purchase-date]]" emptyMessage="<div class='ct-empty-state'>No finished bags</div>">
             <div class="ct-card" style="opacity: 0.7;">
                 <h3 class="ct-card-title"><$link to=<<currentTiddler>>><$view field="title"/></$link></h3>
                 <div class="ct-card-subtitle">
                     <$link to={{!!coffee-bag}}><$view field="coffee-bag"/></$link>
                 </div>
                 <$let brew-count={{{ [tag[BrewLog]coffee-bag-instance<currentTiddler>count[]] }}}>
-                    <div style="font-size: 0.85em; color: #666;">
+                    <div class="ct-text-sm ct-text-secondary">
                         <$text text=<<brew-count>>/> brews
                     </div>
                 </$let>

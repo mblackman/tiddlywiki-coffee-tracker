@@ -645,3 +645,94 @@
 .ct-pl-md {
     padding-left: 15px;
 }
+
+/* Background color utilities */
+.ct-bg-subtle {
+    background: <<colour tiddler-editor-background>>;
+}
+
+.ct-bg-info {
+    background: <<colour message-background>>;
+}
+
+.ct-bg-warning {
+    background: <<colour alert-banner-background>>;
+}
+
+/* Text color utilities */
+.ct-text-primary {
+    color: <<colour primary>>;
+}
+
+.ct-text-secondary {
+    color: <<colour muted-foreground>>;
+}
+
+.ct-text-warning {
+    color: <<colour alert-banner-foreground>>;
+}
+
+.ct-text-danger {
+    color: <<colour dirty-indicator>>;
+}
+
+/* Calculated metric display box */
+.ct-calculated-metric {
+    margin-top: 15px;
+    padding: 10px;
+    background: <<colour message-background>>;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.ct-calculated-metric-label {
+    font-weight: bold;
+    color: <<colour muted-foreground>>;
+}
+
+.ct-calculated-metric-value {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: <<colour primary>>;
+    margin-left: 10px;
+}
+
+/* Equipment stats boxes */
+.ct-equipment-stats {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.ct-equipment-stat-box {
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    flex: 1;
+}
+
+.ct-equipment-stat-box.primary {
+    background: <<colour message-background>>;
+}
+
+.ct-equipment-stat-box.secondary {
+    background: <<colour alert-banner-background>>;
+}
+
+.ct-equipment-stat-value {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.ct-equipment-stat-value.primary {
+    color: <<colour primary>>;
+}
+
+.ct-equipment-stat-value.secondary {
+    color: <<colour alert-banner-foreground>>;
+}
+
+.ct-equipment-stat-label {
+    color: <<colour muted-foreground>>;
+    font-size: 0.9em;
+}

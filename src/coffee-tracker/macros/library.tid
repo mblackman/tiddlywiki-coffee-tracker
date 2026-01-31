@@ -1,0 +1,35 @@
+title: $:/plugins/mblackman/coffee-tracker/macros/library
+type: text/vnd.tiddlywiki
+tags: $:/tags/Macro
+
+\define coffee-freshness-badge(roastDate)
+<$wikify name="roast-days" text="""<$macrocall $name="days-since-roast" roastDate="$roastDate$"/>""">
+<$let
+    peak-start={{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-start}}
+    peak-end={{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-end}}
+    optimal-end={{$:/plugins/mblackman/coffee-tracker/config/freshness/optimal-end}}
+>
+<$list filter="[<roast-days>!is[blank]]" variable="ignore">
+    <$list filter="[<roast-days>compare:number:lt<peak-start>]" variable="ignore">
+        <span class="ct-tag ct-badge-success">Fresh</span>
+    </$list>
+    <$list filter="[<roast-days>compare:number:gteq<peak-start>compare:number:lt<peak-end>]" variable="ignore">
+        <span class="ct-tag ct-badge-warning">Peak</span>
+    </$list>
+    <$list filter="[<roast-days>compare:number:gteq<peak-end>compare:number:lt<optimal-end>]" variable="ignore">
+        <span class="ct-tag ct-badge-warning">Good</span>
+    </$list>
+    <$list filter="[<roast-days>compare:number:gteq<optimal-end>]" variable="ignore">
+        <span class="ct-tag ct-badge-danger">Aging</span>
+    </$list>
+</$list>
+</$let>
+</$wikify>
+\end
+
+\define coffee-stat-card(value, label)
+<div class="ct-stat-card">
+    <div class="ct-stat-value">$value$</div>
+    <div class="ct-stat-label">$label$</div>
+</div>
+\end

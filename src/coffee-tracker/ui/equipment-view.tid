@@ -5,7 +5,7 @@ type: text/vnd.tiddlywiki
 <$list filter="[all[current]tag[Equipment]]">
     <h2>{{!!equipment-name}}</h2>
 
-    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; padding: 15px; background: #f5f5f5; border-radius: 8px;">
+    <div class="ct-grid-2col ct-info-box ct-mb-md">
         <div><strong>Type:</strong> {{!!equipment-type}}</div>
         <div><strong>Manufacturer:</strong> {{!!equipment-manufacturer}}</div>
     </div>
@@ -15,15 +15,15 @@ type: text/vnd.tiddlywiki
             brew-count={{{ [tag[BrewLog]brewer<currentTiddler>count[]] }}}
             avg-rating={{{ [tag[BrewLog]brewer<currentTiddler>get[overall-rating]average[]round:1] }}}
         >
-        <div style="display: flex; gap: 15px; margin-bottom: 15px;">
-            <div style="padding: 15px; background: #e7f3ff; border-radius: 8px; text-align: center; flex: 1;">
-                <div style="font-size: 2em; font-weight: bold; color: #0366d6;"><$text text=<<brew-count>>/></div>
-                <div style="color: #666; font-size: 0.9em;">Total Brews</div>
+        <div class="ct-equipment-stats">
+            <div class="ct-equipment-stat-box primary">
+                <div class="ct-equipment-stat-value primary"><$text text=<<brew-count>>/></div>
+                <div class="ct-equipment-stat-label">Total Brews</div>
             </div>
             <$list filter="[<avg-rating>!is[blank]]" variable="ignore">
-                <div style="padding: 15px; background: #fff3cd; border-radius: 8px; text-align: center; flex: 1;">
-                    <div style="font-size: 2em; font-weight: bold; color: #856404;"><$text text=<<avg-rating>>/>/10</div>
-                    <div style="color: #666; font-size: 0.9em;">Avg Rating</div>
+                <div class="ct-equipment-stat-box secondary">
+                    <div class="ct-equipment-stat-value secondary"><$text text=<<avg-rating>>/>/10</div>
+                    <div class="ct-equipment-stat-label">Avg Rating</div>
                 </div>
             </$list>
         </div>
@@ -32,17 +32,17 @@ type: text/vnd.tiddlywiki
 
     <$list filter="[all[current]equipment-type[Grinder]]" variable="ignore">
         <$let brew-count={{{ [tag[BrewLog]grinder<currentTiddler>count[]] }}}>
-        <div style="padding: 15px; background: #e7f3ff; border-radius: 8px; text-align: center; margin-bottom: 15px;">
-            <div style="font-size: 2em; font-weight: bold; color: #0366d6;"><$text text=<<brew-count>>/></div>
-            <div style="color: #666; font-size: 0.9em;">Total Brews</div>
+        <div class="ct-equipment-stat-box primary ct-mb-md" style="text-align: center;">
+            <div class="ct-equipment-stat-value primary"><$text text=<<brew-count>>/></div>
+            <div class="ct-equipment-stat-label">Total Brews</div>
         </div>
         </$let>
     </$list>
 
-    <div style="margin-bottom: 15px;">
+    <div class="ct-section-margin">
         <strong>My Notes:</strong>
-        <div style="margin-top: 5px; padding: 10px; background: #f5f5f5; border-radius: 4px; min-height: 40px;">
-            <$view field="my-notes"><em>No notes recorded yet</em></$view>
+        <div class="ct-text-box">
+            <$view field="my-notes"><em class="ct-muted-text">No notes recorded yet</em></$view>
         </div>
     </div>
 
@@ -53,7 +53,7 @@ type: text/vnd.tiddlywiki
     <$list filter="[list[!!brew-methods]]">
         <li>
             <<currentTiddler>>
-            <$button class="tc-btn-invisible" style="color: #d9534f; margin-left: 10px; font-weight: bold;" tooltip="Remove method">
+            <$button class="tc-btn-invisible ct-text-danger" style="margin-left: 10px; font-weight: bold;" tooltip="Remove method">
                 × <$action-listops $field="brew-methods" $subfilter="-[<currentTiddler>]"/>
             </$button>
         </li>

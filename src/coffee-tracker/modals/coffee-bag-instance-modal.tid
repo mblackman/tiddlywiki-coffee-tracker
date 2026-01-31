@@ -77,7 +77,19 @@ type: text/vnd.tiddlywiki
 </div>
 
 <div class="tc-modal-footer">
-    <$button class="tc-btn-invisible" actions=<<save-actions>>>
+    <$let
+        has-coffee={{{ [{$:/temp/new-coffee-bag-instance!!coffee-bag}!is[blank]then[yes]else[no]] }}}
+        has-date={{{ [{$:/temp/new-coffee-bag-instance!!purchase-date}!is[blank]then[yes]else[no]] }}}
+        can-save={{{ [<has-coffee>match[yes]] [<has-date>match[yes]] +[count[]match[2]then[yes]else[no]] }}}
+    >
+    <$list filter="[<can-save>match[no]]" variable="ignore">
+        <div style="color: <<colour dirty-indicator>>; margin-bottom: 10px; font-size: 0.9em;">
+            <$list filter="[<has-coffee>match[no]]" variable="ignore">Please select a coffee type<br/></$list>
+            <$list filter="[<has-date>match[no]]" variable="ignore">Please enter a purchase date</$list>
+        </div>
+    </$list>
+    <$button class="tc-btn-invisible" actions=<<save-actions>> disabled={{{ [<can-save>match[no]then[yes]else[no]] }}}>
         ✓ Purchase Bag
     </$button>
+    </$let>
 </div>

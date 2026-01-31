@@ -117,9 +117,9 @@ type: text/vnd.tiddlywiki
             ratio={{{ [<dose>!is[blank]] [<water>!is[blank]] +[then<water>divide<dose>round:2]else[]] }}}
         >
         <$list filter="[<ratio>!is[blank]]" variable="ignore">
-            <div style="margin-top: 15px; padding: 10px; background: #f0f8ff; border-radius: 4px; text-align: center;">
-                <span style="font-weight: bold; color: #666;">Brew Ratio:</span>
-                <span style="font-size: 1.3em; font-weight: bold; color: #0366d6; margin-left: 10px;">1:<$text text=<<ratio>>/></span>
+            <div class="ct-calculated-metric">
+                <span class="ct-calculated-metric-label">Brew Ratio:</span>
+                <span class="ct-calculated-metric-value">1:<$text text=<<ratio>>/></span>
             </div>
         </$list>
         </$let>

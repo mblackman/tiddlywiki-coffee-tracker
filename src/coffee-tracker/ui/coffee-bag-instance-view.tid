@@ -41,17 +41,8 @@ type: text/vnd.tiddlywiki
 
     <$let roast-date={{!!roast-date}}>
     <$list filter="[<roast-date>!is[blank]]" variable="ignore">
+        <$wikify name="roast-days" text="""<$macrocall $name="days-since-roast" roastDate=<<roast-date>>/>""">
         <$let
-            roast-year={{{ [{!!roast-date}split[-]first[]] }}}
-            roast-month={{{ [{!!roast-date}split[-]nth[2]] }}}
-            roast-day={{{ [{!!roast-date}split[-]last[]] }}}
-            today-year=<<now "YYYY">>
-            today-month=<<now "0MM">>
-            today-day=<<now "0DD">>
-            year-days={{{ [<today-year>subtract<roast-year>multiply[365]] }}}
-            month-days={{{ [<today-month>subtract<roast-month>multiply[30]] }}}
-            day-diff={{{ [<today-day>subtract<roast-day>] }}}
-            roast-days={{{ [<year-days>add<month-days>add<day-diff>] }}}
             peak-start={{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-start}}
             peak-end={{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-end}}
             optimal-end={{$:/plugins/mblackman/coffee-tracker/config/freshness/optimal-end}}
@@ -72,6 +63,7 @@ type: text/vnd.tiddlywiki
             </$list>
         </div>
         </$let>
+        </$wikify>
     </$list>
     </$let>
 

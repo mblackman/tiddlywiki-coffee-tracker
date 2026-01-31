@@ -50,7 +50,19 @@ type: text/vnd.tiddlywiki
 </div>
 
 <div class="tc-modal-footer">
-    <$button class="tc-btn-invisible" actions=<<save-actions>>>
+    <$let
+        has-name={{{ [{$:/temp/new-equipment!!equipment-name}!is[blank]then[yes]else[no]] }}}
+        has-type={{{ [{$:/temp/new-equipment!!equipment-type}!is[blank]then[yes]else[no]] }}}
+        can-save={{{ [<has-name>match[yes]] [<has-type>match[yes]] +[count[]match[2]then[yes]else[no]] }}}
+    >
+    <$list filter="[<can-save>match[no]]" variable="ignore">
+        <div style="color: <<colour dirty-indicator>>; margin-bottom: 10px; font-size: 0.9em;">
+            <$list filter="[<has-name>match[no]]" variable="ignore">Please enter equipment name<br/></$list>
+            <$list filter="[<has-type>match[no]]" variable="ignore">Please select equipment type</$list>
+        </div>
+    </$list>
+    <$button class="tc-btn-invisible" actions=<<save-actions>> disabled={{{ [<can-save>match[no]then[yes]else[no]] }}}>
         ✓ Create Equipment
     </$button>
+    </$let>
 </div>

@@ -16,10 +16,11 @@ Configure when coffee is considered at peak freshness:
 |Still Good Until |<$edit-text tiddler="$:/plugins/mblackman/coffee-tracker/config/freshness/optimal-end" tag="input" default="60"/> days |
 
 ''Guidelines:''
-* ''Very Fresh'' (< {{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-start}} days): Coffee is still degassing
-* ''Peak'' ({{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-start}}-{{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-end}} days): Optimal flavor development
-* ''Good'' ({{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-end}}-{{$:/plugins/mblackman/coffee-tracker/config/freshness/optimal-end}} days): Still enjoyable
-* ''Aging'' (> {{$:/plugins/mblackman/coffee-tracker/config/freshness/optimal-end}} days): Flavor declining
+
+* ''Very Fresh'' (< <$text text={{{ [[$:/plugins/mblackman/coffee-tracker/config/freshness/peak-start]get[text]] ~[[7]] }}}/> days): Coffee is still degassing
+* ''Peak'' (<$text text={{{ [[$:/plugins/mblackman/coffee-tracker/config/freshness/peak-start]get[text]] ~[[7]] }}}/>-<$text text={{{ [[$:/plugins/mblackman/coffee-tracker/config/freshness/peak-end]get[text]] ~[[21]] }}}/> days): Optimal flavor development
+* ''Good'' (<$text text={{{ [[$:/plugins/mblackman/coffee-tracker/config/freshness/peak-end]get[text]] ~[[21]] }}}/>-<$text text={{{ [[$:/plugins/mblackman/coffee-tracker/config/freshness/optimal-end]get[text]] ~[[60]] }}}/> days): Still enjoyable
+* ''Aging'' (> <$text text={{{ [[$:/plugins/mblackman/coffee-tracker/config/freshness/optimal-end]get[text]] ~[[60]] }}}/> days): Flavor declining
 
 ---
 
