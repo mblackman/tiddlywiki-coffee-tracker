@@ -61,7 +61,7 @@ type: text/vnd.tiddlywiki
     </ul>
     <div style="display: flex; gap: 10px; align-items: center;">
         <$edit-text tiddler="$:/temp/new-method" tag="input" placeholder="Add method (e.g. Pour Over)" class="tc-edit-texteditor" style="padding: 6px;"/>
-        <$button>
+        <$button aria-label="Add brew method to this equipment">
             <$action-listops $field="brew-methods" $subfilter="[{$:/temp/new-method}]"/>
             <$action-deletefield $tiddler="$:/temp/new-method" $field="text"/>
             Add

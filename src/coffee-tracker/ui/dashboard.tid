@@ -5,7 +5,7 @@ title: $:/plugins/mblackman/coffee-tracker/ui/dashboard
 <div class="ct-dashboard-header">
     <h1 class="ct-dashboard-title">☕ Coffee Dashboard</h1>
     <div style="display: flex; align-items: center; gap: 15px;">
-        <$button class="tc-btn-invisible ct-theme-button">
+        <$button class="tc-btn-invisible ct-theme-button" aria-label="Browse all coffee records">
             <$action-navigate $to="$:/plugins/mblackman/coffee-tracker/ui/all-lists"/>
             📋 Browse All
         </$button>
@@ -50,7 +50,7 @@ title: $:/plugins/mblackman/coffee-tracker/ui/dashboard
     <div>
         <div class="ct-flex-row ct-mb-md">
             <h2 class="ct-section-title ct-section-title-clean">Active Coffee</h2>
-            <$button class="tc-btn-invisible ct-link ct-text-sm">
+            <$button class="tc-btn-invisible ct-link ct-text-sm" aria-label="View all active coffee bags">
                 <$action-navigate $to="$:/plugins/mblackman/coffee-tracker/ui/all-lists"/>
                 View All →
             </$button>
@@ -75,18 +75,19 @@ title: $:/plugins/mblackman/coffee-tracker/ui/dashboard
                 <$link to={{!!coffee-bag}}><$view field="coffee-bag"/></$link>
             </div>
 
-            <$button class="tc-btn-invisible ct-card-action-btn">
+            <$let newTitle=<<now "Brew Log: YYYY-0MM-0DD 0hh:0mm">>>
+            <$button class="tc-btn-invisible ct-card-action-btn" aria-label="Log new brew for this coffee bag">
                 <$action-createtiddler
-                    $basetitle=<<now "Brew Log: YYYY-0MM-0DD 0hh:0mm">>
+                    $basetitle=<<newTitle>>
                     tags="BrewLog"
                     coffee-bag-instance=<<currentTiddler>>
                     brew-date=<<now "YYYY-0MM-0DD">>
                     brew-time=<<now "0hh:0mm">>
-                    $savetitle="$:/temp/new-brew-log-dash"
                 />
-                <$action-navigate $to={{$:/temp/new-brew-log-dash}}/>
+                <$action-navigate $to=<<newTitle>>/>
                 ☕ Log Brew
             </$button>
+            </$let>
         </div>
         </$list>
     </div>
@@ -140,7 +141,7 @@ title: $:/plugins/mblackman/coffee-tracker/ui/dashboard
                     <div class="ct-quick-stat-label">Finished Bags</div>
                 </div>
                 <div>
-                    <$button class="tc-btn-invisible ct-theme-button" style="width: 100%; text-align: center;">
+                    <$button class="tc-btn-invisible ct-theme-button" style="width: 100%; text-align: center;" aria-label="Browse all coffee records">
                         <$action-navigate $to="$:/plugins/mblackman/coffee-tracker/ui/all-lists"/>
                         Browse All
                     </$button>

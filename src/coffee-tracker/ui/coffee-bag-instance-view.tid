@@ -11,13 +11,13 @@ type: text/vnd.tiddlywiki
             </$list>
         </div>
         <$list filter="[all[current]!tag[Finished]]" variable="ignore">
-            <$button class="tc-btn-invisible ct-btn ct-btn-secondary">
+            <$button class="tc-btn-invisible ct-btn ct-btn-secondary" aria-label="Mark this coffee bag as finished">
                 <$action-listops $tags="+[append[Finished]]"/>
                 Mark as Finished
             </$button>
         </$list>
         <$list filter="[all[current]tag[Finished]]" variable="ignore">
-            <$button class="tc-btn-invisible ct-btn ct-btn-primary">
+            <$button class="tc-btn-invisible ct-btn ct-btn-primary" aria-label="Mark this coffee bag as active again">
                 <$action-listops $tags="-Finished"/>
                 Mark as Active
             </$button>
@@ -96,18 +96,19 @@ type: text/vnd.tiddlywiki
     </div>
     </$let>
 
-    <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-w-full ct-mb-md">
+    <$let newTitle=<<now "Brew Log: YYYY-0MM-0DD 0hh:0mm">>>
+    <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-w-full ct-mb-md" aria-label="Add new brew log for this coffee bag">
         <$action-createtiddler
-            $basetitle=<<now "Brew Log: YYYY-0MM-0DD 0hh:0mm">>
+            $basetitle=<<newTitle>>
             tags="BrewLog"
             coffee-bag-instance=<<currentTiddler>>
             brew-date=<<now "YYYY-0MM-0DD">>
             brew-time=<<now "0hh:0mm">>
-            $savetitle="$:/temp/new-brew-log-bag"
         />
-        <$action-navigate $to={{$:/temp/new-brew-log-bag}}/>
+        <$action-navigate $to=<<newTitle>>/>
         ☕ Add New Brew Log
     </$button>
+    </$let>
 
     <table class="ct-table">
         <thead>

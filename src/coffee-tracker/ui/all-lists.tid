@@ -5,7 +5,7 @@ caption: Coffee Tracker - All Lists
 
 <div class="ct-dashboard-header">
     <h1 class="ct-dashboard-title">☕ Coffee Tracker - Browse All</h1>
-    <$button class="tc-btn-invisible ct-btn ct-btn-primary">
+    <$button class="tc-btn-invisible ct-btn ct-btn-primary" aria-label="Return to dashboard">
         <$action-navigate $to="$:/plugins/mblackman/coffee-tracker/ui/dashboard"/>
         Back to Dashboard
     </$button>
@@ -16,7 +16,7 @@ caption: Coffee Tracker - All Lists
     <!-- Active Coffee Bags -->
     <div>
         <h2 class="ct-section-title">Active Coffee Bags</h2>
-        <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-w-full ct-mb-sm">
+        <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-w-full ct-mb-sm" aria-label="Purchase a new coffee bag">
             <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/coffee-bag-instance"/>
             + Purchase Coffee Bag
         </$button>
@@ -36,7 +36,7 @@ caption: Coffee Tracker - All Lists
     <!-- All Coffee Types -->
     <div>
         <h2 class="ct-section-title">Coffee Types</h2>
-        <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-w-full ct-mb-sm">
+        <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-w-full ct-mb-sm" aria-label="Add a new coffee type">
             <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/coffee-bag"/>
             + New Coffee Type
         </$button>
@@ -56,7 +56,7 @@ caption: Coffee Tracker - All Lists
     <!-- Equipment -->
     <div>
         <h2 class="ct-section-title">Equipment</h2>
-        <$button class="tc-btn-invisible ct-btn ct-btn-secondary" style="width: 100%; margin-bottom: 10px;">
+        <$button class="tc-btn-invisible ct-btn ct-btn-secondary" style="width: 100%; margin-bottom: 10px;" aria-label="Add new brewing equipment">
             <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/equipment"/>
             + New Equipment
         </$button>
@@ -89,7 +89,7 @@ caption: Coffee Tracker - All Lists
     <!-- Roasters -->
     <div>
         <h2 class="ct-section-title">Roasters</h2>
-        <$button class="tc-btn-invisible ct-btn ct-btn-secondary" style="width: 100%; margin-bottom: 10px;">
+        <$button class="tc-btn-invisible ct-btn ct-btn-secondary" style="width: 100%; margin-bottom: 10px;" aria-label="Add a new coffee roaster">
             <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/roaster"/>
             + New Roaster
         </$button>
@@ -109,7 +109,7 @@ caption: Coffee Tracker - All Lists
     <!-- Recent Brew Logs -->
     <div>
         <h2 class="ct-section-title">Recent Brew Logs</h2>
-        <$button class="tc-btn-invisible ct-btn ct-btn-primary" style="width: 100%; margin-bottom: 10px;">
+        <$button class="tc-btn-invisible ct-btn ct-btn-primary" style="width: 100%; margin-bottom: 10px;" aria-label="Log a new brew">
             <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/brew-log"/>
             + Log Brew
         </$button>

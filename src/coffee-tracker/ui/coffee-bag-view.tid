@@ -53,7 +53,7 @@ type: text/vnd.tiddlywiki
 
     <h3>Purchased Bags</h3>
 
-    <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-w-full ct-mb-md">
+    <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-w-full ct-mb-md" aria-label="Purchase a new bag of this coffee">
         <$action-setfield $tiddler="$:/temp/new-coffee-bag-instance" coffee-bag=<<currentTiddler>>/>
         <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/coffee-bag-instance"/>
         + Purchase New Bag
