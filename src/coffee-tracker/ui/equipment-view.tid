@@ -13,17 +13,17 @@ type: text/vnd.tiddlywiki
     <$list filter="[all[current]equipment-type[Brewer]]" variable="ignore">
         <$let
             brew-count={{{ [tag[BrewLog]brewer<currentTiddler>count[]] }}}
-            avg-rating={{{ [tag[BrewLog]brewer<currentTiddler>get[overall-rating]average[]round:1] }}}
+            avg-rating={{{ [tag[BrewLog]brewer<currentTiddler>get[overall-rating]average[]] }}}
         >
-        <div class="ct-equipment-stats">
-            <div class="ct-equipment-stat-box primary">
-                <div class="ct-equipment-stat-value primary"><$text text=<<brew-count>>/></div>
-                <div class="ct-equipment-stat-label">Total Brews</div>
+        <div class="ct-stats-grid">
+            <div class="ct-stat-card">
+                <div class="ct-stat-value"><$text text=<<brew-count>>/></div>
+                <div class="ct-stat-label">Total Brews</div>
             </div>
             <$list filter="[<avg-rating>!is[blank]]" variable="ignore">
-                <div class="ct-equipment-stat-box secondary">
-                    <div class="ct-equipment-stat-value secondary"><$text text=<<avg-rating>>/>/10</div>
-                    <div class="ct-equipment-stat-label">Avg Rating</div>
+                <div class="ct-stat-card">
+                    <div class="ct-stat-value"><$text text=<<avg-rating>>/> /10</div>
+                    <div class="ct-stat-label">Avg Rating</div>
                 </div>
             </$list>
         </div>
@@ -32,9 +32,11 @@ type: text/vnd.tiddlywiki
 
     <$list filter="[all[current]equipment-type[Grinder]]" variable="ignore">
         <$let brew-count={{{ [tag[BrewLog]grinder<currentTiddler>count[]] }}}>
-        <div class="ct-equipment-stat-box primary ct-mb-md" style="text-align: center;">
-            <div class="ct-equipment-stat-value primary"><$text text=<<brew-count>>/></div>
-            <div class="ct-equipment-stat-label">Total Brews</div>
+        <div class="ct-stats-grid">
+            <div class="ct-stat-card">
+                <div class="ct-stat-value"><$text text=<<brew-count>>/></div>
+                <div class="ct-stat-label">Total Brews</div>
+            </div>
         </div>
         </$let>
     </$list>
@@ -46,25 +48,52 @@ type: text/vnd.tiddlywiki
         </div>
     </div>
 
-    <hr>
+    <$list filter="[all[current]equipment-type[Brewer]]" variable="ignore">
+        <hr>
 
-    <h3>Supported Methods</h3>
-    <ul>
-    <$list filter="[list[!!brew-methods]]">
-        <li>
-            <<currentTiddler>>
-            <$button class="tc-btn-invisible ct-text-danger" style="margin-left: 10px; font-weight: bold;" tooltip="Remove method">
-                × <$action-listops $field="brew-methods" $subfilter="-[<currentTiddler>]"/>
-            </$button>
-        </li>
+        <h3>Supported Methods</h3>
+
+        <div class="ct-brew-methods-container">
+            <$list filter="[list[!!brew-methods]]" variable="method">
+                <span class="ct-brew-method-badge">
+                    <$text text=<<method>>/>
+                    <$button class="ct-brew-method-remove" tooltip="Remove method" aria-label={{{ [<method>addprefix[Remove brew method: ]] }}}>
+                        <$action-listops $tiddler=<<currentTiddler>> $field="brew-methods" $subfilter="-[<method>]"/>
+                        ×
+                    </$button>
+                </span>
+            </$list>
+            <$list filter="[list[!!brew-methods]count[]compare:eq[0]]" variable="ignore">
+                <em class="ct-muted-text">No methods added yet</em>
+            </$list>
+        </div>
+
+        <div class="ct-section-margin">
+            <strong>Add Method:</strong>
+            <div style="margin-top: 8px;">
+                <div style="margin-bottom: 8px; display: flex; gap: 8px;">
+                    <$select tiddler="$:/temp/select-method" default="" class="ct-input" style="width: auto;">
+                        <option value="">-- Select method --</option>
+                        <$list filter="[tag[Equipment]equipment-type[Brewer]get[brew-methods]enlist-input[]] [[$:/plugins/mblackman/coffee-tracker/configs/brew-methods]list[]] +[unique[]sort[]]" variable="method">
+                            <option value=<<method>>><$text text=<<method>>/></option>
+                        </$list>
+                    </$select>
+                    <$button class="tc-btn-invisible ct-btn ct-btn-primary" aria-label="Add selected brew method">
+                        <$action-listops $tiddler=<<currentTiddler>> $field="brew-methods" $subfilter="[{$:/temp/select-method}!is[blank]]"/>
+                        <$action-deletefield $tiddler="$:/temp/select-method" $field="text"/>
+                        Add
+                    </$button>
+                </div>
+
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <$edit-text tiddler="$:/temp/custom-method" tag="input" placeholder="Enter custom method name" class="ct-input" style="width: auto;"/>
+                    <$button class="tc-btn-invisible ct-btn ct-btn-secondary" aria-label="Add custom brew method">
+                        <$action-listops $tiddler=<<currentTiddler>> $field="brew-methods" $subfilter="[{$:/temp/custom-method}!is[blank]]"/>
+                        <$action-deletefield $tiddler="$:/temp/custom-method" $field="text"/>
+                        Add Custom
+                    </$button>
+                </div>
+            </div>
+        </div>
     </$list>
-    </ul>
-    <div style="display: flex; gap: 10px; align-items: center;">
-        <$edit-text tiddler="$:/temp/new-method" tag="input" placeholder="Add method (e.g. Pour Over)" class="tc-edit-texteditor" style="padding: 6px;"/>
-        <$button aria-label="Add brew method to this equipment">
-            <$action-listops $field="brew-methods" $subfilter="[{$:/temp/new-method}]"/>
-            <$action-deletefield $tiddler="$:/temp/new-method" $field="text"/>
-            Add
-        </$button>
-    </div>
 </$list>
