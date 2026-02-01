@@ -150,7 +150,7 @@ type: text/vnd.tiddlywiki
             <span class="ct-rating-value">Overall Rating</span>
             <div class="ct-rating-controls">
                 <$range field="overall-rating" min="0" max="10" increment="0.5" default="0" style="width: 150px;"/>
-                <span class="ct-rating-value"><$text text={{{ [{!!overall-rating}!is[blank]else[0]] }}}/></span>
+                <span class="ct-rating-value" style="width: 60px; text-align: right;"><$text text={{{ [{!!overall-rating}!is[blank]else[0]] }}}/></span>
             </div>
         </div>
 
