@@ -21,6 +21,7 @@ Coffee Tracker plugin startup initialization
       '$:/plugins/mblackman/coffee-tracker/config/freshness/peak-start': '7',
       '$:/plugins/mblackman/coffee-tracker/config/freshness/peak-end': '21',
       '$:/plugins/mblackman/coffee-tracker/config/freshness/optimal-end': '60',
+      '$:/config/PageControlButtons/Visibility/$:/plugins/mblackman/coffee-tracker/ui/toolbar-quick-brew': 'show',
     };
 
     // Set defaults for any missing config values

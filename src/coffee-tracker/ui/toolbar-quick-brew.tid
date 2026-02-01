@@ -1,10 +1,21 @@
 title: $:/plugins/mblackman/coffee-tracker/ui/toolbar-quick-brew
 tags: $:/tags/PageControls
-caption: Quick Brew
-description: Log a brew for the last used coffee
+caption: Log Brew
+description: Log a new coffee brew
 
-\define quickBrewButton()
-<$let lastBrew={{{ [tag[BrewLog]!sort[brew-date]first[]] }}}><$list filter="[<lastBrew>!is[blank]]" variable="ignore"><$let lastBag={{{ [<lastBrew>get[coffee-bag-instance]] }}}><$list filter="[<lastBag>!is[blank]!tag[Finished]]" variable="ignore"><$let newTitle=<<now "Brew Log: YYYY-0MM-0DD 0hh:0mm">>><$button class=<<tv-config-toolbar-class>>><$action-createtiddler $basetitle=<<newTitle>> tags="BrewLog" coffee-bag-instance=<<lastBag>> brew-date=<<now "YYYY-0MM-0DD">> brew-time=<<now "0hh:0mm">>/><$action-navigate $to=<<newTitle>>/><$list filter="[<tv-config-toolbar-icons>match[yes]]">{{$:/plugins/mblackman/coffee-tracker/images/coffee_icon.svg}}</$list><$list filter="[<tv-config-toolbar-text>match[yes]]"><span class="tc-btn-text"><$text text="Quick Brew"/></span></$list></$button></$let></$list></$let></$list></$let>
+\define logBrewButton()
+<$button class=<<tv-config-toolbar-class>> aria-label="Log a new brew">
+  <$action-setfield $tiddler="$:/temp/new-brew-log" brew-date=<<now 'YYYY-0MM-0DD'>> brew-time=<<now '0hh:0mm'>>/>
+  <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/brew-log"/>
+  <$list filter="[<tv-config-toolbar-icons>match[yes]]">
+    {{$:/plugins/mblackman/coffee-tracker/images/coffee_icon}}
+  </$list>
+  <$list filter="[<tv-config-toolbar-text>match[yes]]">
+    <span class="tc-btn-text">
+      <$text text="Log Brew"/>
+    </span>
+  </$list>
+</$button>
 \end
 
-<<quickBrewButton>>
+<<logBrewButton>>
