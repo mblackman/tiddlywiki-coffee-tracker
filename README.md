@@ -2,7 +2,7 @@
 
 A comprehensive TiddlyWiki plugin for tracking your coffee journey - from roasters and beans to brewing techniques and tasting notes.
 
-![Version](https://img.shields.io/badge/version-0.0.1-blue)
+![Version](https://img.shields.io/badge/version-0.0.5-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![TiddlyWiki](https://img.shields.io/badge/TiddlyWiki-%3E%3D5.1.22-red)
 
