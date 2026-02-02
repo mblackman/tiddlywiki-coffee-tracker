@@ -55,7 +55,7 @@ description: "Access the Coffee Tracker Dashboard"
 <hr>
 
 <!-- Alerts & Reminders -->
-<h4 class="ct-sidebar-heading">Alerts</h4>
+<h4 class="ct-sidebar-heading">Active Coffee</h4>
 <div class="ct-sidebar-alerts">
 <$let
     peakStart={{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-start}}
@@ -135,26 +135,21 @@ description: "Access the Coffee Tracker Dashboard"
     </$list>
 
     <!-- Coffee bags with many brews (running low) -->
-    <$set name="foundHeavyUse" value="no">
-    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]]" variable="bag">
-        <$let brewCount={{{ [tag[BrewLog]coffee-bag-instance<bag>count[]] }}}>
-            <$list filter="[<brewCount>compare:number:gteq[10]]" variable="ignore">
-                <$list filter="[<foundHeavyUse>match[no]]" variable="ignore">
-                    <div class="ct-sidebar-alert ct-alert-info">
-                        <div class="ct-sidebar-alert-title">📉 Might Be Running Low</div>
-                    <$set name="foundHeavyUse" value="yes"/>
+    <$let heavyUseFilter="[tag[BrewLog]coffee-bag-instance<currentTiddler>count[]compare:number:gteq[10]]">
+        <$list filter="[tag[CoffeeBagInstance]!tag[Finished]] :filter[subfilter<heavyUseFilter>] +[limit[1]]" variable="ignore">
+            <div class="ct-sidebar-alert ct-alert-info">
+                <div class="ct-sidebar-alert-title">📉 Might Be Running Low</div>
+                <$list filter="[tag[CoffeeBagInstance]!tag[Finished]] :filter[subfilter<heavyUseFilter>]" variable="bag">
+                    <$let brewCount={{{ [tag[BrewLog]coffee-bag-instance<bag>count[]] }}}>
+                        <div class="ct-sidebar-alert-item">
+                            <$link to=<<bag>>><$view tiddler=<<bag>> field="title"/></$link>
+                            <span class="ct-sidebar-alert-detail">(<<brewCount>> brews)</span>
+                        </div>
+                    </$let>
                 </$list>
-                <div class="ct-sidebar-alert-item">
-                    <$link to=<<bag>>><$view tiddler=<<bag>> field="title"/></$link>
-                    <span class="ct-sidebar-alert-detail">(<<brewCount>> brews)</span>
-                </div>
-            </$list>
-        </$let>
-    </$list>
-    <$list filter="[<foundHeavyUse>match[yes]]" variable="ignore">
-        </div>
-    </$list>
-    </$set>
+            </div>
+        </$list>
+    </$let>
 
     <!-- Show "All caught up" if no active bags with roast dates -->
     <$list filter="[tag[CoffeeBagInstance]!tag[Finished]has[roast-date]count[]match[0]]" variable="ignore">
@@ -167,14 +162,6 @@ description: "Access the Coffee Tracker Dashboard"
 
 <hr>
 
-<hr>
-
-<!-- Active Coffee List -->
-<h4 class="ct-sidebar-heading">📦 Active Coffee</h4>
-<div class="ct-sidebar-list">
-<$list filter="[tag[CoffeeBagInstance]!tag[Finished]sort[title]limit[5]]" emptyMessage="<div class='ct-muted-text ct-sidebar-list-item'>No active bags</div>">
-    <div class="ct-sidebar-list-item">
-        <$link to=<<currentTiddler>>><$view field="title"/></$link>
-    </div>
-</$list>
+<div class="ct-sidebar-section">
+    <$link to="$:/plugins/mblackman/coffee-tracker/readme" class="ct-muted-text">❓ Help / Readme</$link>
 </div>
