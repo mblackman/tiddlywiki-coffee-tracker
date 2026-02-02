@@ -32,6 +32,10 @@ Automatic freshness indicators based on roast date:
 - **Aging** (60+ days): Still usable but past peak
 - Visual badges and status messages
 
+## Preview
+
+See a live version of the latest `master` build: <https://mblackman.github.io/tiddlywiki-coffee-tracker/>
+
 ## Installation
 
 ### Option 1. Manual
