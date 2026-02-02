@@ -34,9 +34,21 @@ Automatic freshness indicators based on roast date:
 
 ## Installation
 
+### Option 1. Manual
+
+If you already have TiddlyWiki setupped, follow these steps:
+
 1. Download the latest plugin from the [Releases](https://github.com/mblackman/tiddlywiki-coffee-tracker/releases) page
 2. Drag and drop the plugin file into your TiddlyWiki
 3. Save and reload your wiki
+
+### Option 2. Create TiddlyHost From Template
+
+If you want a new notebook that's hosted online (it's free), follow these steps:
+
+1. Create an account with [TiddlyHost](https://tiddlyhost.com/) if you don't already have one.
+2. Create a [clone](https://tiddlyhost.com/sites/new?clone=coffee-tracker) of the template.
+3. Enjoy!
 
 ## Development
 
