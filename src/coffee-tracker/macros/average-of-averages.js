@@ -45,7 +45,7 @@ Calculates the average of per-instance average ratings for a coffee bag
         });
 
         if (count > 0) {
-          instanceAverages.push(sum / count);
+          instanceAverages.push(parseFloat((sum / count).toFixed(1)));
         }
       }
     });

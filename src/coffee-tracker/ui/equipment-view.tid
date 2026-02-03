@@ -13,7 +13,7 @@ type: text/vnd.tiddlywiki
     <$list filter="[all[current]equipment-type[Brewer]]" variable="ignore">
         <$let
             brew-count={{{ [tag[BrewLog]brewer<currentTiddler>count[]] }}}
-            avg-rating={{{ [tag[BrewLog]brewer<currentTiddler>get[overall-rating]average[]] }}}
+            avg-rating={{{ [tag[BrewLog]brewer<currentTiddler>get[overall-rating]average[]fixed[1]] }}}
         >
         <div class="ct-stats-grid">
             <div class="ct-stat-card">
