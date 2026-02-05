@@ -5,8 +5,7 @@ description: Log a new coffee brew
 
 \define logBrewButton()
 <$button class=<<tv-config-toolbar-class>> aria-label="Log a new brew">
-  <$action-setfield $tiddler="$:/temp/new-brew-log" brew-date=<<now 'YYYY-0MM-0DD'>> brew-time=<<now '0hh:0mm'>>/>
-  <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/brew-log"/>
+  <<create-brew-log-actions>>
   <$list filter="[<tv-config-toolbar-icons>match[yes]]">
     {{$:/plugins/mblackman/coffee-tracker/images/coffee_icon}}
   </$list>

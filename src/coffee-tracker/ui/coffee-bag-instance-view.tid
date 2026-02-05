@@ -96,19 +96,10 @@ type: text/vnd.tiddlywiki
     </div>
     </$let>
 
-    <$let newTitle=<<now "Brew Log: YYYY-0MM-0DD 0hh:0mm">>>
     <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-w-full ct-mb-md" aria-label="Add new brew log for this coffee bag">
-        <$action-createtiddler
-            $basetitle=<<newTitle>>
-            tags="BrewLog"
-            coffee-bag-instance=<<currentTiddler>>
-            brew-date=<<now "YYYY-0MM-0DD">>
-            brew-time=<<now "0hh:0mm">>
-        />
-        <$action-navigate $to=<<newTitle>>/>
+        <$macrocall $name="create-brew-log-actions" coffee-bag-instance=<<currentTiddler>>/>
         ☕ Add New Brew Log
     </$button>
-    </$let>
 
     <table class="ct-table">
         <thead>

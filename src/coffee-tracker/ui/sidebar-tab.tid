@@ -21,19 +21,10 @@ description: "Access the Coffee Tracker Dashboard"
     <$list filter="[<lastBrew>!is[blank]]" variable="ignore">
         <$let lastBag={{{ [<lastBrew>get[coffee-bag-instance]] }}}>
         <$list filter="[<lastBag>!is[blank]!tag[Finished]]" variable="ignore">
-            <$let newTitle=<<now "Brew Log: YYYY-0MM-0DD 0hh:0mm">>>
-            <$button class="tc-btn-invisible ct-sidebar-button ct-sidebar-button-highlight" aria-label="Quick log brew for last used coffee">
-                <$action-createtiddler
-                    $basetitle=<<newTitle>>
-                    tags="BrewLog"
-                    coffee-bag-instance=<<lastBag>>
-                    brew-date=<<now "YYYY-0MM-0DD">>
-                    brew-time=<<now "0hh:0mm">>
-                />
-                <$action-navigate $to=<<newTitle>>/>
+            <$button class="tc-btn-invisible ct-sidebar-button ct-sidebar-button-highlight" aria-label="Quick log brew for last used coffee with previous settings">
+                <$macrocall $name="create-brew-log-from-last" lastBrew=<<lastBrew>>/>
                 ⚡ Log Again: <$view tiddler=<<lastBag>> field="title"/>
             </$button>
-            </$let>
         </$list>
         </$let>
     </$list>
@@ -41,8 +32,7 @@ description: "Access the Coffee Tracker Dashboard"
 
     <!-- Standard actions -->
     <$button class="tc-btn-invisible ct-sidebar-button" aria-label="Log a new brew">
-        <$action-setfield $tiddler="$:/temp/new-brew-log" brew-date=<<now 'YYYY-0MM-0DD'>> brew-time=<<now '0hh:0mm'>>/>
-        <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/brew-log"/>
+        <<create-brew-log-actions>>
         + Log Brew
     </$button>
     <$button class="tc-btn-invisible ct-sidebar-button" aria-label="Purchase a new coffee bag">

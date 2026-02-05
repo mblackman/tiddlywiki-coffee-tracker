@@ -76,19 +76,10 @@ caption: Coffee Dashboard
                 <$link to={{!!coffee-bag}}><$view field="coffee-bag"/></$link>
             </div>
 
-            <$let newTitle=<<now "Brew Log: YYYY-0MM-0DD 0hh:0mm">>>
             <$button class="tc-btn-invisible ct-card-action-btn" aria-label="Log new brew for this coffee bag">
-                <$action-createtiddler
-                    $basetitle=<<newTitle>>
-                    tags="BrewLog"
-                    coffee-bag-instance=<<currentTiddler>>
-                    brew-date=<<now "YYYY-0MM-0DD">>
-                    brew-time=<<now "0hh:0mm">>
-                />
-                <$action-navigate $to=<<newTitle>>/>
+                <$macrocall $name="create-brew-log-actions" coffee-bag-instance=<<currentTiddler>>/>
                 ☕ Log Brew
             </$button>
-            </$let>
         </div>
         </$list>
     </div>
@@ -99,7 +90,7 @@ caption: Coffee Dashboard
             <h2 class="ct-section-title ct-section-title-clean">Recent Brews</h2>
         </div>
 
-        <$list filter="[tag[BrewLog]!sort[brew-date]limit[5]]" emptyMessage="<div class='ct-empty-state'><div class='ct-empty-state-icon'>☕</div><div class='ct-empty-state-text'>No brews logged yet</div><div class='ct-mt-sm'><$button class='tc-btn-invisible ct-btn ct-btn-primary'><$action-setfield $tiddler='$:/temp/new-brew-log' brew-date=<<now 'YYYY-0MM-0DD'>> brew-time=<<now '0hh:0mm'>>/><$action-sendmessage $message='tm-modal' $param='$:/plugins/mblackman/coffee-tracker/modal/brew-log'/>☕ Log Your First Brew</$button></div></div>">
+        <$list filter="[tag[BrewLog]!sort[brew-date]limit[5]]" emptyMessage="<div class='ct-empty-state'><div class='ct-empty-state-icon'>☕</div><div class='ct-empty-state-text'>No brews logged yet</div><div class='ct-mt-sm'><$button class='tc-btn-invisible ct-btn ct-btn-primary'><<create-brew-log-actions>>☕ Log Your First Brew</$button></div></div>">
             <div class="ct-card ct-flex-row">
                 <div class="ct-flex-1">
                     <div class="ct-text-bold ct-mb-xs">

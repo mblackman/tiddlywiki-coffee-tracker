@@ -33,3 +33,48 @@ tags: $:/tags/Macro
     <div class="ct-stat-label">$label$</div>
 </div>
 \end
+
+\define create-brew-log-actions(coffee-bag-instance:"")
+<$let newTitle=<<now "Brew Log: YYYY-0MM-0DD 0hh:0mm">>>
+<$action-createtiddler
+    $basetitle=<<newTitle>>
+    tags="BrewLog"
+    coffee-bag-instance="$coffee-bag-instance$"
+    brew-date=<<now "YYYY-0MM-0DD">>
+    brew-time=<<now "0hh:0mm">>
+/>
+<$action-navigate $to=<<newTitle>>/>
+</$let>
+\end
+
+\define create-brew-log-from-last(lastBrew)
+<$let
+    newTitle=<<now "Brew Log: YYYY-0MM-0DD 0hh:0mm">>
+    coffee-bag={{{ [[$lastBrew$]get[coffee-bag-instance]] }}}
+    dose={{{ [[$lastBrew$]get[dose]] }}}
+    water={{{ [[$lastBrew$]get[water]] }}}
+    yield={{{ [[$lastBrew$]get[yield]] }}}
+    water-temp={{{ [[$lastBrew$]get[water-temp]] }}}
+    grind-size={{{ [[$lastBrew$]get[grind-size]] }}}
+    brewer={{{ [[$lastBrew$]get[brewer]] }}}
+    grinder={{{ [[$lastBrew$]get[grinder]] }}}
+    brew-method={{{ [[$lastBrew$]get[brew-method]] }}}
+>
+<$action-createtiddler
+    $basetitle=<<newTitle>>
+    tags="BrewLog"
+    coffee-bag-instance=<<coffee-bag>>
+    brew-date=<<now "YYYY-0MM-0DD">>
+    brew-time=<<now "0hh:0mm">>
+    dose=<<dose>>
+    water=<<water>>
+    yield=<<yield>>
+    water-temp=<<water-temp>>
+    grind-size=<<grind-size>>
+    brewer=<<brewer>>
+    grinder=<<grinder>>
+    brew-method=<<brew-method>>
+/>
+<$action-navigate $to=<<newTitle>>/>
+</$let>
+\end
