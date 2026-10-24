@@ -3,7 +3,7 @@ subtitle: Add New Coffee Bag
 tags: $:/tags/Modal
 type: text/vnd.tiddlywiki
 
-\define save-actions()
+\procedure save-actions()
 <$let
     bag-name={{{ [{$:/temp/new-coffee-bag-instance!!coffee-bag}] }}}
     purchase-date={{{ [{$:/temp/new-coffee-bag-instance!!purchase-date}!is[blank]else<now "YYYY-0MM-0DD">] }}}

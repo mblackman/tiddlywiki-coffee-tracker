@@ -45,20 +45,22 @@ type: text/vnd.tiddlywiki
             <div><strong>Location:</strong> <$view field="roaster-location"><em class="ct-muted-text">—</em></$view></div>
             <div>
                 <strong>Website:</strong>
-                <$list filter="[all[current]has[roaster-website]]" variable="ignore" emptyMessage="<em class='ct-muted-text'>—</em>">
+                <%if [all[current]has[roaster-website]] %>
                     <a href={{!!roaster-website}} target="_blank" rel="noopener noreferrer" class="ct-link">Visit Website ↗</a>
-                </$list>
+                <%else%>
+                    <em class="ct-muted-text">—</em>
+                <%endif%>
             </div>
         </div>
 
-        <$list filter="[all[current]has[my-notes]]" variable="ignore">
+        <%if [all[current]has[my-notes]] %>
             <div class="ct-section-margin">
                 <strong>Notes:</strong>
                 <div class="ct-text-box">
                     <$view field="my-notes"/>
                 </div>
             </div>
-        </$list>
+        <%endif%>
     <%endif%>
 
     <hr>

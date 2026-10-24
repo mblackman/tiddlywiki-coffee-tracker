@@ -926,3 +926,159 @@
     border: 1px solid <<colour tiddler-editor-border>>;
     border-radius: 8px;
 }
+
+.ct-mt-0 {
+    margin-top: 0;
+}
+
+/* Interactive Coffee Compass & Dial-In Assistant */
+.ct-compass-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.ct-compass-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid <<colour tiddler-editor-border>>;
+    background: <<colour tiddler-editor-background>>;
+    color: <<colour foreground>>;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.ct-compass-pill:hover {
+    border-color: <<colour primary>>;
+}
+
+.ct-compass-pill-active {
+    background: <<colour alert-banner-background>>;
+    color: <<colour alert-banner-foreground>>;
+    border-color: <<colour dirty-indicator>>;
+}
+
+.ct-compass-pill-active.ct-compass-pill-balanced {
+    background: <<colour positive-alert-banner-background>>;
+    color: <<colour positive-alert-banner-foreground>>;
+    border-color: <<colour positive-alert-banner-foreground>>;
+}
+
+.ct-compass-advice {
+    padding: 12px 14px;
+    background: <<colour message-background>>;
+    border-left: 4px solid <<colour primary>>;
+    border-radius: 6px;
+    font-size: 0.92em;
+}
+
+.ct-next-adjustment-callout {
+    padding: 10px 14px;
+    background: <<colour alert-banner-background>>;
+    color: <<colour alert-banner-foreground>>;
+    border-left: 4px solid <<colour dirty-indicator>>;
+    border-radius: 6px;
+    font-size: 0.92em;
+}
+
+.ct-grinder-hint-banner {
+    padding: 10px 14px;
+    background: <<colour tiddler-background>>;
+    border: 1px dashed <<colour primary>>;
+    border-radius: 6px;
+    font-size: 0.9em;
+}
+
+/* Pure-SVG Sensory Radar & Progression Charts */
+.ct-sensory-layout {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+}
+
+.ct-analytics-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+}
+
+.ct-radar-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 240px;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.ct-radar-svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.ct-radar-grid-outer {
+    fill: none;
+    stroke: <<colour tiddler-editor-border>>;
+    stroke-width: 1.5;
+}
+
+.ct-radar-grid {
+    fill: none;
+    stroke: <<colour tiddler-editor-border>>;
+    stroke-width: 1;
+    stroke-dasharray: 3,3;
+}
+
+.ct-radar-axis {
+    stroke: <<colour tiddler-editor-border>>;
+    stroke-width: 1;
+}
+
+.ct-radar-polygon {
+    fill: <<colour primary>>;
+    fill-opacity: 0.22;
+    stroke: <<colour primary>>;
+    stroke-width: 2.2;
+}
+
+.ct-radar-dot {
+    fill: <<colour primary>>;
+    stroke: <<colour tiddler-background>>;
+    stroke-width: 1.5;
+}
+
+.ct-radar-label {
+    fill: <<colour foreground>>;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.ct-progression-container {
+    width: 100%;
+}
+
+.ct-progression-svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.ct-progression-line {
+    fill: none;
+    stroke: <<colour primary>>;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.ct-chart-axis-text {
+    fill: <<colour muted-foreground>>;
+    font-size: 10px;
+}

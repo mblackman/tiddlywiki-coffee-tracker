@@ -121,6 +121,12 @@ type: text/vnd.tiddlywiki
             </div>
         <%endif%>
     </div>
+    <%if [<currentTiddler>sensory-radar-points[]!is[blank]] %>
+        <div class="ct-info-box ct-mb-md">
+            <div class="ct-text-sm ct-text-bold ct-mb-xs" style="text-align: center;">Avg Sensory Profile Across All Brews</div>
+            <$ct.sensory-radar target=<<currentTiddler>>/>
+        </div>
+    <%endif%>
     </$let>
 
     <h3>Purchased Bags</h3>
@@ -148,13 +154,13 @@ type: text/vnd.tiddlywiki
                     <div class="ct-card-subtitle ct-m-0">Purchased: <$view field="purchase-date"/></div>
                     <$let
                         brew-count={{{ [tag[BrewLog]coffee-bag-instance<currentTiddler>count[]] }}}
-                        bag-avg={{{ [tag[BrewLog]coffee-bag-instance<currentTiddler>get[overall-rating]average[]fixed[1]] }}}
+                        bag-avg={{{ [ct.bag-instance-avg<currentTiddler>] }}}
                     >
                         <div class="ct-card-subtitle ct-m-0">
                             <$text text=<<brew-count>>/> brews
-                            <$list filter="[<bag-avg>!is[blank]]" variable="ignore">
+                            <%if [<bag-avg>!is[blank]] %>
                                 • ★ <$text text=<<bag-avg>>/>
-                            </$list>
+                            <%endif%>
                         </div>
                     </$let>
                 </div>

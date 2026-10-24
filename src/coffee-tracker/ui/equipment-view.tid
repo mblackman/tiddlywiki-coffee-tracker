@@ -49,52 +49,118 @@ type: text/vnd.tiddlywiki
         </div>
     <%endif%>
 
-    <$list filter="[all[current]equipment-type[Brewer]]" variable="ignore">
+    <%if [all[current]equipment-type[Brewer]] %>
         <$let
             brew-count={{{ [tag[BrewLog]brewer<currentTiddler>count[]] }}}
-            avg-rating={{{ [tag[BrewLog]brewer<currentTiddler>get[overall-rating]average[]fixed[1]] }}}
+            avg-rating={{{ [tag[BrewLog]brewer<currentTiddler>get[overall-rating]!is[blank]] :and[average[]compare:number:gt[0]fixed[1]] }}}
         >
         <div class="ct-stats-grid">
             <div class="ct-stat-card">
                 <div class="ct-stat-value"><$text text=<<brew-count>>/></div>
                 <div class="ct-stat-label">Total Brews</div>
             </div>
-            <$list filter="[<avg-rating>!is[blank]]" variable="ignore">
+            <%if [<avg-rating>!is[blank]] %>
                 <div class="ct-stat-card">
                     <div class="ct-stat-value"><$text text=<<avg-rating>>/> /10</div>
                     <div class="ct-stat-label">Avg Rating</div>
                 </div>
-            </$list>
+            <%endif%>
         </div>
         </$let>
-    </$list>
+    <%endif%>
 
-    <$list filter="[all[current]equipment-type[Grinder]]" variable="ignore">
+    <%if [all[current]equipment-type[Grinder]] %>
         <$let
+            currentGrinder=<<currentTiddler>>
             brew-count={{{ [tag[BrewLog]grinder<currentTiddler>count[]] }}}
-            avg-rating={{{ [tag[BrewLog]grinder<currentTiddler>get[overall-rating]average[]fixed[1]] }}}
+            avg-rating={{{ [tag[BrewLog]grinder<currentTiddler>get[overall-rating]!is[blank]] :and[average[]compare:number:gt[0]fixed[1]] }}}
+            total-ground={{{ [ct.grinder-total-display<currentTiddler>] }}}
         >
         <div class="ct-stats-grid">
             <div class="ct-stat-card">
                 <div class="ct-stat-value"><$text text=<<brew-count>>/></div>
                 <div class="ct-stat-label">Total Brews</div>
             </div>
-            <$list filter="[<avg-rating>!is[blank]]" variable="ignore">
+            <div class="ct-stat-card">
+                <div class="ct-stat-value"><$text text=<<total-ground>>/></div>
+                <div class="ct-stat-label">Total Ground</div>
+            </div>
+            <%if [<avg-rating>!is[blank]] %>
                 <div class="ct-stat-card">
                     <div class="ct-stat-value"><$text text=<<avg-rating>>/> /10</div>
                     <div class="ct-stat-label">Avg Rating</div>
                 </div>
-            </$list>
+            <%endif%>
         </div>
+
+        <%if [tag[BrewLog]grinder<currentGrinder>has[grind-size]has[brewer]limit[1]] %>
+            <div class="ct-section-white ct-mb-md">
+                <h3 class="ct-section-header">⚙️ Dial-In Grind Setting Matrix</h3>
+                <div class="ct-table-wrapper">
+                    <table class="ct-table">
+                        <thead>
+                            <tr class="ct-table-header">
+                                <th>Brewer</th>
+                                <th>Brews</th>
+                                <th>Grind Range</th>
+                                <th>Best Grind Setting</th>
+                                <th>Reference Coffee / Profile</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <$list filter="[tag[BrewLog]grinder<currentGrinder>has[grind-size]get[brewer]!is[blank]unique[]sort[]]" variable="brewerItem">
+                                <$let
+                                    methodCount={{{ [tag[BrewLog]grinder<currentGrinder>brewer<brewerItem>has[grind-size]count[]] }}}
+                                    grindRange={{{ [<currentGrinder>grinder-brewer-range<brewerItem>] }}}
+                                    bestBrew={{{ [<currentGrinder>grinder-brewer-best<brewerItem>] }}}
+                                    bestGrind={{{ [<bestBrew>get[grind-size]] }}}
+                                    bestRating={{{ [<bestBrew>get[overall-rating]] }}}
+                                    bestBagInstance={{{ [<bestBrew>get[coffee-bag-instance]] }}}
+                                    bestCoffeeType={{{ [<bestBagInstance>get[coffee-bag]] }}}
+                                    bestRoast={{{ [<bestCoffeeType>get[coffee-roast-level]] }}}
+                                    bestProcess={{{ [<bestCoffeeType>get[coffee-processing]] }}}
+                                >
+                                    <tr>
+                                        <td><strong><$link to=<<brewerItem>>><$view tiddler=<<brewerItem>> field="title"/></$link></strong></td>
+                                        <td><$text text=<<methodCount>>/></td>
+                                        <td><span class="ct-tag"><$text text=<<grindRange>>/></span></td>
+                                        <td>
+                                            <%if [<bestBrew>!is[blank]] %>
+                                                <strong><$text text=<<bestGrind>>/></strong>
+                                                <%if [<bestRating>!is[blank]] %>
+                                                    <span class="ct-text-sm ct-text-primary"> (★ <$link to=<<bestBrew>>><$text text=<<bestRating>>/>/10</$link>)</span>
+                                                <%endif%>
+                                            <%else%>
+                                                —
+                                            <%endif%>
+                                        </td>
+                                        <td class="ct-text-sm ct-muted-text">
+                                            <%if [<bestCoffeeType>!is[blank]] %>
+                                                <$link to=<<bestCoffeeType>>><$view tiddler=<<bestCoffeeType>> field="title"/></$link>
+                                                <%if [<bestRoast>!is[blank]] [<bestProcess>!is[blank]] +[limit[1]] %>
+                                                    (<$text text={{{ [<bestRoast>!is[blank]] [<bestProcess>!is[blank]] +[join[ • ]] }}}/>)
+                                                <%endif%>
+                                            <%else%>
+                                                —
+                                            <%endif%>
+                                        </td>
+                                    </tr>
+                                </$let>
+                            </$list>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        <%endif%>
         </$let>
-    </$list>
+    <%endif%>
 
     <div class="ct-section-margin">
         <label class="ct-label">My Notes</label>
         <$edit-text field="my-notes" class="tc-edit-texteditor ct-textarea" min-height="60px" placeholder="Record grind ranges, filter papers, maintenance notes..."/>
     </div>
 
-    <$list filter="[all[current]equipment-type[Brewer]]" variable="ignore">
+    <%if [all[current]equipment-type[Brewer]] %>
         <hr>
 
         <h3>Supported Methods</h3>
@@ -109,9 +175,9 @@ type: text/vnd.tiddlywiki
                     </$button>
                 </span>
             </$list>
-            <$list filter="[list[!!brew-methods]count[]compare:eq[0]]" variable="ignore">
+            <%if [list[!!brew-methods]count[]compare:eq[0]] %>
                 <em class="ct-muted-text">No methods added yet</em>
-            </$list>
+            <%endif%>
         </div>
 
         <div class="ct-section-margin">
@@ -141,10 +207,10 @@ type: text/vnd.tiddlywiki
                 </div>
             </div>
         </div>
-    </$list>
+    <%endif%>
 
     <!-- Recent Brews Using This Equipment -->
-    <$list filter="[all[current]equipment-type[Brewer]] [all[current]equipment-type[Grinder]]" variable="ignore">
+    <%if [all[current]equipment-type[Brewer]] [all[current]equipment-type[Grinder]] +[limit[1]] %>
         <hr>
         <h3>Recent Brews</h3>
         <div class="ct-table-wrapper">
@@ -158,7 +224,7 @@ type: text/vnd.tiddlywiki
                     </tr>
                 </thead>
                 <tbody>
-                    <$list filter="[tag[BrewLog]brewer<currentTiddler>] [tag[BrewLog]grinder<currentTiddler>] +[unique[]!sort[brew-date]limit[10]]" emptyMessage="<tr><td colspan='4' style='padding: 15px; text-align: center;' class='ct-muted-text'>No brews recorded with this equipment yet</td></tr>">
+                    <$list filter="[tag[BrewLog]brewer<currentTiddler>] [tag[BrewLog]grinder<currentTiddler>] +[unique[]sort[created]sort[brew-time]!sort[brew-date]limit[10]]" emptyMessage="<tr><td colspan='4' style='padding: 15px; text-align: center;' class='ct-muted-text'>No brews recorded with this equipment yet</td></tr>">
                         <tr>
                             <td><$link to=<<currentTiddler>>><$view field="brew-date"/></$link></td>
                             <td><$link to={{!!coffee-bag-instance}}><$view field="coffee-bag-instance"/></$link></td>
@@ -169,6 +235,6 @@ type: text/vnd.tiddlywiki
                 </tbody>
             </table>
         </div>
-    </$list>
+    <%endif%>
 </$let>
 </$list>

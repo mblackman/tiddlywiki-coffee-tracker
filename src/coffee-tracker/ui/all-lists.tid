@@ -15,12 +15,12 @@ caption: Coffee Tracker - All Lists
 <div class="ct-search-bar">
     <span>🔍</span>
     <$edit-text tiddler="$:/temp/coffee-tracker/search" field="text" tag="input" placeholder="Search bags, coffee types, origins, roasters, equipment, or brew notes..." class="tc-edit-texteditor ct-input" style="border: none; background: transparent;"/>
-    <$list filter="[{$:/temp/coffee-tracker/search}!is[blank]]" variable="ignore">
+    <%if [{$:/temp/coffee-tracker/search}!is[blank]] %>
         <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-text-sm">
             <$action-deletetiddler $tiddler="$:/temp/coffee-tracker/search"/>
             Clear
         </$button>
-    </$list>
+    <%endif%>
 </div>
 
 <$let searchTerm={{$:/temp/coffee-tracker/search}}>
@@ -138,7 +138,7 @@ caption: Coffee Tracker - All Lists
                     <div>
                         <$link to=<<currentTiddler>> class="ct-text-bold">
                             <$text text={{{ [{!!brew-date}split[-]join[]format:date[0MM/0DD/YY]] }}}/>
-                            <$list filter="[all[current]has[brew-time]]" variable="ignore"> ({{!!brew-time}})</$list>
+                            <%if [all[current]has[brew-time]] %> ({{!!brew-time}})<%endif%>
                         </$link>
                         <div class="ct-card-subtitle ct-m-0">
                             <$link to={{!!coffee-bag-instance}}><$view field="coffee-bag-instance"/></$link>

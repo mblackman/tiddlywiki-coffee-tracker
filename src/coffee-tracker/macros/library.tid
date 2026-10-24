@@ -3,11 +3,11 @@ type: text/vnd.tiddlywiki
 tags: $:/tags/Macro
 
 \function ct.bag-instance-avg(bagInstance)
-[all[tiddlers]tag[BrewLog]coffee-bag-instance<bagInstance>get[overall-rating]!is[blank]] :and[average[]fixed[1]]
+[all[tiddlers]tag[BrewLog]coffee-bag-instance<bagInstance>get[overall-rating]!is[blank]] :and[average[]compare:number:gt[0]fixed[1]]
 \end
 
 \function ct.coffee-type-avg(coffeeType)
-[all[tiddlers]tag[CoffeeBagInstance]coffee-bag<coffeeType>] :map[ct.bag-instance-avg<currentTiddler>] :filter[!is[blank]] :and[average[]fixed[1]]
+[all[tiddlers]tag[CoffeeBagInstance]coffee-bag<coffeeType>] :map[ct.bag-instance-avg<currentTiddler>] :filter[!is[blank]] :and[average[]compare:number:gt[0]fixed[1]]
 \end
 
 \function ct.bag-last-brew(bagInstance)
@@ -24,6 +24,116 @@ tags: $:/tags/Macro
 
 \function ct.yield-ratio(dose, yield)
 [<yield>compare:number:gt[0]] :filter[<dose>compare:number:gt[0]] :and[divide<dose>fixed[1]]
+\end
+
+\function ct.grinder-total-grams(grinder)
+[<grinder>grinder-total-grams[]]
+\end
+
+\function ct.grinder-total-display(grinder)
+[<grinder>grinder-total-grams[]compare:number:gteq[1000]] :map[divide[1000]fixed[2]addsuffix[ kg (]addsuffix<currentTiddler>addsuffix[g)]] ~[<grinder>grinder-total-grams[]addsuffix[g]]
+\end
+
+\widget $ct.panel(title, badge:"")
+<div class="ct-section-white">
+    <%if [<title>!is[blank]] %>
+        <div class="ct-flex-row ct-section-header">
+            <h3 class="ct-m-0"><$text text=<<title>>/></h3>
+            <%if [<badge>!is[blank]] %>
+                <span class="ct-tag ct-badge-info"><$text text=<<badge>>/></span>
+            <%endif%>
+        </div>
+    <%endif%>
+    <$slot $name="ts-raw"/>
+</div>
+\end
+
+\widget $ct.sensory-radar(target)
+<$let
+    subject={{{ [<target>!is[blank]else<currentTiddler>] }}}
+    radarPoints={{{ [<subject>sensory-radar-points[]] }}}
+>
+<%if [<radarPoints>!is[blank]] %>
+<div class="ct-radar-container">
+    <svg viewBox="-20 5 300 220" class="ct-radar-svg" role="img" aria-label="6-Axis Sensory Radar Chart">
+        <!-- Concentric reference hexagons (2.5, 5.0, 7.5, 10.0) -->
+        <polygon points="130,43 192.4,79 192.4,151 130,187 67.6,151 67.6,79" class="ct-radar-grid-outer"/>
+        <polygon points="130,61 176.8,88 176.8,142 130,169 83.2,142 83.2,88" class="ct-radar-grid"/>
+        <polygon points="130,79 161.2,97 161.2,133 130,151 98.8,133 98.8,97" class="ct-radar-grid"/>
+        <polygon points="130,97 145.6,106 145.6,124 130,133 114.4,124 114.4,106" class="ct-radar-grid"/>
+        <!-- Axis spokes -->
+        <line x1="130" y1="43" x2="130" y2="187" class="ct-radar-axis"/>
+        <line x1="192.4" y1="79" x2="67.6" y2="151" class="ct-radar-axis"/>
+        <line x1="192.4" y1="151" x2="67.6" y2="79" class="ct-radar-axis"/>
+        <!-- Sensory polygon -->
+        <polygon points=<<radarPoints>> class="ct-radar-polygon"/>
+        <!-- Vertex dots -->
+        <$list filter="aroma flavor acidity body sweetness aftertaste" variable="attr">
+            <$let
+                vx={{{ [<subject>sensory-axis-point:x<attr>] }}}
+                vy={{{ [<subject>sensory-axis-point:y<attr>] }}}
+            >
+                <circle cx=<<vx>> cy=<<vy>> r="3.5" class="ct-radar-dot"/>
+            </$let>
+        </$list>
+        <!-- Axis labels -->
+        <text x="130" y="30" text-anchor="middle" class="ct-radar-label">Aroma (<$text text={{{ [<subject>sensory-score[aroma]else[—]] }}}/>)</text>
+        <text x="200" y="78" text-anchor="start" class="ct-radar-label">Flavor (<$text text={{{ [<subject>sensory-score[flavor]else[—]] }}}/>)</text>
+        <text x="200" y="156" text-anchor="start" class="ct-radar-label">Acidity (<$text text={{{ [<subject>sensory-score[acidity]else[—]] }}}/>)</text>
+        <text x="130" y="206" text-anchor="middle" class="ct-radar-label">Body (<$text text={{{ [<subject>sensory-score[body]else[—]] }}}/>)</text>
+        <text x="60" y="156" text-anchor="end" class="ct-radar-label">Sweetness (<$text text={{{ [<subject>sensory-score[sweetness]else[—]] }}}/>)</text>
+        <text x="60" y="78" text-anchor="end" class="ct-radar-label">Aftertaste (<$text text={{{ [<subject>sensory-score[aftertaste]else[—]] }}}/>)</text>
+    </svg>
+</div>
+<%endif%>
+</$let>
+\end
+
+\procedure ct-sensory-radar(target)
+<$ct.sensory-radar target=<<target>>/>
+\end
+
+\procedure ct-progression-chart(target, label:"Rating & Roast-Age Progression")
+<$let
+    subject={{{ [<target>!is[blank]else<currentTiddler>] }}}
+    polyPoints={{{ [<subject>bag-progression-points[]] }}}
+>
+<%if [<polyPoints>!is[blank]] %>
+<div class="ct-progression-container">
+    <div class="ct-flex-row ct-mb-xs">
+        <span class="ct-text-sm ct-text-bold"><$text text=<<label>>/></span>
+        <span class="ct-text-sm ct-muted-text">Roast Age / Date →</span>
+    </div>
+    <svg viewBox="0 0 420 140" class="ct-progression-svg" role="img" aria-label=<<label>>>
+        <!-- Y-axis grid lines (10, 7.5, 5.0) -->
+        <line x1="35" y1="15" x2="395" y2="15" class="ct-radar-grid"/>
+        <text x="28" y="19" text-anchor="end" class="ct-chart-axis-text">10</text>
+        <line x1="35" y1="40" x2="395" y2="40" class="ct-radar-grid"/>
+        <text x="28" y="44" text-anchor="end" class="ct-chart-axis-text">7.5</text>
+        <line x1="35" y1="65" x2="395" y2="65" class="ct-radar-grid"/>
+        <text x="28" y="69" text-anchor="end" class="ct-chart-axis-text">5.0</text>
+        <line x1="35" y1="115" x2="395" y2="115" class="ct-radar-grid-outer"/>
+        <text x="28" y="118" text-anchor="end" class="ct-chart-axis-text">0</text>
+        <!-- Trendline -->
+        <polyline points=<<polyPoints>> class="ct-progression-line"/>
+        <!-- Data points & Roast Age / Date X-axis ticks -->
+        <$list filter="[<subject>bag-progression-points:meta[]]" variable="meta">
+            <$let
+                px={{{ [<meta>split[|]nth[1]] }}}
+                py={{{ [<meta>split[|]nth[2]] }}}
+                pRating={{{ [<meta>split[|]nth[3]] }}}
+                pLabel={{{ [<meta>split[|]nth[4]] }}}
+            >
+                <circle cx=<<px>> cy=<<py>> r="4" class="ct-radar-dot">
+                    <title><$text text=<<pLabel>>/>: ★ <$text text=<<pRating>>/>/10</title>
+                </circle>
+                <text x=<<px>> y="132" text-anchor="middle" class="ct-chart-axis-text"><$text text=<<pLabel>>/></text>
+            </$let>
+        </$list>
+    </svg>
+</div>
+<%endif%>
+</$let>
 \end
 
 \procedure coffee-freshness-badge(roastDate:"", bag:"")

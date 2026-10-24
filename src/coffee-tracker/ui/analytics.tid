@@ -1,0 +1,222 @@
+title: $:/plugins/mblackman/coffee-tracker/ui/analytics
+caption: Coffee Insights & Analytics
+type: text/vnd.tiddlywiki
+
+<div class="ct-dashboard-container">
+
+<div class="ct-dashboard-header">
+    <h1 class="ct-dashboard-title">📊 Coffee Insights & Analytics</h1>
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <$button class="tc-btn-invisible ct-theme-button" aria-label="Browse all coffee records">
+            <$action-navigate $to="$:/plugins/mblackman/coffee-tracker/ui/all-lists"/>
+            📋 Browse All
+        </$button>
+        <$button class="tc-btn-invisible ct-btn ct-btn-primary" aria-label="Return to coffee dashboard">
+            <$action-navigate $to="$:/plugins/mblackman/coffee-tracker/ui/dashboard"/>
+            ← Dashboard
+        </$button>
+    </div>
+</div>
+
+<!-- Top Summary KPIs -->
+<$let
+    totalBrews={{{ [tag[BrewLog]count[]] }}}
+    totalGramsBrewed={{{ [tag[BrewLog]get[dose]!is[blank]sum[]round[]] ~[[0]] }}}
+    totalSpend={{{ [tag[CoffeeBagInstance]bag-raw-cost[]] :and[sum[]compare:number:gt[0]fixed[2]] }}}
+    avgBrewCost={{{ [tag[BrewLog]brew-cost[]] :and[average[]compare:number:gt[0]fixed[2]] }}}
+    avgRating={{{ [tag[BrewLog]get[overall-rating]!is[blank]] :and[average[]compare:number:gt[0]fixed[1]] }}}
+    totalBags={{{ [tag[CoffeeBagInstance]count[]] }}}
+    frozenBags={{{ [tag[CoffeeBagInstance]!tag[Finished]tag[Frozen]count[]] }}}
+>
+<div class="ct-stats-grid">
+    <div class="ct-stat-card">
+        <div class="ct-stat-value"><$text text=<<totalBrews>>/></div>
+        <div class="ct-stat-label">Total Brews</div>
+    </div>
+    <div class="ct-stat-card">
+        <div class="ct-stat-value"><$text text=<<totalGramsBrewed>>/>g</div>
+        <div class="ct-stat-label">Coffee Brewed</div>
+    </div>
+    <%if [<totalSpend>!is[blank]] %>
+        <div class="ct-stat-card">
+            <div class="ct-stat-value">$<$text text=<<totalSpend>>/></div>
+            <div class="ct-stat-label">Total Spend (<$text text=<<totalBags>>/> bags)</div>
+        </div>
+    <%endif%>
+    <%if [<avgBrewCost>!is[blank]] %>
+        <div class="ct-stat-card">
+            <div class="ct-stat-value">$<$text text=<<avgBrewCost>>/></div>
+            <div class="ct-stat-label">Avg Cost / Cup</div>
+        </div>
+    <%endif%>
+    <%if [<avgRating>!is[blank]] %>
+        <div class="ct-stat-card">
+            <div class="ct-stat-value"><$text text=<<avgRating>>/> /10</div>
+            <div class="ct-stat-label">Avg Rating</div>
+        </div>
+    <%endif%>
+    <%if [<frozenBags>compare:number:gt[0]] %>
+        <div class="ct-stat-card">
+            <div class="ct-stat-value">❄️ <$text text=<<frozenBags>>/></div>
+            <div class="ct-stat-label">Frozen Bags</div>
+        </div>
+    <%endif%>
+</div>
+</$let>
+
+<!-- Global Rating Progression Trendline -->
+<%if [[all]bag-progression-points[]!is[blank]] %>
+    <$ct.panel title="📈 Brew Rating Progression" badge="Recent Brews">
+        <$macrocall $name="ct-progression-chart" target="all" label="Overall Rating Across Recent Brews"/>
+    </$ct.panel>
+<%endif%>
+
+<div class="ct-dashboard-grid">
+
+    <!-- Origins Leaderboard -->
+    <$ct.panel title="🌍 Performance by Origin">
+        <div class="ct-table-wrapper">
+            <table class="ct-table">
+                <thead>
+                    <tr class="ct-table-header">
+                        <th>Origin</th>
+                        <th>Coffees</th>
+                        <th>Brews</th>
+                        <th>Avg Rating</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <$list filter="[tag[CoffeeBag]get[coffee-origin]!is[blank]unique[]sort[]]" variable="originName" emptyMessage="<tr><td colspan='4' class='ct-muted-text' style='text-align: center; padding: 12px;'>No origins recorded yet</td></tr>">
+                        <$let
+                            coffeeCount={{{ [tag[CoffeeBag]coffee-origin<originName>count[]] }}}
+                            brewCount={{{ [tag[CoffeeBag]coffee-origin<originName>] :map:flat[tag[CoffeeBagInstance]coffee-bag<currentTiddler>] :map:flat[tag[BrewLog]coffee-bag-instance<currentTiddler>] +[count[]] }}}
+                            originAvg={{{ [tag[CoffeeBag]coffee-origin<originName>] :map:flat[tag[CoffeeBagInstance]coffee-bag<currentTiddler>] :map:flat[tag[BrewLog]coffee-bag-instance<currentTiddler>get[overall-rating]!is[blank]] :and[average[]compare:number:gt[0]fixed[1]] }}}
+                        >
+                            <tr>
+                                <td><strong><$text text=<<originName>>/></strong></td>
+                                <td><$text text=<<coffeeCount>>/></td>
+                                <td><$text text=<<brewCount>>/></td>
+                                <td>
+                                    <%if [<originAvg>!is[blank]] %>
+                                        <span class="ct-text-bold ct-text-primary">★ <$text text=<<originAvg>>/>/10</span>
+                                    <%else%>
+                                        <span class="ct-muted-text">—</span>
+                                    <%endif%>
+                                </td>
+                            </tr>
+                        </$let>
+                    </$list>
+                </tbody>
+            </table>
+        </div>
+    </$ct.panel>
+
+    <!-- Processing Methods Leaderboard -->
+    <$ct.panel title="🍒 Performance by Processing Method">
+        <div class="ct-table-wrapper">
+            <table class="ct-table">
+                <thead>
+                    <tr class="ct-table-header">
+                        <th>Process</th>
+                        <th>Coffees</th>
+                        <th>Brews</th>
+                        <th>Avg Rating</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <$list filter="[tag[CoffeeBag]get[coffee-processing]!is[blank]unique[]sort[]]" variable="procName" emptyMessage="<tr><td colspan='4' class='ct-muted-text' style='text-align: center; padding: 12px;'>No processing methods recorded yet</td></tr>">
+                        <$let
+                            coffeeCount={{{ [tag[CoffeeBag]coffee-processing<procName>count[]] }}}
+                            brewCount={{{ [tag[CoffeeBag]coffee-processing<procName>] :map:flat[tag[CoffeeBagInstance]coffee-bag<currentTiddler>] :map:flat[tag[BrewLog]coffee-bag-instance<currentTiddler>] +[count[]] }}}
+                            procAvg={{{ [tag[CoffeeBag]coffee-processing<procName>] :map:flat[tag[CoffeeBagInstance]coffee-bag<currentTiddler>] :map:flat[tag[BrewLog]coffee-bag-instance<currentTiddler>get[overall-rating]!is[blank]] :and[average[]compare:number:gt[0]fixed[1]] }}}
+                        >
+                            <tr>
+                                <td><strong><$text text=<<procName>>/></strong></td>
+                                <td><$text text=<<coffeeCount>>/></td>
+                                <td><$text text=<<brewCount>>/></td>
+                                <td>
+                                    <%if [<procAvg>!is[blank]] %>
+                                        <span class="ct-text-bold ct-text-primary">★ <$text text=<<procAvg>>/>/10</span>
+                                    <%else%>
+                                        <span class="ct-muted-text">—</span>
+                                    <%endif%>
+                                </td>
+                            </tr>
+                        </$let>
+                    </$list>
+                </tbody>
+            </table>
+        </div>
+    </$ct.panel>
+
+    <!-- Roasters Leaderboard -->
+    <$ct.panel title="🏪 Roaster Leaderboard">
+        <div class="ct-table-wrapper">
+            <table class="ct-table">
+                <thead>
+                    <tr class="ct-table-header">
+                        <th>Roaster</th>
+                        <th>Bags</th>
+                        <th>Brews</th>
+                        <th>Avg Rating</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <$list filter="[tag[Roaster]sort[title]]" variable="roasterItem" emptyMessage="<tr><td colspan='4' class='ct-muted-text' style='text-align: center; padding: 12px;'>No roasters recorded yet</td></tr>">
+                        <$let
+                            bagCount={{{ [tag[CoffeeBag]roaster<roasterItem>] :map:flat[tag[CoffeeBagInstance]coffee-bag<currentTiddler>] +[count[]] }}}
+                            brewCount={{{ [tag[CoffeeBag]roaster<roasterItem>] :map:flat[tag[CoffeeBagInstance]coffee-bag<currentTiddler>] :map:flat[tag[BrewLog]coffee-bag-instance<currentTiddler>] +[count[]] }}}
+                            roasterAvg={{{ [tag[CoffeeBag]roaster<roasterItem>] :map:flat[tag[CoffeeBagInstance]coffee-bag<currentTiddler>] :map:flat[tag[BrewLog]coffee-bag-instance<currentTiddler>get[overall-rating]!is[blank]] :and[average[]compare:number:gt[0]fixed[1]] }}}
+                        >
+                            <tr>
+                                <td><strong><$link to=<<roasterItem>>><$view tiddler=<<roasterItem>> field="roaster-name"><$view tiddler=<<roasterItem>> field="title"/></$view></$link></strong></td>
+                                <td><$text text=<<bagCount>>/></td>
+                                <td><$text text=<<brewCount>>/></td>
+                                <td>
+                                    <%if [<roasterAvg>!is[blank]] %>
+                                        <span class="ct-text-bold ct-text-primary">★ <$text text=<<roasterAvg>>/>/10</span>
+                                    <%else%>
+                                        <span class="ct-muted-text">—</span>
+                                    <%endif%>
+                                </td>
+                            </tr>
+                        </$let>
+                    </$list>
+                </tbody>
+            </table>
+        </div>
+    </$ct.panel>
+
+    <!-- Tasting Notes Cloud & Extraction Diagnostics -->
+    <$ct.panel title="🍋 Flavor Profile & Extraction Balance">
+        <div class="ct-mb-md">
+            <div class="ct-label">Tasting Note Cloud</div>
+            <div class="ct-compass-pills">
+                <$list filter="[tag[CoffeeBag]tasting-note-tokens:count[]]" variable="flavorToken" emptyMessage="<em class='ct-muted-text'>No tasting notes logged on coffee types yet</em>">
+                    <span class="ct-tag ct-badge-info"><$text text=<<flavorToken>>/></span>
+                </$list>
+            </div>
+        </div>
+
+        <div>
+            <div class="ct-label">Extraction Compass Distribution</div>
+            <div class="ct-compass-pills">
+                <$list filter="Balanced Sour Bitter Astringent Weak Heavy" variable="extTag">
+                    <$let tagCount={{{ [tag[BrewLog]] :filter[list[!!extraction-notes]match<extTag>] +[count[]] }}}>
+                        <%if [<tagCount>compare:number:gt[0]] %>
+                            <span class=`ct-compass-pill ct-compass-pill-active ${ [<extTag>match[Balanced]then[ct-compass-pill-balanced]else[]] }$`>
+                                <$text text=<<extTag>>/> (<$text text=<<tagCount>>/>)
+                            </span>
+                        <%endif%>
+                    </$let>
+                </$list>
+                <%if [tag[BrewLog]has[extraction-notes]count[]match[0]] %>
+                    <em class="ct-muted-text ct-text-sm">Tag brews with the Coffee Compass to track extraction patterns</em>
+                <%endif%>
+            </div>
+        </div>
+    </$ct.panel>
+
+</div>
+
+</div>

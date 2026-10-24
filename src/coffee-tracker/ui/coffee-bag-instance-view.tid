@@ -120,7 +120,7 @@ type: text/vnd.tiddlywiki
         remainingGrams={{{ [all[current]remaining-bag-weight[]] }}}
         usedGrams={{{ [tag[BrewLog]coffee-bag-instance<currentTiddler>get[dose]sum[]round[]] ~[[0]] }}}
         weightAdj={{{ [{!!weight-adjustment}!is[blank]else[0]] }}}
-        avgDose={{{ [tag[BrewLog]coffee-bag-instance<currentTiddler>get[dose]average[]] ~[[18]] }}}
+        avgDose={{{ [tag[BrewLog]coffee-bag-instance<currentTiddler>get[dose]average[]compare:number:gt[0]] ~[[18]] }}}
         pctRaw={{{ [<remainingGrams>!is[blank]divide<rawWeight>multiply[100]round[]] }}}
         pctRemaining={{{ [<pctRaw>compare:number:gt[100]then[100]else<pctRaw>] }}}
         estBrewsLeft={{{ [<remainingGrams>!is[blank]divide<avgDose>floor[]] }}}
@@ -293,6 +293,29 @@ type: text/vnd.tiddlywiki
         </div>
     <%endif%>
 
+    <%if [<lastBagBrew>has[next-brew-adjustment]] %>
+        <div class="ct-next-adjustment-callout ct-mb-md">
+            <strong>🎯 Target Adjustment for Next Brew:</strong> <$view tiddler=<<lastBagBrew>> field="next-brew-adjustment"/>
+        </div>
+    <%endif%>
+
+    <!-- Bag Visual Analytics (Sensory Radar & Rating Progression) -->
+    <%if [<currentTiddler>sensory-radar-points[]] [<currentTiddler>bag-progression-points[]] +[limit[1]] %>
+        <div class="ct-analytics-row ct-mb-md">
+            <%if [<currentTiddler>sensory-radar-points[]!is[blank]] %>
+                <div class="ct-info-box ct-flex-1">
+                    <div class="ct-text-sm ct-text-bold ct-mb-xs" style="text-align: center;">Avg Sensory Profile</div>
+                    <$ct.sensory-radar target=<<currentTiddler>>/>
+                </div>
+            <%endif%>
+            <%if [<currentTiddler>bag-progression-points[]!is[blank]] %>
+                <div class="ct-info-box ct-flex-1">
+                    <$macrocall $name="ct-progression-chart" target=<<currentTiddler>> label="Bag Rating & Roast-Age Progression"/>
+                </div>
+            <%endif%>
+        </div>
+    <%endif%>
+
     <div class="ct-flex-gap ct-mb-md">
         <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-flex-1" aria-label="Add new brew log for this coffee bag">
             <$macrocall $name="create-brew-log-actions" coffee-bag-instance=<<currentTiddler>>/>
@@ -366,7 +389,19 @@ type: text/vnd.tiddlywiki
                     <td style="font-weight: bold; white-space: nowrap;">
                         <$text text={{{ [{!!overall-rating}!is[blank]addsuffix[/10]else[—]] }}}/>
                     </td>
-                    <td class="ct-text-sm ct-muted-text">{{!!notes}}</td>
+                    <td class="ct-text-sm ct-muted-text">
+                        <%if [list[!!extraction-notes]limit[1]] %>
+                            <div style="margin-bottom: 2px;">
+                                <$list filter="[list[!!extraction-notes]]" variable="extTag">
+                                    <span class="ct-tag" style="margin-right: 4px;"><$text text=<<extTag>>/></span>
+                                </$list>
+                            </div>
+                        <%endif%>
+                        <div>{{!!notes}}</div>
+                        <%if [all[current]has[next-brew-adjustment]] %>
+                            <div class="ct-text-primary"><strong>🎯 Next:</strong> {{!!next-brew-adjustment}}</div>
+                        <%endif%>
+                    </td>
                 </tr>
                 </$let>
             </$list>

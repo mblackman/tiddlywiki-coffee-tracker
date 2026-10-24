@@ -3,7 +3,7 @@ subtitle: Add New Equipment
 tags: $:/tags/Modal
 type: text/vnd.tiddlywiki
 
-\define save-actions()
+\procedure save-actions()
 <$let
     initialMethod={{{ [{$:/temp/new-equipment!!equipment-type}match[Brewer]then{$:/temp/new-equipment!!default-brew-method}!is[blank]format:titlelist[]] }}}
 >
@@ -50,7 +50,7 @@ type: text/vnd.tiddlywiki
     </div>
 </div>
 
-<$list filter="[{$:/temp/new-equipment!!equipment-type}match[Brewer]]" variable="ignore">
+<%if [{$:/temp/new-equipment!!equipment-type}match[Brewer]] %>
     <div class="ct-mb-md">
         <label class="ct-label">Primary Brew Method</label>
         <$select tiddler="$:/temp/new-equipment" field="default-brew-method" class="tc-edit-texteditor ct-input">
@@ -60,7 +60,7 @@ type: text/vnd.tiddlywiki
             </$list>
         </$select>
     </div>
-</$list>
+<%endif%>
 
 <div class="ct-mb-md">
     <label class="ct-label">Notes</label>

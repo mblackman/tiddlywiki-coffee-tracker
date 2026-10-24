@@ -3,7 +3,7 @@ subtitle: Add New Roaster
 tags: $:/tags/Modal
 type: text/vnd.tiddlywiki
 
-\define save-actions()
+\procedure save-actions()
 <$action-createtiddler
     $basetitle={{$:/temp/new-roaster!!roaster-name}}
     tags="Roaster"

@@ -3,13 +3,13 @@ subtitle: Add New Coffee Type
 tags: $:/tags/Modal
 type: text/vnd.tiddlywiki
 
-\define create-coffee-type-base()
+\procedure create-coffee-type-base()
 <$let
     selectedRoaster={{{ [{$:/temp/new-coffee-bag!!roaster}] }}}
     newRoasterName={{{ [{$:/temp/new-coffee-bag!!new-roaster-name}trim[]] }}}
     effectiveRoaster={{{ [<selectedRoaster>match[__new__]then<newRoasterName>else<selectedRoaster>] }}}
 >
-<$list filter="[<selectedRoaster>match[__new__]] [<newRoasterName>!is[blank]] +[count[]match[2]]" variable="ignore">
+<%if [<selectedRoaster>match[__new__]] :filter[<newRoasterName>!is[blank]] %>
     <$action-createtiddler
         $basetitle=<<newRoasterName>>
         tags="Roaster"
@@ -30,8 +30,7 @@ type: text/vnd.tiddlywiki
         $savetitle="$:/temp/created-coffee-bag"
     />
     <$action-deletetiddler $tiddler="$:/temp/created-roaster-inline"/>
-</$list>
-<$list filter="[<selectedRoaster>!match[__new__]]" variable="ignore">
+<%else%>
     <$action-createtiddler
         $basetitle={{$:/temp/new-coffee-bag!!coffee-name}}
         tags="CoffeeBag"
@@ -44,11 +43,11 @@ type: text/vnd.tiddlywiki
         coffee-tasting-notes={{$:/temp/new-coffee-bag!!coffee-tasting-notes}}
         $savetitle="$:/temp/created-coffee-bag"
     />
-</$list>
+<%endif%>
 </$let>
 \end
 
-\define save-actions()
+\procedure save-actions()
 <<create-coffee-type-base>>
 <$action-deletetiddler $tiddler="$:/temp/new-coffee-bag"/>
 <$action-sendmessage $message="tm-close-tiddler"/>
@@ -56,7 +55,7 @@ type: text/vnd.tiddlywiki
 <$action-deletetiddler $tiddler="$:/temp/created-coffee-bag"/>
 \end
 
-\define save-and-purchase-actions()
+\procedure save-and-purchase-actions()
 <<create-coffee-type-base>>
 <$action-setfield
     $tiddler="$:/temp/new-coffee-bag-instance"
@@ -89,7 +88,7 @@ type: text/vnd.tiddlywiki
     </div>
 </div>
 
-<$list filter="[{$:/temp/new-coffee-bag!!roaster}match[__new__]]" variable="ignore">
+<%if [{$:/temp/new-coffee-bag!!roaster}match[__new__]] %>
     <div class="ct-info-box ct-mb-md">
         <div class="ct-setup-grid">
             <div>
@@ -102,7 +101,7 @@ type: text/vnd.tiddlywiki
             </div>
         </div>
     </div>
-</$list>
+<%endif%>
 
 <div class="ct-setup-grid ct-mb-md">
     <div>
