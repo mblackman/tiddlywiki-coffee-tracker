@@ -2,43 +2,67 @@ title: $:/plugins/mblackman/coffee-tracker/macros/library
 type: text/vnd.tiddlywiki
 tags: $:/tags/Macro
 
-\define coffee-freshness-badge(roastDate)
+\function ct.bag-instance-avg(bagInstance)
+[all[tiddlers]tag[BrewLog]coffee-bag-instance<bagInstance>get[overall-rating]!is[blank]] :and[average[]fixed[1]]
+\end
+
+\function ct.coffee-type-avg(coffeeType)
+[all[tiddlers]tag[CoffeeBagInstance]coffee-bag<coffeeType>] :map[ct.bag-instance-avg<currentTiddler>] :filter[!is[blank]] :and[average[]fixed[1]]
+\end
+
+\function ct.bag-last-brew(bagInstance)
+[all[tiddlers]tag[BrewLog]coffee-bag-instance<bagInstance>sort[created]sort[brew-time]sort[brew-date]last[]]
+\end
+
+\function ct.bag-best-brew(bagInstance)
+[<bagInstance>bag-best-brew[]]
+\end
+
+\function ct.water-ratio(dose, water)
+[<water>compare:number:gt[0]] :filter[<dose>compare:number:gt[0]] :and[divide<dose>fixed[1]]
+\end
+
+\function ct.yield-ratio(dose, yield)
+[<yield>compare:number:gt[0]] :filter[<dose>compare:number:gt[0]] :and[divide<dose>fixed[1]]
+\end
+
+\procedure coffee-freshness-badge(roastDate:"", bag:"")
 <$let
-    roast-days={{{ [<__roastDate__>days-since-roast[]] }}}
+    targetBag={{{ [<bag>!is[blank]] ~[<currentTiddler>tag[CoffeeBagInstance]] }}}
+    roast-days={{{ [<targetBag>!is[blank]days-since-roast[roast-date]] ~[<roastDate>!is[blank]days-since-roast[]] }}}
     peak-start={{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-start}}
     peak-end={{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-end}}
     optimal-end={{$:/plugins/mblackman/coffee-tracker/config/freshness/optimal-end}}
 >
-<$list filter="[<roast-days>!is[blank]]" variable="ignore">
-    <$list filter="[<roast-days>compare:number:lt<peak-start>]" variable="ignore">
+<%if [<targetBag>tag[Frozen]] %>
+    <span class="ct-tag ct-badge-frozen" title="Coffee is stored in the freezer (aging paused)">❄️ Frozen<%if [<roast-days>!is[blank]] %> • <$text text=<<roast-days>>/>d<%endif%></span>
+<%elseif [<roast-days>!is[blank]] %>
+    <%if [<roast-days>compare:number:lt<peak-start>] %>
         <span class="ct-tag ct-badge-info" title="Coffee is very fresh and still degassing">Fresh • <$text text=<<roast-days>>/>d</span>
-    </$list>
-    <$list filter="[<roast-days>compare:number:gteq<peak-start>compare:number:lt<peak-end>]" variable="ignore">
+    <%elseif [<roast-days>compare:number:gteq<peak-start>compare:number:lt<peak-end>] %>
         <span class="ct-tag ct-badge-success" title="Optimal flavor development window">Peak • <$text text=<<roast-days>>/>d</span>
-    </$list>
-    <$list filter="[<roast-days>compare:number:gteq<peak-end>compare:number:lt<optimal-end>]" variable="ignore">
+    <%elseif [<roast-days>compare:number:gteq<peak-end>compare:number:lt<optimal-end>] %>
         <span class="ct-tag ct-badge-warning" title="Well-integrated flavors, still enjoyable">Good • <$text text=<<roast-days>>/>d</span>
-    </$list>
-    <$list filter="[<roast-days>compare:number:gteq<optimal-end>]" variable="ignore">
+    <%else%>
         <span class="ct-tag ct-badge-danger" title="Past optimal freshness window">Aging • <$text text=<<roast-days>>/>d</span>
-    </$list>
-</$list>
+    <%endif%>
+<%endif%>
 </$let>
 \end
 
-\define coffee-stat-card(value, label)
+\procedure coffee-stat-card(value, label)
 <div class="ct-stat-card">
-    <div class="ct-stat-value">$value$</div>
-    <div class="ct-stat-label">$label$</div>
+    <div class="ct-stat-value"><$text text=<<value>>/></div>
+    <div class="ct-stat-label"><$text text=<<label>>/></div>
 </div>
 \end
 
-\define create-brew-log-actions(coffee-bag-instance:"")
+\procedure create-brew-log-actions(coffee-bag-instance:"")
 <$let newTitle=<<now "Brew Log: YYYY-0MM-0DD 0hh:0mm">>>
 <$action-createtiddler
     $basetitle=<<newTitle>>
     tags="BrewLog"
-    coffee-bag-instance="$coffee-bag-instance$"
+    coffee-bag-instance=<<coffee-bag-instance>>
     brew-date=<<now "YYYY-0MM-0DD">>
     brew-time=<<now "0hh:0mm">>
     $savetitle="$:/temp/created-brew-log"
@@ -49,18 +73,18 @@ tags: $:/tags/Macro
 </$let>
 \end
 
-\define create-brew-log-from-last(lastBrew)
+\procedure create-brew-log-from-last(lastBrew)
 <$let
     newTitle=<<now "Brew Log: YYYY-0MM-0DD 0hh:0mm">>
-    coffee-bag={{{ [<__lastBrew__>get[coffee-bag-instance]] }}}
-    dose={{{ [<__lastBrew__>get[dose]] }}}
-    water={{{ [<__lastBrew__>get[water]] }}}
-    yield={{{ [<__lastBrew__>get[yield]] }}}
-    water-temp={{{ [<__lastBrew__>get[water-temp]] }}}
-    grind-size={{{ [<__lastBrew__>get[grind-size]] }}}
-    brewer={{{ [<__lastBrew__>get[brewer]] }}}
-    grinder={{{ [<__lastBrew__>get[grinder]] }}}
-    brew-method={{{ [<__lastBrew__>get[brew-method]] }}}
+    coffee-bag={{{ [<lastBrew>get[coffee-bag-instance]] }}}
+    dose={{{ [<lastBrew>get[dose]] }}}
+    water={{{ [<lastBrew>get[water]] }}}
+    yield={{{ [<lastBrew>get[yield]] }}}
+    water-temp={{{ [<lastBrew>get[water-temp]] }}}
+    grind-size={{{ [<lastBrew>get[grind-size]] }}}
+    brewer={{{ [<lastBrew>get[brewer]] }}}
+    grinder={{{ [<lastBrew>get[grinder]] }}}
+    brew-method={{{ [<lastBrew>get[brew-method]] }}}
 >
 <$action-createtiddler
     $basetitle=<<newTitle>>
@@ -84,19 +108,19 @@ tags: $:/tags/Macro
 </$let>
 \end
 
-\define copy-brew-log-settings(sourceBrew, targetBrew)
+\procedure copy-brew-log-settings(sourceBrew, targetBrew)
 <$let
-    dose={{{ [<__sourceBrew__>get[dose]] }}}
-    water={{{ [<__sourceBrew__>get[water]] }}}
-    yield={{{ [<__sourceBrew__>get[yield]] }}}
-    water-temp={{{ [<__sourceBrew__>get[water-temp]] }}}
-    grind-size={{{ [<__sourceBrew__>get[grind-size]] }}}
-    brewer={{{ [<__sourceBrew__>get[brewer]] }}}
-    grinder={{{ [<__sourceBrew__>get[grinder]] }}}
-    brew-method={{{ [<__sourceBrew__>get[brew-method]] }}}
+    dose={{{ [<sourceBrew>get[dose]] }}}
+    water={{{ [<sourceBrew>get[water]] }}}
+    yield={{{ [<sourceBrew>get[yield]] }}}
+    water-temp={{{ [<sourceBrew>get[water-temp]] }}}
+    grind-size={{{ [<sourceBrew>get[grind-size]] }}}
+    brewer={{{ [<sourceBrew>get[brewer]] }}}
+    grinder={{{ [<sourceBrew>get[grinder]] }}}
+    brew-method={{{ [<sourceBrew>get[brew-method]] }}}
 >
 <$action-setfield
-    $tiddler=<<__targetBrew__>>
+    $tiddler=<<targetBrew>>
     dose=<<dose>>
     water=<<water>>
     yield=<<yield>>
@@ -106,5 +130,30 @@ tags: $:/tags/Macro
     grinder=<<grinder>>
     brew-method=<<brew-method>>
 />
+</$let>
+\end
+
+\procedure unfreeze-coffee-bag-actions(bag)
+<$let
+    targetBag={{{ [<bag>!is[blank]else<currentTiddler>] }}}
+    frozenDate={{{ [<targetBag>get[frozen-date]] }}}
+    sessionDays={{{ [<frozenDate>!is[blank]days-since-roast[]] ~[[0]] }}}
+    prevFrozenDays={{{ [<targetBag>get[frozen-days]!is[blank]else[0]] }}}
+    newFrozenDays={{{ [<prevFrozenDays>add<sessionDays>] }}}
+>
+<$action-listops $tiddler=<<targetBag>> $tags="-Frozen"/>
+<%if [<frozenDate>!is[blank]] %>
+    <$action-setfield $tiddler=<<targetBag>> frozen-days=<<newFrozenDays>>/>
+    <$action-deletefield $tiddler=<<targetBag>> $field="frozen-date"/>
+<%endif%>
+</$let>
+\end
+
+\procedure finish-coffee-bag-actions(bag)
+<$let targetBag={{{ [<bag>!is[blank]else<currentTiddler>] }}}>
+<%if [<targetBag>tag[Frozen]] %>
+    <$macrocall $name="unfreeze-coffee-bag-actions" bag=<<targetBag>>/>
+<%endif%>
+<$action-listops $tiddler=<<targetBag>> $tags="+[append[Finished]] -Frozen"/>
 </$let>
 \end

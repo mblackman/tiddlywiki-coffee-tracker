@@ -57,10 +57,10 @@ description: "Access the Coffee Tracker Dashboard"
     freshFilter="[days-since-roast[roast-date]compare:number:lt<peakStart>]"
 >
     <!-- Coffees in peak freshness window (7-21 days) -->
-    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]has[roast-date]] :filter[subfilter<peakFilter>] +[limit[1]]" variable="ignore">
+    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]!tag[Frozen]has[roast-date]] :filter[subfilter<peakFilter>] +[limit[1]]" variable="ignore">
         <div class="ct-sidebar-alert ct-alert-success">
             <div class="ct-sidebar-alert-title">☕ At Peak Freshness</div>
-            <$list filter="[tag[CoffeeBagInstance]!tag[Finished]has[roast-date]] :filter[subfilter<peakFilter>]" variable="bag">
+            <$list filter="[tag[CoffeeBagInstance]!tag[Finished]!tag[Frozen]has[roast-date]] :filter[subfilter<peakFilter>]" variable="bag">
                 <$let days={{{ [<bag>days-since-roast[roast-date]] }}}>
                     <div class="ct-sidebar-alert-item">
                         <$link to=<<bag>>><$view tiddler=<<bag>> field="title"/></$link>
@@ -72,10 +72,10 @@ description: "Access the Coffee Tracker Dashboard"
     </$list>
 
     <!-- Very fresh coffees (degassing, < 7 days) -->
-    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]has[roast-date]] :filter[subfilter<freshFilter>] +[limit[1]]" variable="ignore">
+    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]!tag[Frozen]has[roast-date]] :filter[subfilter<freshFilter>] +[limit[1]]" variable="ignore">
         <div class="ct-sidebar-alert ct-alert-info">
             <div class="ct-sidebar-alert-title">✨ Very Fresh (Degassing)</div>
-            <$list filter="[tag[CoffeeBagInstance]!tag[Finished]has[roast-date]] :filter[subfilter<freshFilter>]" variable="bag">
+            <$list filter="[tag[CoffeeBagInstance]!tag[Finished]!tag[Frozen]has[roast-date]] :filter[subfilter<freshFilter>]" variable="bag">
                 <$let days={{{ [<bag>days-since-roast[roast-date]] }}}>
                     <div class="ct-sidebar-alert-item">
                         <$link to=<<bag>>><$view tiddler=<<bag>> field="title"/></$link>
@@ -87,10 +87,10 @@ description: "Access the Coffee Tracker Dashboard"
     </$list>
 
     <!-- Coffees still good (21-60 days) -->
-    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]has[roast-date]] :filter[subfilter<goodFilter>] +[limit[1]]" variable="ignore">
+    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]!tag[Frozen]has[roast-date]] :filter[subfilter<goodFilter>] +[limit[1]]" variable="ignore">
         <div class="ct-sidebar-alert ct-alert-info">
             <div class="ct-sidebar-alert-title">👍 Still Good</div>
-            <$list filter="[tag[CoffeeBagInstance]!tag[Finished]has[roast-date]] :filter[subfilter<goodFilter>]" variable="bag">
+            <$list filter="[tag[CoffeeBagInstance]!tag[Finished]!tag[Frozen]has[roast-date]] :filter[subfilter<goodFilter>]" variable="bag">
                 <$let days={{{ [<bag>days-since-roast[roast-date]] }}}>
                     <div class="ct-sidebar-alert-item">
                         <$link to=<<bag>>><$view tiddler=<<bag>> field="title"/></$link>
@@ -102,14 +102,34 @@ description: "Access the Coffee Tracker Dashboard"
     </$list>
 
     <!-- Coffees aging beyond optimal (60+ days) -->
-    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]has[roast-date]] :filter[subfilter<agingFilter>] +[limit[1]]" variable="ignore">
+    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]!tag[Frozen]has[roast-date]] :filter[subfilter<agingFilter>] +[limit[1]]" variable="ignore">
         <div class="ct-sidebar-alert ct-alert-warning">
             <div class="ct-sidebar-alert-title">⚠️ Coffee Aging</div>
-            <$list filter="[tag[CoffeeBagInstance]!tag[Finished]has[roast-date]] :filter[subfilter<agingFilter>]" variable="bag">
+            <$list filter="[tag[CoffeeBagInstance]!tag[Finished]!tag[Frozen]has[roast-date]] :filter[subfilter<agingFilter>]" variable="bag">
                 <$let days={{{ [<bag>days-since-roast[roast-date]] }}}>
                     <div class="ct-sidebar-alert-item">
                         <$link to=<<bag>>><$view tiddler=<<bag>> field="title"/></$link>
                         <span class="ct-sidebar-alert-detail">(<<days>>d)</span>
+                    </div>
+                </$let>
+            </$list>
+        </div>
+    </$list>
+
+    <!-- Coffees stored in freezer -->
+    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]tag[Frozen]limit[1]]" variable="ignore">
+        <div class="ct-sidebar-alert ct-alert-info">
+            <div class="ct-sidebar-alert-title">❄️ In Freezer</div>
+            <$list filter="[tag[CoffeeBagInstance]!tag[Finished]tag[Frozen]]" variable="bag">
+                <$let
+                    days={{{ [<bag>days-since-roast[roast-date]] }}}
+                    remGrams={{{ [<bag>remaining-bag-weight[]] }}}
+                >
+                    <div class="ct-sidebar-alert-item">
+                        <$link to=<<bag>>><$view tiddler=<<bag>> field="title"/></$link>
+                        <span class="ct-sidebar-alert-detail">
+                            <%if [<days>!is[blank]] %>(<<days>>d)<%elseif [<remGrams>!is[blank]] %>(<<remGrams>>g)<%endif%>
+                        </span>
                     </div>
                 </$let>
             </$list>

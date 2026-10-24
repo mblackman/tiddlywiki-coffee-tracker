@@ -660,6 +660,50 @@
     color: <<colour background>> !important;
 }
 
+.ct-badge-frozen {
+    background: <<colour message-background>> !important;
+    color: <<colour primary>> !important;
+    border: 1px solid <<colour primary>>;
+    font-weight: 600;
+}
+
+.ct-calibrate-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 10px;
+    background: <<colour message-background>>;
+    border: 1px dashed <<colour primary>>;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.ct-pin-btn {
+    cursor: pointer;
+    font-size: 1.15em;
+    line-height: 1;
+    padding: 4px 6px;
+    border-radius: 4px;
+    opacity: 0.55;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.ct-pin-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.ct-pin-btn.ct-pin-active,
+.ct-pin-btn.ct-pin-auto {
+    opacity: 1;
+    color: <<colour primary>>;
+}
+
+.ct-best-brew-row {
+    background: <<colour message-background>>;
+}
+
 /* Section header without border */
 .ct-section-title-clean {
     margin: 0;

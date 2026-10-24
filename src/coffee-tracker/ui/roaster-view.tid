@@ -6,42 +6,20 @@ type: text/vnd.tiddlywiki
 <$let editState={{{ [[$:/state/coffee-tracker/edit/]addsuffix<currentTiddler>] }}}>
     <div class="ct-flex-row ct-mb-md">
         <h2 class="ct-m-0"><$view field="roaster-name"><$view field="title"/></$view></h2>
-        <$list filter="[<editState>get[text]!match[yes]]" variable="ignore">
-            <$button class="tc-btn-invisible ct-btn ct-btn-secondary" aria-label="Edit roaster details">
-                <$action-setfield $tiddler=<<editState>> text="yes"/>
-                ✏️ Edit
-            </$button>
-        </$list>
-        <$list filter="[<editState>get[text]match[yes]]" variable="ignore">
+        <%if [<editState>get[text]match[yes]] %>
             <$button class="tc-btn-invisible ct-btn ct-btn-primary" aria-label="Finish editing roaster details">
                 <$action-deletetiddler $tiddler=<<editState>>/>
                 ✓ Done
             </$button>
-        </$list>
+        <%else%>
+            <$button class="tc-btn-invisible ct-btn ct-btn-secondary" aria-label="Edit roaster details">
+                <$action-setfield $tiddler=<<editState>> text="yes"/>
+                ✏️ Edit
+            </$button>
+        <%endif%>
     </div>
 
-    <$list filter="[<editState>get[text]!match[yes]]" variable="ignore">
-        <div class="ct-grid-2col ct-info-box ct-mb-md">
-            <div><strong>Location:</strong> <$view field="roaster-location"><em class="ct-muted-text">—</em></$view></div>
-            <div>
-                <strong>Website:</strong>
-                <$list filter="[all[current]has[roaster-website]]" variable="ignore" emptyMessage="<em class='ct-muted-text'>—</em>">
-                    <a href={{!!roaster-website}} target="_blank" rel="noopener noreferrer" class="ct-link">Visit Website ↗</a>
-                </$list>
-            </div>
-        </div>
-
-        <$list filter="[all[current]has[my-notes]]" variable="ignore">
-            <div class="ct-section-margin">
-                <strong>Notes:</strong>
-                <div class="ct-text-box">
-                    <$view field="my-notes"/>
-                </div>
-            </div>
-        </$list>
-    </$list>
-
-    <$list filter="[<editState>get[text]match[yes]]" variable="ignore">
+    <%if [<editState>get[text]match[yes]] %>
         <div class="ct-info-box ct-mb-md">
             <div class="ct-setup-grid ct-mb-sm">
                 <div>
@@ -62,7 +40,26 @@ type: text/vnd.tiddlywiki
                 <$edit-text field="my-notes" placeholder="Notes about this roaster..." class="tc-edit-texteditor ct-textarea" min-height="70px"/>
             </div>
         </div>
-    </$list>
+    <%else%>
+        <div class="ct-grid-2col ct-info-box ct-mb-md">
+            <div><strong>Location:</strong> <$view field="roaster-location"><em class="ct-muted-text">—</em></$view></div>
+            <div>
+                <strong>Website:</strong>
+                <$list filter="[all[current]has[roaster-website]]" variable="ignore" emptyMessage="<em class='ct-muted-text'>—</em>">
+                    <a href={{!!roaster-website}} target="_blank" rel="noopener noreferrer" class="ct-link">Visit Website ↗</a>
+                </$list>
+            </div>
+        </div>
+
+        <$list filter="[all[current]has[my-notes]]" variable="ignore">
+            <div class="ct-section-margin">
+                <strong>Notes:</strong>
+                <div class="ct-text-box">
+                    <$view field="my-notes"/>
+                </div>
+            </div>
+        </$list>
+    <%endif%>
 
     <hr>
 

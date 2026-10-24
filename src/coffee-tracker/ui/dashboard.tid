@@ -86,11 +86,9 @@ caption: Coffee Dashboard
         <div class="ct-card">
             <div class="ct-card-header">
                 <h3 class="ct-card-title"><$link to=<<currentTiddler>>><$view field="title"/></$link></h3>
-                <$let roast-date={{!!roast-date}}>
-                <$list filter="[<roast-date>!is[blank]]" variable="ignore">
-                    <$macrocall $name="coffee-freshness-badge" roastDate=<<roast-date>>/>
-                </$list>
-                </$let>
+                <%if [all[current]has[roast-date]] [all[current]tag[Frozen]] +[limit[1]] %>
+                    <$macrocall $name="coffee-freshness-badge" roastDate={{!!roast-date}} bag=<<currentTiddler>>/>
+                <%endif%>
             </div>
             <div class="ct-card-subtitle">
                 <$link to={{!!coffee-bag}}><$view field="coffee-bag"/></$link>
@@ -99,24 +97,33 @@ caption: Coffee Dashboard
                     remGrams={{{ [all[current]remaining-bag-weight[]] }}}
                 >
                     • <$text text=<<brewCount>>/> brews
-                    <$list filter="[<remGrams>!is[blank]]" variable="ignore">
+                    <%if [<remGrams>!is[blank]] %>
                         • <strong><$text text=<<remGrams>>/>g</strong> left
-                    </$list>
+                    <%endif%>
                 </$let>
             </div>
 
-            <$let lastBagBrew={{{ [tag[BrewLog]coffee-bag-instance<currentTiddler>sort[created]sort[brew-time]sort[brew-date]last[]] }}}>
+            <$let
+                lastBagBrew={{{ [ct.bag-last-brew<currentTiddler>] }}}
+                bestBagBrew={{{ [all[current]bag-best-brew[]] }}}
+            >
                 <div style="display: flex; gap: 8px;">
                     <$button class="tc-btn-invisible ct-card-action-btn ct-flex-1" aria-label="Log new brew for this coffee bag">
                         <$macrocall $name="create-brew-log-actions" coffee-bag-instance=<<currentTiddler>>/>
                         ☕ Log Brew
                     </$button>
-                    <$list filter="[<lastBagBrew>!is[blank]]" variable="ignore">
+                    <%if [<bestBagBrew>!is[blank]!match<lastBagBrew>] %>
+                        <$button class="tc-btn-invisible ct-card-action-btn ct-flex-1" aria-label="Log brew using best settings for this coffee bag">
+                            <$macrocall $name="create-brew-log-from-last" lastBrew=<<bestBagBrew>>/>
+                            ⭐ Brew Best
+                        </$button>
+                    <%endif%>
+                    <%if [<lastBagBrew>!is[blank]] %>
                         <$button class="tc-btn-invisible ct-card-action-btn ct-flex-1" aria-label="Repeat last brew for this coffee bag">
                             <$macrocall $name="create-brew-log-from-last" lastBrew=<<lastBagBrew>>/>
                             ⚡ Brew Again
                         </$button>
-                    </$list>
+                    <%endif%>
                 </div>
             </$let>
         </div>

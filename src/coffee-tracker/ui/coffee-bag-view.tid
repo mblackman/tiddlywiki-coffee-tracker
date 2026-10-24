@@ -6,38 +6,20 @@ type: text/vnd.tiddlywiki
 <$let editState={{{ [[$:/state/coffee-tracker/edit/]addsuffix<currentTiddler>] }}}>
     <div class="ct-flex-row ct-mb-md">
         <h2 class="ct-m-0"><$view field="coffee-name"><$view field="title"/></$view></h2>
-        <$list filter="[<editState>get[text]!match[yes]]" variable="ignore">
-            <$button class="tc-btn-invisible ct-btn ct-btn-secondary" aria-label="Edit coffee type details">
-                <$action-setfield $tiddler=<<editState>> text="yes"/>
-                ✏️ Edit
-            </$button>
-        </$list>
-        <$list filter="[<editState>get[text]match[yes]]" variable="ignore">
+        <%if [<editState>get[text]match[yes]] %>
             <$button class="tc-btn-invisible ct-btn ct-btn-primary" aria-label="Finish editing coffee type details">
                 <$action-deletetiddler $tiddler=<<editState>>/>
                 ✓ Done
             </$button>
-        </$list>
+        <%else%>
+            <$button class="tc-btn-invisible ct-btn ct-btn-secondary" aria-label="Edit coffee type details">
+                <$action-setfield $tiddler=<<editState>> text="yes"/>
+                ✏️ Edit
+            </$button>
+        <%endif%>
     </div>
 
-    <$list filter="[<editState>get[text]!match[yes]]" variable="ignore">
-        <div class="ct-grid-2col ct-info-box ct-section-margin-lg">
-            <div><strong>Roaster:</strong> <$link to={{!!roaster}}><$text text={{!!roaster}}/></$link></div>
-            <div><strong>Origin:</strong> <$view field="coffee-origin"><em class="ct-muted-text">—</em></$view></div>
-            <div><strong>Roast Level:</strong> <$view field="coffee-roast-level"><em class="ct-muted-text">—</em></$view></div>
-            <div><strong>Varietal:</strong> <$view field="coffee-varietal"><em class="ct-muted-text">—</em></$view></div>
-            <div><strong>Processing:</strong> <$view field="coffee-processing"><em class="ct-muted-text">—</em></$view></div>
-        </div>
-
-        <div class="ct-section-margin-lg">
-            <strong>Tasting Notes:</strong>
-            <div class="ct-highlight-box">
-                <$view field="coffee-tasting-notes"><em class="ct-muted-text">No tasting notes</em></$view>
-            </div>
-        </div>
-    </$list>
-
-    <$list filter="[<editState>get[text]match[yes]]" variable="ignore">
+    <%if [<editState>get[text]match[yes]] %>
         <div class="ct-info-box ct-section-margin-lg">
             <div class="ct-setup-grid ct-mb-sm">
                 <div>
@@ -93,7 +75,22 @@ type: text/vnd.tiddlywiki
                 <$edit-text field="coffee-tasting-notes" class="tc-edit-texteditor ct-textarea" min-height="70px"/>
             </div>
         </div>
-    </$list>
+    <%else%>
+        <div class="ct-grid-2col ct-info-box ct-section-margin-lg">
+            <div><strong>Roaster:</strong> <$link to={{!!roaster}}><$text text={{!!roaster}}/></$link></div>
+            <div><strong>Origin:</strong> <$view field="coffee-origin"><em class="ct-muted-text">—</em></$view></div>
+            <div><strong>Roast Level:</strong> <$view field="coffee-roast-level"><em class="ct-muted-text">—</em></$view></div>
+            <div><strong>Varietal:</strong> <$view field="coffee-varietal"><em class="ct-muted-text">—</em></$view></div>
+            <div><strong>Processing:</strong> <$view field="coffee-processing"><em class="ct-muted-text">—</em></$view></div>
+        </div>
+
+        <div class="ct-section-margin-lg">
+            <strong>Tasting Notes:</strong>
+            <div class="ct-highlight-box">
+                <$view field="coffee-tasting-notes"><em class="ct-muted-text">No tasting notes</em></$view>
+            </div>
+        </div>
+    <%endif%>
 
     <hr>
 
@@ -102,8 +99,8 @@ type: text/vnd.tiddlywiki
         total-bags={{{ [tag[CoffeeBagInstance]coffee-bag<currentTiddler>count[]] }}}
         active-bags={{{ [tag[CoffeeBagInstance]coffee-bag<currentTiddler>!tag[Finished]count[]] }}}
         total-brews={{{ [tag[CoffeeBagInstance]coffee-bag<currentTiddler>] :map:flat[tag[BrewLog]coffee-bag-instance<currentTiddler>] +[count[]] }}}
+        avg-rating={{{ [ct.coffee-type-avg<currentTiddler>] }}}
     >
-    <$wikify name="avg-rating" text="""<$macrocall $name="coffee-bag-avg-of-avgs" coffeeBag=<<currentTiddler>>/>""">
     <div class="ct-stats-grid">
         <div class="ct-stat-card">
             <div class="ct-stat-value"><$text text=<<total-bags>>/></div>
@@ -117,14 +114,13 @@ type: text/vnd.tiddlywiki
             <div class="ct-stat-value"><$text text=<<total-brews>>/></div>
             <div class="ct-stat-label">Total Brews</div>
         </div>
-        <$list filter="[<avg-rating>!is[blank]]" variable="ignore">
+        <%if [<avg-rating>!is[blank]] %>
             <div class="ct-stat-card">
                 <div class="ct-stat-value"><$text text=<<avg-rating>>/> /10</div>
                 <div class="ct-stat-label">Avg Rating</div>
             </div>
-        </$list>
+        <%endif%>
     </div>
-    </$wikify>
     </$let>
 
     <h3>Purchased Bags</h3>
@@ -140,14 +136,13 @@ type: text/vnd.tiddlywiki
             <div class="ct-flex-row">
                 <div>
                     <$link to=<<currentTiddler>> class="ct-text-bold" style="font-size: 1.1em;"><$view field="title"/></$link>
-                    <$list filter="[all[current]tag[Finished]]" variable="ignore">
+                    <%if [all[current]tag[Finished]] %>
                         <span class="ct-tag ct-badge-danger" style="margin-left: 10px;">FINISHED</span>
-                    </$list>
-                    <$list filter="[all[current]!tag[Finished]has[roast-date]]" variable="ignore">
+                    <%elseif [all[current]has[roast-date]] [all[current]tag[Frozen]] +[limit[1]] %>
                         <span style="margin-left: 8px;">
-                            <$macrocall $name="coffee-freshness-badge" roastDate={{!!roast-date}}/>
+                            <$macrocall $name="coffee-freshness-badge" roastDate={{!!roast-date}} bag=<<currentTiddler>>/>
                         </span>
-                    </$list>
+                    <%endif%>
                 </div>
                 <div style="text-align: right;">
                     <div class="ct-card-subtitle ct-m-0">Purchased: <$view field="purchase-date"/></div>

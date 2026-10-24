@@ -38,9 +38,9 @@ caption: Coffee Tracker - All Lists
             <div class="ct-card">
                 <div class="ct-card-header">
                     <h3 class="ct-card-title"><$link to=<<currentTiddler>>><$view field="title"/></$link></h3>
-                    <$list filter="[all[current]has[roast-date]]" variable="ignore">
-                        <$macrocall $name="coffee-freshness-badge" roastDate={{!!roast-date}}/>
-                    </$list>
+                    <%if [all[current]has[roast-date]] [all[current]tag[Frozen]] +[limit[1]] %>
+                        <$macrocall $name="coffee-freshness-badge" roastDate={{!!roast-date}} bag=<<currentTiddler>>/>
+                    <%endif%>
                 </div>
                 <div class="ct-card-subtitle">
                     <$link to={{!!coffee-bag}}><$view field="coffee-bag"/></$link>
