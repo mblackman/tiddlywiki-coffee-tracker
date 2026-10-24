@@ -19,19 +19,43 @@ Calculate days since a given date
     if (!roastDate) return '';
 
     try {
-      const roast = new Date(roastDate);
-      const today = new Date();
+      var trimmed = String(roastDate).trim();
+      var parts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(trimmed);
+      var roastUtc;
 
-      // Check for invalid date
-      if (isNaN(roast.getTime())) {
+      if (parts) {
+        roastUtc = Date.UTC(
+          parseInt(parts[1], 10),
+          parseInt(parts[2], 10) - 1,
+          parseInt(parts[3], 10),
+        );
+      } else {
+        var roast = new Date(trimmed);
+        if (isNaN(roast.getTime())) {
+          return '';
+        }
+        roastUtc = Date.UTC(
+          roast.getFullYear(),
+          roast.getMonth(),
+          roast.getDate(),
+        );
+      }
+
+      if (isNaN(roastUtc)) {
         return '';
       }
 
-      // Calculate difference in days
-      const diffTime = Math.abs(today - roast);
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      var today = new Date();
+      var todayUtc = Date.UTC(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate(),
+      );
 
-      return diffDays.toString();
+      // Calculate difference in calendar days (clamped to >= 0)
+      var diffDays = Math.floor((todayUtc - roastUtc) / (1000 * 60 * 60 * 24));
+
+      return Math.max(0, diffDays).toString();
     } catch (e) {
       return '';
     }

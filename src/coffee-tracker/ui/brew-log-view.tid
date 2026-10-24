@@ -3,160 +3,343 @@ tags: $:/tags/ViewTemplate
 type: text/vnd.tiddlywiki
 
 <$list filter="[all[current]tag[BrewLog]]">
+<$let
+    currentBrew=<<currentTiddler>>
+    editState={{{ [[$:/state/coffee-tracker/edit/]addsuffix<currentTiddler>] }}}
+    isEditing={{{ [<editState>get[text]match[yes]then[yes]] ~[{!!overall-rating}is[blank]then[yes]] ~[[no]] }}}
+>
 <div class="ct-brew-log-container">
 
-    <!-- Header Section -->
-    <div class="ct-form-row">
-        <div class="ct-form-group">
-            <label class="ct-label">Date</label>
-            <$edit-text field="brew-date" type="date" class="tc-edit-texteditor ct-input"/>
+    <!-- Top Mode Bar -->
+    <div class="ct-flex-row ct-mb-md">
+        <div class="ct-text-sm ct-muted-text">
+            <$list filter="[<isEditing>match[yes]]" variable="ignore">
+                📝 Editing Brew Log
+            </$list>
+            <$list filter="[<isEditing>match[no]]" variable="ignore">
+                🔒 Completed Brew Log
+            </$list>
         </div>
-        <div class="ct-form-group">
-            <label class="ct-label">Time</label>
-            <$edit-text field="brew-time" type="time" class="tc-edit-texteditor ct-input"/>
-        </div>
-    </div>
-
-    <!-- Setup Section -->
-    <div class="ct-section">
-        <h3 class="ct-section-header">Setup</h3>
-        
-        <div class="ct-setup-row">
-            <label class="ct-label">Coffee</label>
-            <div class="ct-flex-gap">
-                <$select field="coffee-bag-instance" class="tc-edit-texteditor ct-input">
-                    <option value="">-- Select Coffee --</option>
-                    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]sort[title]]">
-                        <option value=<<currentTiddler>>><$view field="title"/></option>
-                    </$list>
-                </$select>
-                <$button class="tc-btn-invisible" style="padding: 8px;" tooltip="Open Bag" aria-label="Navigate to coffee bag details">
-                    <$action-navigate $to={{!!coffee-bag-instance}}/>
-                    🔗
+        <div>
+            <$list filter="[<isEditing>match[yes]]" variable="ignore">
+                <$button class="tc-btn-invisible ct-btn ct-btn-primary" aria-label="Lock brew log">
+                    <$action-setfield $tiddler=<<editState>> text="no"/>
+                    ✓ Done Editing
                 </$button>
-            </div>
-        </div>
-
-        <div class="ct-setup-grid">
-            <div>
-                <label class="ct-label">Brewer</label>
-                <$select field="brewer" class="tc-edit-texteditor ct-input" style="margin-bottom: 10px;" actions="""
-                    <$vars brewer={{{ [<actionValue>] }}}>
-                    <$let count={{{ [<brewer>get[brew-methods]enlist-input[]count[]] }}}>
-                        <$action-setfield brew-method={{{ [<count>match[1]then<brewer>get[brew-methods]enlist-input[]else[]] }}}/>
-                    </$let>
-                    </$vars>
-                """>
-                    <option value="">-- Select Brewer --</option>
-                    <$list filter="[tag[Equipment]equipment-type[Brewer]sort[title]]">
-                        <option value=<<currentTiddler>>><$view field="title"/></option>
-                    </$list>
-                </$select>
-                
-                <label class="ct-label">Grinder</label>
-                <$select field="grinder" class="tc-edit-texteditor ct-input">
-                    <option value="">-- Select Grinder --</option>
-                    <$list filter="[tag[Equipment]equipment-type[Grinder]sort[title]]">
-                        <option value=<<currentTiddler>>><$view field="title"/></option>
-                    </$list>
-                </$select>
-            </div>
-            <div>
-                <label class="ct-label">Method</label>
-                <$set name="brewer" value={{!!brewer}}>
-                <$set name="count" value={{{ [<brewer>get[brew-methods]enlist-input[]count[]] }}}>
-                    <$list filter="[<count>compare:number:gt[1]]" variable="ignore">
-                        <$select field="brew-method" class="tc-edit-texteditor ct-input">
-                            <option value="">-- Select Method --</option>
-                            <$list filter="[<brewer>get[brew-methods]enlist-input[]]"><option value=<<currentTiddler>>><<currentTiddler>></option></$list>
-                        </$select>
-                    </$list>
-                    <$list filter="[<count>!compare:number:gt[1]]" variable="ignore">
-                        <$edit-text field="brew-method" placeholder={{{ [<count>match[1]then<brewer>get[brew-methods]enlist-input[]else[e.g. Pour Over]] }}} class="ct-input" disabled={{{ [<count>match[1]then[yes]else[no]] }}}/>
-                    </$list>
-                </$set>
-                </$set>
-            </div>
-        </div>
-    </div>
-
-    <!-- Metrics Section -->
-    <div class="ct-section-white">
-        <h3 class="ct-section-header">Brew Metrics</h3>
-        <div class="ct-metrics-grid">
-            <div class="ct-metric-item">
-                <label class="ct-label">Dose (g)</label>
-                <$edit-text field="dose" size="5" class="ct-metric-input"/>
-            </div>
-            <div class="ct-metric-item">
-                <label class="ct-label">Water (g)</label>
-                <$edit-text field="water" size="5" class="ct-metric-input"/>
-            </div>
-            <div class="ct-metric-item">
-                <label class="ct-label">Yield (g)</label>
-                <$edit-text field="yield" size="5" class="ct-metric-input"/>
-            </div>
-            <div class="ct-metric-item">
-                <label class="ct-label">Time (mm:ss)</label>
-                <$edit-text field="brew-time-seconds" size="5" placeholder="00:00" class="ct-metric-input"/>
-            </div>
-            <div class="ct-metric-item">
-                <label class="ct-label">Water Temp (°C)</label>
-                <$edit-text field="water-temp" size="5" placeholder="93" class="ct-metric-input"/>
-            </div>
-            <div class="ct-metric-item">
-                <label class="ct-label">Grind Size</label>
-                <$edit-text field="grind-size" size="5" placeholder="e.g. 20" class="ct-metric-input"/>
-            </div>
-        </div>
-
-        <!-- Calculated Metrics -->
-        <$let
-            dose={{{ [{!!dose}] }}}
-            water={{{ [{!!water}] }}}
-            ratio={{{ [<dose>!is[blank]] [<water>!is[blank]] +[then<water>divide<dose>round:2]else[]] }}}
-        >
-        <$list filter="[<ratio>!is[blank]]" variable="ignore">
-            <div class="ct-calculated-metric">
-                <span class="ct-calculated-metric-label">Brew Ratio:</span>
-                <span class="ct-calculated-metric-value">1:<$text text=<<ratio>>/></span>
-            </div>
-        </$list>
-        </$let>
-    </div>
-
-    <!-- Sensory Section -->
-    <div class="ct-section">
-        <h3 class="ct-section-header">Tasting Profile</h3>
-        
-        <div class="ct-sensory-grid">
-            <$list filter="aroma flavor acidity body sweetness aftertaste" variable="attribute">
-                <$vars fieldName={{{ [[rating-]addsuffix<attribute>] }}}>
-                    <div class="ct-sensory-row">
-                        <span class="ct-sensory-label"><<attribute>></span>
-                        <div class="ct-sensory-controls">
-                            <$range field=<<fieldName>> min="0" max="10" increment="0.5" default="0" style="width: 100px;"/>
-                            <span style="width: 30px; text-align: right; font-weight: bold;"><$text text={{{ [all[current]get<fieldName>!is[blank]else[0]] }}}/></span>
-                        </div>
-                    </div>
-                </$vars>
+            </$list>
+            <$list filter="[<isEditing>match[no]]" variable="ignore">
+                <$button class="tc-btn-invisible ct-btn ct-btn-secondary" aria-label="Edit brew log">
+                    <$action-setfield $tiddler=<<editState>> text="yes"/>
+                    ✏️ Edit Brew
+                </$button>
             </$list>
         </div>
     </div>
 
-    <!-- Overall & Notes -->
-    <div style="margin-bottom: 20px;">
-        <div class="ct-rating-box">
-            <span class="ct-rating-value">Overall Rating</span>
-            <div class="ct-rating-controls">
-                <$range field="overall-rating" min="0" max="10" increment="0.5" default="0" style="width: 150px;"/>
-                <span class="ct-rating-value" style="width: 40px; text-align: right;"><$text text={{{ [{!!overall-rating}!is[blank]else[0]] }}}/></span>
+    <!-- READ-ONLY VIEW MODE -->
+    <$list filter="[<isEditing>match[no]]" variable="ignore">
+        <div class="ct-section">
+            <div class="ct-flex-row ct-mb-sm">
+                <div>
+                    <div class="ct-text-bold" style="font-size: 1.2em;">
+                        <$link to={{!!coffee-bag-instance}}><$view field="coffee-bag-instance"><em class="ct-muted-text">No coffee selected</em></$view></$link>
+                    </div>
+                    <div class="ct-card-subtitle ct-m-0">
+                        <$view field="brew-date"/> <$view field="brew-time"/>
+                        <$list filter="[all[current]has[brew-method]]" variable="ignore"> • {{!!brew-method}}</$list>
+                    </div>
+                </div>
+                <div class="ct-rating-box" style="margin-bottom: 0; padding: 8px 16px;">
+                    <span class="ct-rating-value"><$text text={{{ [{!!overall-rating}!is[blank]else[—]] }}}/> / 10</span>
+                </div>
+            </div>
+
+            <div class="ct-grid-2col ct-info-box">
+                <div><strong>Brewer:</strong> <$link to={{!!brewer}}><$view field="brewer"><em class="ct-muted-text">—</em></$view></$link></div>
+                <div><strong>Grinder:</strong> <$link to={{!!grinder}}><$view field="grinder"><em class="ct-muted-text">—</em></$view></$link></div>
             </div>
         </div>
 
-        <label class="ct-label">Notes</label>
-        <$edit-text field="notes" class="tc-edit-texteditor ct-textarea" min-height="100px" placeholder="Describe the nuances..."/>
-    </div>
+        <div class="ct-section-white">
+            <h3 class="ct-section-header">Brew Metrics</h3>
+            <div class="ct-metrics-grid">
+                <div class="ct-metric-item">
+                    <div class="ct-label">Dose</div>
+                    <div class="ct-emphasis-text"><$text text={{{ [{!!dose}!is[blank]addsuffix[g]else[—]] }}}/></div>
+                </div>
+                <div class="ct-metric-item">
+                    <div class="ct-label">Water</div>
+                    <div class="ct-emphasis-text"><$text text={{{ [{!!water}!is[blank]addsuffix[g]else[—]] }}}/></div>
+                </div>
+                <div class="ct-metric-item">
+                    <div class="ct-label">Yield</div>
+                    <div class="ct-emphasis-text"><$text text={{{ [{!!yield}!is[blank]addsuffix[g]else[—]] }}}/></div>
+                </div>
+                <div class="ct-metric-item">
+                    <div class="ct-label">Time</div>
+                    <div class="ct-emphasis-text"><$text text={{{ [{!!brew-time-seconds}!is[blank]else[—]] }}}/></div>
+                </div>
+                <div class="ct-metric-item">
+                    <div class="ct-label">Temp</div>
+                    <div class="ct-emphasis-text"><$text text={{{ [{!!water-temp}!is[blank]addsuffix[°C]else[—]] }}}/></div>
+                </div>
+                <div class="ct-metric-item">
+                    <div class="ct-label">Grind</div>
+                    <div class="ct-emphasis-text"><$text text={{{ [{!!grind-size}!is[blank]else[—]] }}}/></div>
+                </div>
+            </div>
+
+            <$let
+                dose={{{ [{!!dose}] }}}
+                water={{{ [{!!water}] }}}
+                yield={{{ [{!!yield}] }}}
+                waterRatio={{{ [<dose>!is[blank]!match[0]] :and[<water>!is[blank]!match[0]divide<dose>fixed[1]] }}}
+                yieldRatio={{{ [<dose>!is[blank]!match[0]] :and[<yield>!is[blank]!match[0]divide<dose>fixed[1]] }}}
+            >
+            <$list filter="[<waterRatio>!is[blank]] [<yieldRatio>!is[blank]] +[limit[1]]" variable="ignore">
+                <div class="ct-calculated-metric">
+                    <$list filter="[<waterRatio>!is[blank]]" variable="ignore">
+                        <span class="ct-calculated-metric-label">Brew Ratio (Water):</span>
+                        <span class="ct-calculated-metric-value">1:<$text text=<<waterRatio>>/></span>
+                    </$list>
+                    <$list filter="[<yieldRatio>!is[blank]]" variable="ignore">
+                        <span class="ct-calculated-metric-label" style="margin-left: 15px;">Output Ratio (Yield):</span>
+                        <span class="ct-calculated-metric-value">1:<$text text=<<yieldRatio>>/></span>
+                    </$list>
+                </div>
+            </$list>
+            </$let>
+        </div>
+
+        <div class="ct-section">
+            <h3 class="ct-section-header">Tasting Profile</h3>
+            <div class="ct-sensory-grid">
+                <$list filter="aroma flavor acidity body sweetness aftertaste" variable="attribute">
+                    <$vars fieldName={{{ [[rating-]addsuffix<attribute>] }}}>
+                        <div class="ct-sensory-row">
+                            <span class="ct-sensory-label"><<attribute>></span>
+                            <span class="ct-text-bold"><$text text={{{ [all[current]get<fieldName>!is[blank]else[—]] }}}/> / 10</span>
+                        </div>
+                    </$vars>
+                </$list>
+            </div>
+        </div>
+
+        <$list filter="[all[current]has[notes]]" variable="ignore">
+            <div class="ct-section-white">
+                <h3 class="ct-section-header">Notes</h3>
+                <div><$view field="notes"/></div>
+            </div>
+        </$list>
+    </$list>
+
+    <!-- EDIT MODE -->
+    <$list filter="[<isEditing>match[yes]]" variable="ignore">
+        <!-- Header Section -->
+        <div class="ct-form-row">
+            <div class="ct-form-group">
+                <label class="ct-label">Date</label>
+                <$edit-text field="brew-date" type="date" class="tc-edit-texteditor ct-input"/>
+            </div>
+            <div class="ct-form-group">
+                <label class="ct-label">Time</label>
+                <$edit-text field="brew-time" type="time" class="tc-edit-texteditor ct-input"/>
+            </div>
+        </div>
+
+        <!-- Setup Section -->
+        <div class="ct-section">
+            <h3 class="ct-section-header">Setup</h3>
+
+            <div class="ct-setup-row">
+                <label class="ct-label">Coffee Bag</label>
+                <div class="ct-flex-gap">
+                    <$select field="coffee-bag-instance" class="tc-edit-texteditor ct-input">
+                        <option value="">-- Select Coffee Bag --</option>
+                        <optgroup label="Active Bags">
+                            <$list filter="[tag[CoffeeBagInstance]!tag[Finished]sort[title]]">
+                                <option value=<<currentTiddler>>><$view field="title"/></option>
+                            </$list>
+                        </optgroup>
+                        <$list filter="[tag[CoffeeBagInstance]tag[Finished]limit[1]]" variable="ignore">
+                            <optgroup label="Finished Bags">
+                                <$list filter="[tag[CoffeeBagInstance]tag[Finished]sort[title]]">
+                                    <option value=<<currentTiddler>>><$view field="title"/> (Finished)</option>
+                                </$list>
+                            </optgroup>
+                        </$list>
+                    </$select>
+                    <$list filter="[all[current]has[coffee-bag-instance]]" variable="ignore">
+                        <$button class="tc-btn-invisible ct-btn ct-btn-secondary" tooltip="Open Bag" aria-label="Navigate to coffee bag details">
+                            <$action-navigate $to={{!!coffee-bag-instance}}/>
+                            🔗 Bag
+                        </$button>
+                    </$list>
+                </div>
+            </div>
+
+            <!-- Previous Brew Reference Banner for Dialing In -->
+            <$let
+                selectedBag={{!!coffee-bag-instance}}
+                prevBrew={{{ [tag[BrewLog]coffee-bag-instance<selectedBag>!match<currentBrew>sort[created]sort[brew-time]sort[brew-date]last[]] }}}
+            >
+            <$list filter="[<selectedBag>!is[blank]] [<prevBrew>!is[blank]] +[count[]match[2]]" variable="ignore">
+                <div class="ct-reference-banner">
+                    <div class="ct-flex-row ct-mb-xs">
+                        <strong>💡 Last brew with this bag (<$link to=<<prevBrew>>><$view tiddler=<<prevBrew>> field="brew-date"/></$link>):</strong>
+                        <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-text-sm" style="padding: 3px 10px;">
+                            <$macrocall $name="copy-brew-log-settings" sourceBrew=<<prevBrew>> targetBrew=<<currentBrew>>/>
+                            ⚡ Copy Settings
+                        </$button>
+                    </div>
+                    <div class="ct-text-sm ct-muted-text">
+                        Method: <strong><$view tiddler=<<prevBrew>> field="brew-method">—</$view></strong> •
+                        Dose: <strong><$view tiddler=<<prevBrew>> field="dose">—</$view>g</strong> •
+                        Water/Yield: <strong><$text text={{{ [<prevBrew>get[water]!is[blank]addsuffix[g]] ~[<prevBrew>get[yield]!is[blank]addsuffix[g]] ~[[—]] }}}/></strong> •
+                        Grind: <strong><$view tiddler=<<prevBrew>> field="grind-size">—</$view></strong> •
+                        Temp: <strong><$view tiddler=<<prevBrew>> field="water-temp">—</$view>°C</strong> •
+                        Time: <strong><$view tiddler=<<prevBrew>> field="brew-time-seconds">—</$view></strong> •
+                        Rating: <strong><$view tiddler=<<prevBrew>> field="overall-rating">—</$view>/10</strong>
+                    </div>
+                    <$list filter="[<prevBrew>has[notes]]" variable="ignore">
+                        <div class="ct-text-sm ct-muted-text" style="margin-top: 4px;">
+                            <em>"<$view tiddler=<<prevBrew>> field="notes"/>"</em>
+                        </div>
+                    </$list>
+                </div>
+            </$list>
+            </$let>
+
+            <div class="ct-setup-grid">
+                <div>
+                    <label class="ct-label">Brewer</label>
+                    <$select field="brewer" class="tc-edit-texteditor ct-input" style="margin-bottom: 10px;" actions="""
+                        <$vars brewer={{{ [<actionValue>] }}}>
+                        <$let count={{{ [<brewer>get[brew-methods]enlist-input[]count[]] }}}>
+                            <$action-setfield brew-method={{{ [<count>match[1]then<brewer>get[brew-methods]enlist-input[]else[]] }}}/>
+                        </$let>
+                        </$vars>
+                    """>
+                        <option value="">-- Select Brewer --</option>
+                        <$list filter="[tag[Equipment]equipment-type[Brewer]sort[title]]">
+                            <option value=<<currentTiddler>>><$view field="title"/></option>
+                        </$list>
+                    </$select>
+
+                    <label class="ct-label">Grinder</label>
+                    <$select field="grinder" class="tc-edit-texteditor ct-input">
+                        <option value="">-- Select Grinder --</option>
+                        <$list filter="[tag[Equipment]equipment-type[Grinder]sort[title]]">
+                            <option value=<<currentTiddler>>><$view field="title"/></option>
+                        </$list>
+                    </$select>
+                </div>
+                <div>
+                    <label class="ct-label">Method</label>
+                    <$set name="brewer" value={{!!brewer}}>
+                    <$set name="count" value={{{ [<brewer>get[brew-methods]enlist-input[]count[]] }}}>
+                        <$list filter="[<count>compare:number:gt[1]]" variable="ignore">
+                            <$select field="brew-method" class="tc-edit-texteditor ct-input">
+                                <option value="">-- Select Method --</option>
+                                <$list filter="[<brewer>get[brew-methods]enlist-input[]]"><option value=<<currentTiddler>>><<currentTiddler>></option></$list>
+                            </$select>
+                        </$list>
+                        <$list filter="[<count>!compare:number:gt[1]]" variable="ignore">
+                            <$edit-text field="brew-method" placeholder={{{ [<count>match[1]then<brewer>get[brew-methods]enlist-input[]else[e.g. Pour Over]] }}} class="ct-input" disabled={{{ [<count>match[1]then[yes]else[no]] }}}/>
+                        </$list>
+                    </$set>
+                    </$set>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metrics Section -->
+        <div class="ct-section-white">
+            <h3 class="ct-section-header">Brew Metrics</h3>
+            <div class="ct-metrics-grid">
+                <div class="ct-metric-item">
+                    <label class="ct-label">Dose (g)</label>
+                    <$edit-text field="dose" size="5" placeholder="18" class="ct-metric-input"/>
+                </div>
+                <div class="ct-metric-item">
+                    <label class="ct-label">Water (g)</label>
+                    <$edit-text field="water" size="5" placeholder="300" class="ct-metric-input"/>
+                </div>
+                <div class="ct-metric-item">
+                    <label class="ct-label">Yield (g)</label>
+                    <$edit-text field="yield" size="5" placeholder="260" class="ct-metric-input"/>
+                </div>
+                <div class="ct-metric-item">
+                    <label class="ct-label">Time (mm:ss)</label>
+                    <$edit-text field="brew-time-seconds" size="5" placeholder="02:45" class="ct-metric-input"/>
+                </div>
+                <div class="ct-metric-item">
+                    <label class="ct-label">Water Temp (°C)</label>
+                    <$edit-text field="water-temp" size="5" placeholder="93" class="ct-metric-input"/>
+                </div>
+                <div class="ct-metric-item">
+                    <label class="ct-label">Grind Size</label>
+                    <$edit-text field="grind-size" size="5" placeholder="e.g. 20" class="ct-metric-input"/>
+                </div>
+            </div>
+
+            <!-- Calculated Metrics -->
+            <$let
+                dose={{{ [{!!dose}] }}}
+                water={{{ [{!!water}] }}}
+                yield={{{ [{!!yield}] }}}
+                waterRatio={{{ [<dose>!is[blank]!match[0]] :and[<water>!is[blank]!match[0]divide<dose>fixed[1]] }}}
+                yieldRatio={{{ [<dose>!is[blank]!match[0]] :and[<yield>!is[blank]!match[0]divide<dose>fixed[1]] }}}
+            >
+            <$list filter="[<waterRatio>!is[blank]] [<yieldRatio>!is[blank]] +[limit[1]]" variable="ignore">
+                <div class="ct-calculated-metric">
+                    <$list filter="[<waterRatio>!is[blank]]" variable="ignore">
+                        <span class="ct-calculated-metric-label">Brew Ratio (Water):</span>
+                        <span class="ct-calculated-metric-value">1:<$text text=<<waterRatio>>/></span>
+                    </$list>
+                    <$list filter="[<yieldRatio>!is[blank]]" variable="ignore">
+                        <span class="ct-calculated-metric-label" style="margin-left: 15px;">Output Ratio (Yield):</span>
+                        <span class="ct-calculated-metric-value">1:<$text text=<<yieldRatio>>/></span>
+                    </$list>
+                </div>
+            </$list>
+            </$let>
+        </div>
+
+        <!-- Sensory Section -->
+        <div class="ct-section">
+            <h3 class="ct-section-header">Tasting Profile</h3>
+
+            <div class="ct-sensory-grid">
+                <$list filter="aroma flavor acidity body sweetness aftertaste" variable="attribute">
+                    <$vars fieldName={{{ [[rating-]addsuffix<attribute>] }}}>
+                        <div class="ct-sensory-row">
+                            <span class="ct-sensory-label"><<attribute>></span>
+                            <div class="ct-sensory-controls">
+                                <$range field=<<fieldName>> min="0" max="10" increment="0.5" default="0" style="width: 100px;"/>
+                                <span style="width: 30px; text-align: right; font-weight: bold;"><$text text={{{ [all[current]get<fieldName>!is[blank]else[0]] }}}/></span>
+                            </div>
+                        </div>
+                    </$vars>
+                </$list>
+            </div>
+        </div>
+
+        <!-- Overall & Notes -->
+        <div style="margin-bottom: 20px;">
+            <div class="ct-rating-box">
+                <span class="ct-rating-value">Overall Rating</span>
+                <div class="ct-rating-controls">
+                    <$range field="overall-rating" min="0" max="10" increment="0.5" default="0" style="width: 150px;"/>
+                    <span class="ct-rating-value" style="width: 40px; text-align: right;"><$text text={{{ [{!!overall-rating}!is[blank]else[0]] }}}/></span>
+                </div>
+            </div>
+
+            <label class="ct-label">Notes</label>
+            <$edit-text field="notes" class="tc-edit-texteditor ct-textarea" min-height="100px" placeholder="Describe the nuances, extraction adjustments for next time..."/>
+        </div>
+    </$list>
 
 </div>
+</$let>
 </$list>

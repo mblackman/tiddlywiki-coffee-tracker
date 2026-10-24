@@ -3,52 +3,116 @@ subtitle: Add New Coffee Type
 tags: $:/tags/Modal
 type: text/vnd.tiddlywiki
 
+\define create-coffee-type-base()
+<$let
+    selectedRoaster={{{ [{$:/temp/new-coffee-bag!!roaster}] }}}
+    newRoasterName={{{ [{$:/temp/new-coffee-bag!!new-roaster-name}trim[]] }}}
+    effectiveRoaster={{{ [<selectedRoaster>match[__new__]then<newRoasterName>else<selectedRoaster>] }}}
+>
+<$list filter="[<selectedRoaster>match[__new__]] [<newRoasterName>!is[blank]] +[count[]match[2]]" variable="ignore">
+    <$action-createtiddler
+        $basetitle=<<newRoasterName>>
+        tags="Roaster"
+        roaster-name=<<newRoasterName>>
+        roaster-location={{$:/temp/new-coffee-bag!!new-roaster-location}}
+        $savetitle="$:/temp/created-roaster-inline"
+    />
+    <$action-createtiddler
+        $basetitle={{$:/temp/new-coffee-bag!!coffee-name}}
+        tags="CoffeeBag"
+        coffee-name={{$:/temp/new-coffee-bag!!coffee-name}}
+        roaster={{$:/temp/created-roaster-inline}}
+        coffee-origin={{$:/temp/new-coffee-bag!!coffee-origin}}
+        coffee-roast-level={{$:/temp/new-coffee-bag!!coffee-roast-level}}
+        coffee-varietal={{$:/temp/new-coffee-bag!!coffee-varietal}}
+        coffee-processing={{$:/temp/new-coffee-bag!!coffee-processing}}
+        coffee-tasting-notes={{$:/temp/new-coffee-bag!!coffee-tasting-notes}}
+        $savetitle="$:/temp/created-coffee-bag"
+    />
+    <$action-deletetiddler $tiddler="$:/temp/created-roaster-inline"/>
+</$list>
+<$list filter="[<selectedRoaster>!match[__new__]]" variable="ignore">
+    <$action-createtiddler
+        $basetitle={{$:/temp/new-coffee-bag!!coffee-name}}
+        tags="CoffeeBag"
+        coffee-name={{$:/temp/new-coffee-bag!!coffee-name}}
+        roaster=<<effectiveRoaster>>
+        coffee-origin={{$:/temp/new-coffee-bag!!coffee-origin}}
+        coffee-roast-level={{$:/temp/new-coffee-bag!!coffee-roast-level}}
+        coffee-varietal={{$:/temp/new-coffee-bag!!coffee-varietal}}
+        coffee-processing={{$:/temp/new-coffee-bag!!coffee-processing}}
+        coffee-tasting-notes={{$:/temp/new-coffee-bag!!coffee-tasting-notes}}
+        $savetitle="$:/temp/created-coffee-bag"
+    />
+</$list>
+</$let>
+\end
+
 \define save-actions()
-<$action-createtiddler
-    $basetitle={{$:/temp/new-coffee-bag!!coffee-name}}
-    tags="CoffeeBag"
-    coffee-name={{$:/temp/new-coffee-bag!!coffee-name}}
-    roaster={{$:/temp/new-coffee-bag!!roaster}}
-    coffee-origin={{$:/temp/new-coffee-bag!!coffee-origin}}
-    coffee-roast-level={{$:/temp/new-coffee-bag!!coffee-roast-level}}
-    coffee-varietal={{$:/temp/new-coffee-bag!!coffee-varietal}}
-    coffee-processing={{$:/temp/new-coffee-bag!!coffee-processing}}
-    coffee-tasting-notes={{$:/temp/new-coffee-bag!!coffee-tasting-notes}}
-    $savetitle="$:/temp/created-coffee-bag"
-/>
+<<create-coffee-type-base>>
 <$action-deletetiddler $tiddler="$:/temp/new-coffee-bag"/>
 <$action-sendmessage $message="tm-close-tiddler"/>
 <$action-navigate $to={{$:/temp/created-coffee-bag}}/>
+<$action-deletetiddler $tiddler="$:/temp/created-coffee-bag"/>
+\end
+
+\define save-and-purchase-actions()
+<<create-coffee-type-base>>
+<$action-setfield
+    $tiddler="$:/temp/new-coffee-bag-instance"
+    coffee-bag={{$:/temp/created-coffee-bag}}
+    purchase-date=<<now "YYYY-0MM-0DD">>
+/>
+<$action-deletetiddler $tiddler="$:/temp/new-coffee-bag"/>
+<$action-deletetiddler $tiddler="$:/temp/created-coffee-bag"/>
+<$action-sendmessage $message="tm-close-tiddler"/>
+<$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/coffee-bag-instance"/>
 \end
 
 <div class="tc-modal-body">
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+<div class="ct-setup-grid ct-mb-md">
     <div>
-        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Coffee Name *</label>
-        <$edit-text tiddler="$:/temp/new-coffee-bag" field="coffee-name" placeholder="e.g. Ethiopia Yirgacheffe" class="tc-edit-texteditor" style="width: 100%;"/>
+        <label class="ct-label">Coffee Name *</label>
+        <$edit-text tiddler="$:/temp/new-coffee-bag" field="coffee-name" placeholder="e.g. Ethiopia Yirgacheffe" class="tc-edit-texteditor ct-input"/>
     </div>
 
     <div>
-        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Roaster *</label>
-        <$select tiddler="$:/temp/new-coffee-bag" field="roaster" class="tc-edit-texteditor" style="width: 100%;">
+        <label class="ct-label">Roaster *</label>
+        <$select tiddler="$:/temp/new-coffee-bag" field="roaster" class="tc-edit-texteditor ct-input">
             <option value="">-- Select Roaster --</option>
             <$list filter="[tag[Roaster]sort[title]]">
-                <option value=<<currentTiddler>>><$view field="roaster-name"/></option>
+                <option value=<<currentTiddler>>><$view field="roaster-name"><$view field="title"/></$view></option>
             </$list>
+            <option value="__new__">+ Add New Roaster...</option>
         </$select>
     </div>
 </div>
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+<$list filter="[{$:/temp/new-coffee-bag!!roaster}match[__new__]]" variable="ignore">
+    <div class="ct-info-box ct-mb-md">
+        <div class="ct-setup-grid">
+            <div>
+                <label class="ct-label">New Roaster Name *</label>
+                <$edit-text tiddler="$:/temp/new-coffee-bag" field="new-roaster-name" placeholder="e.g. Onyx Coffee Lab" class="tc-edit-texteditor ct-input"/>
+            </div>
+            <div>
+                <label class="ct-label">Roaster Location</label>
+                <$edit-text tiddler="$:/temp/new-coffee-bag" field="new-roaster-location" placeholder="e.g. Rogers, AR" class="tc-edit-texteditor ct-input"/>
+            </div>
+        </div>
+    </div>
+</$list>
+
+<div class="ct-setup-grid ct-mb-md">
     <div>
-        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Origin</label>
-        <$edit-text tiddler="$:/temp/new-coffee-bag" field="coffee-origin" placeholder="e.g. Ethiopia" class="tc-edit-texteditor" style="width: 100%;"/>
+        <label class="ct-label">Origin</label>
+        <$edit-text tiddler="$:/temp/new-coffee-bag" field="coffee-origin" placeholder="e.g. Ethiopia" class="tc-edit-texteditor ct-input"/>
     </div>
 
     <div>
-        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Roast Level</label>
-        <$select tiddler="$:/temp/new-coffee-bag" field="coffee-roast-level" class="tc-edit-texteditor" style="width: 100%;">
+        <label class="ct-label">Roast Level</label>
+        <$select tiddler="$:/temp/new-coffee-bag" field="coffee-roast-level" class="tc-edit-texteditor ct-input">
             <option value="">-- Select --</option>
             <option value="Light">Light</option>
             <option value="Medium-Light">Medium-Light</option>
@@ -59,15 +123,15 @@ type: text/vnd.tiddlywiki
     </div>
 </div>
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+<div class="ct-setup-grid ct-mb-md">
     <div>
-        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Varietal</label>
-        <$edit-text tiddler="$:/temp/new-coffee-bag" field="coffee-varietal" placeholder="e.g. Heirloom" class="tc-edit-texteditor" style="width: 100%;"/>
+        <label class="ct-label">Varietal</label>
+        <$edit-text tiddler="$:/temp/new-coffee-bag" field="coffee-varietal" placeholder="e.g. Heirloom" class="tc-edit-texteditor ct-input"/>
     </div>
 
     <div>
-        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Processing</label>
-        <$select tiddler="$:/temp/new-coffee-bag" field="coffee-processing" class="tc-edit-texteditor" style="width: 100%;">
+        <label class="ct-label">Processing</label>
+        <$select tiddler="$:/temp/new-coffee-bag" field="coffee-processing" class="tc-edit-texteditor ct-input">
             <option value="">-- Select --</option>
             <option value="Washed">Washed</option>
             <option value="Natural">Natural</option>
@@ -78,15 +142,26 @@ type: text/vnd.tiddlywiki
     </div>
 </div>
 
-<div style="margin-bottom: 15px;">
-    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Tasting Notes</label>
-    <$edit-text tiddler="$:/temp/new-coffee-bag" field="coffee-tasting-notes" placeholder="e.g. Floral, berry, citrus..." class="tc-edit-texteditor" style="width: 100%; min-height: 80px;"/>
+<div class="ct-mb-md">
+    <label class="ct-label">Tasting Notes</label>
+    <$edit-text tiddler="$:/temp/new-coffee-bag" field="coffee-tasting-notes" placeholder="e.g. Floral, berry, citrus..." class="tc-edit-texteditor ct-textarea" min-height="80px"/>
 </div>
 
 </div>
 
 <div class="tc-modal-footer">
-    <$button class="tc-btn-invisible" actions=<<save-actions>>>
-        ✓ Create Coffee Type
-    </$button>
+    <$let
+        hasName={{{ [{$:/temp/new-coffee-bag!!coffee-name}trim[]!is[blank]then[yes]else[no]] }}}
+        roasterVal={{{ [{$:/temp/new-coffee-bag!!roaster}] }}}
+        newRoasterVal={{{ [{$:/temp/new-coffee-bag!!new-roaster-name}trim[]] }}}
+        hasRoaster={{{ [<roasterVal>match[__new__]then<newRoasterVal>!is[blank]then[yes]] ~[<roasterVal>!is[blank]!match[__new__]then[yes]] ~[[no]] }}}
+        isDisabled={{{ [<hasName>match[yes]] [<hasRoaster>match[yes]] +[count[]match[2]then[no]else[yes]] }}}
+    >
+        <$button class="tc-btn-invisible ct-btn ct-btn-secondary" actions=<<save-actions>> disabled=<<isDisabled>> style="margin-right: 8px;">
+            ✓ Create Coffee Type
+        </$button>
+        <$button class="tc-btn-invisible ct-btn ct-btn-primary" actions=<<save-and-purchase-actions>> disabled=<<isDisabled>>>
+            ✓ Create & Purchase Bag
+        </$button>
+    </$let>
 </div>

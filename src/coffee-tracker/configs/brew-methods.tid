@@ -1,0 +1,4 @@
+title: $:/plugins/mblackman/coffee-tracker/configs/brew-methods
+list: [[Pour Over]] Espresso Immersion [[French Press]] AeroPress [[Cold Brew]] [[Moka Pot]] Drip
+
+Default brew methods available when configuring brewers.

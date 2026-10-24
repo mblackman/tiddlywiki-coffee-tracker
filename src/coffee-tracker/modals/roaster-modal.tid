@@ -10,34 +10,43 @@ type: text/vnd.tiddlywiki
     roaster-name={{$:/temp/new-roaster!!roaster-name}}
     roaster-location={{$:/temp/new-roaster!!roaster-location}}
     roaster-website={{$:/temp/new-roaster!!roaster-website}}
+    my-notes={{$:/temp/new-roaster!!my-notes}}
     $savetitle="$:/temp/created-roaster"
 />
 <$action-deletetiddler $tiddler="$:/temp/new-roaster"/>
 <$action-sendmessage $message="tm-close-tiddler"/>
 <$action-navigate $to={{$:/temp/created-roaster}}/>
+<$action-deletetiddler $tiddler="$:/temp/created-roaster"/>
 \end
 
 <div class="tc-modal-body">
 
-<div style="margin-bottom: 15px;">
-    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Roaster Name *</label>
-    <$edit-text tiddler="$:/temp/new-roaster" field="roaster-name" placeholder="e.g. Blue Bottle Coffee" class="tc-edit-texteditor" style="width: 100%;"/>
+<div class="ct-mb-md">
+    <label class="ct-label">Roaster Name *</label>
+    <$edit-text tiddler="$:/temp/new-roaster" field="roaster-name" placeholder="e.g. Blue Bottle Coffee" class="tc-edit-texteditor ct-input"/>
 </div>
 
-<div style="margin-bottom: 15px;">
-    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Location</label>
-    <$edit-text tiddler="$:/temp/new-roaster" field="roaster-location" placeholder="e.g. Oakland, CA" class="tc-edit-texteditor" style="width: 100%;"/>
+<div class="ct-mb-md">
+    <label class="ct-label">Location</label>
+    <$edit-text tiddler="$:/temp/new-roaster" field="roaster-location" placeholder="e.g. Oakland, CA" class="tc-edit-texteditor ct-input"/>
 </div>
 
-<div style="margin-bottom: 15px;">
-    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Website</label>
-    <$edit-text tiddler="$:/temp/new-roaster" field="roaster-website" placeholder="https://" class="tc-edit-texteditor" style="width: 100%;"/>
+<div class="ct-mb-md">
+    <label class="ct-label">Website</label>
+    <$edit-text tiddler="$:/temp/new-roaster" field="roaster-website" placeholder="https://" class="tc-edit-texteditor ct-input"/>
+</div>
+
+<div class="ct-mb-md">
+    <label class="ct-label">Notes</label>
+    <$edit-text tiddler="$:/temp/new-roaster" field="my-notes" placeholder="Specialty, shipping notes, favorite blends..." class="tc-edit-texteditor ct-textarea" min-height="70px"/>
 </div>
 
 </div>
 
 <div class="tc-modal-footer">
-    <$button class="tc-btn-invisible" actions=<<save-actions>>>
-        ✓ Create Roaster
-    </$button>
+    <$let isValid={{{ [{$:/temp/new-roaster!!roaster-name}trim[]!is[blank]then[yes]else[no]] }}}>
+        <$button class="tc-btn-invisible ct-btn ct-btn-primary" actions=<<save-actions>> disabled={{{ [<isValid>match[no]then[yes]else[no]] }}}>
+            ✓ Create Roaster
+        </$button>
+    </$let>
 </div>

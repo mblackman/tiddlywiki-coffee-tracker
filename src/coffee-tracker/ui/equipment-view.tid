@@ -3,12 +3,54 @@ tags: $:/tags/ViewTemplate
 type: text/vnd.tiddlywiki
 
 <$list filter="[all[current]tag[Equipment]]">
-    <h2>{{!!equipment-name}}</h2>
-
-    <div class="ct-grid-2col ct-info-box ct-mb-md">
-        <div><strong>Type:</strong> {{!!equipment-type}}</div>
-        <div><strong>Manufacturer:</strong> {{!!equipment-manufacturer}}</div>
+<$let editState={{{ [[$:/state/coffee-tracker/edit/]addsuffix<currentTiddler>] }}}>
+    <div class="ct-flex-row ct-mb-md">
+        <h2 class="ct-m-0"><$view field="equipment-name"><$view field="title"/></$view></h2>
+        <$list filter="[<editState>get[text]!match[yes]]" variable="ignore">
+            <$button class="tc-btn-invisible ct-btn ct-btn-secondary" aria-label="Edit equipment details">
+                <$action-setfield $tiddler=<<editState>> text="yes"/>
+                ✏️ Edit
+            </$button>
+        </$list>
+        <$list filter="[<editState>get[text]match[yes]]" variable="ignore">
+            <$button class="tc-btn-invisible ct-btn ct-btn-primary" aria-label="Finish editing equipment details">
+                <$action-deletetiddler $tiddler=<<editState>>/>
+                ✓ Done
+            </$button>
+        </$list>
     </div>
+
+    <$list filter="[<editState>get[text]!match[yes]]" variable="ignore">
+        <div class="ct-grid-2col ct-info-box ct-mb-md">
+            <div><strong>Type:</strong> <$view field="equipment-type"><em class="ct-muted-text">—</em></$view></div>
+            <div><strong>Manufacturer:</strong> <$view field="equipment-manufacturer"><em class="ct-muted-text">—</em></$view></div>
+        </div>
+    </$list>
+
+    <$list filter="[<editState>get[text]match[yes]]" variable="ignore">
+        <div class="ct-info-box ct-mb-md">
+            <div class="ct-setup-grid ct-mb-sm">
+                <div>
+                    <label class="ct-label">Equipment Name</label>
+                    <$edit-text field="equipment-name" class="tc-edit-texteditor ct-input"/>
+                </div>
+                <div>
+                    <label class="ct-label">Type</label>
+                    <$select field="equipment-type" class="tc-edit-texteditor ct-input">
+                        <option value="Brewer">Brewer</option>
+                        <option value="Grinder">Grinder</option>
+                        <option value="Scale">Scale</option>
+                        <option value="Kettle">Kettle</option>
+                        <option value="Other">Other</option>
+                    </$select>
+                </div>
+            </div>
+            <div>
+                <label class="ct-label">Manufacturer</label>
+                <$edit-text field="equipment-manufacturer" class="tc-edit-texteditor ct-input"/>
+            </div>
+        </div>
+    </$list>
 
     <$list filter="[all[current]equipment-type[Brewer]]" variable="ignore">
         <$let
@@ -31,21 +73,28 @@ type: text/vnd.tiddlywiki
     </$list>
 
     <$list filter="[all[current]equipment-type[Grinder]]" variable="ignore">
-        <$let brew-count={{{ [tag[BrewLog]grinder<currentTiddler>count[]] }}}>
+        <$let
+            brew-count={{{ [tag[BrewLog]grinder<currentTiddler>count[]] }}}
+            avg-rating={{{ [tag[BrewLog]grinder<currentTiddler>get[overall-rating]average[]fixed[1]] }}}
+        >
         <div class="ct-stats-grid">
             <div class="ct-stat-card">
                 <div class="ct-stat-value"><$text text=<<brew-count>>/></div>
                 <div class="ct-stat-label">Total Brews</div>
             </div>
+            <$list filter="[<avg-rating>!is[blank]]" variable="ignore">
+                <div class="ct-stat-card">
+                    <div class="ct-stat-value"><$text text=<<avg-rating>>/> /10</div>
+                    <div class="ct-stat-label">Avg Rating</div>
+                </div>
+            </$list>
         </div>
         </$let>
     </$list>
 
     <div class="ct-section-margin">
-        <strong>My Notes:</strong>
-        <div class="ct-text-box">
-            <$view field="my-notes"><em class="ct-muted-text">No notes recorded yet</em></$view>
-        </div>
+        <label class="ct-label">My Notes</label>
+        <$edit-text field="my-notes" class="tc-edit-texteditor ct-textarea" min-height="60px" placeholder="Record grind ranges, filter papers, maintenance notes..."/>
     </div>
 
     <$list filter="[all[current]equipment-type[Brewer]]" variable="ignore">
@@ -96,4 +145,33 @@ type: text/vnd.tiddlywiki
             </div>
         </div>
     </$list>
+
+    <!-- Recent Brews Using This Equipment -->
+    <$list filter="[all[current]equipment-type[Brewer]] [all[current]equipment-type[Grinder]]" variable="ignore">
+        <hr>
+        <h3>Recent Brews</h3>
+        <div class="ct-table-wrapper">
+            <table class="ct-table">
+                <thead>
+                    <tr class="ct-table-header">
+                        <th>Date</th>
+                        <th>Coffee Bag</th>
+                        <th>Grind</th>
+                        <th>Rating</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <$list filter="[tag[BrewLog]brewer<currentTiddler>] [tag[BrewLog]grinder<currentTiddler>] +[unique[]!sort[brew-date]limit[10]]" emptyMessage="<tr><td colspan='4' style='padding: 15px; text-align: center;' class='ct-muted-text'>No brews recorded with this equipment yet</td></tr>">
+                        <tr>
+                            <td><$link to=<<currentTiddler>>><$view field="brew-date"/></$link></td>
+                            <td><$link to={{!!coffee-bag-instance}}><$view field="coffee-bag-instance"/></$link></td>
+                            <td><$text text={{{ [{!!grind-size}!is[blank]else[—]] }}}/></td>
+                            <td class="ct-text-bold"><$text text={{{ [{!!overall-rating}!is[blank]addsuffix[/10]else[—]] }}}/></td>
+                        </tr>
+                    </$list>
+                </tbody>
+            </table>
+        </div>
+    </$list>
+</$let>
 </$list>

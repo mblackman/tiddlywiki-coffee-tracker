@@ -18,35 +18,40 @@ Calculates the average of per-instance average ratings for a coffee bag
   exports.run = function(coffeeBag) {
     if (!coffeeBag) return '';
 
-    // Get all CoffeeBagInstance tiddlers for this coffee bag
-    var instances = $tw.wiki.filterTiddlers('[tag[CoffeeBagInstance]coffee-bag[' + coffeeBag + ']]');
+    // Get all CoffeeBagInstance tiddlers for this coffee bag safely without filter string interpolation
+    var allInstances = $tw.wiki.getTiddlersWithTag('CoffeeBagInstance');
+    var instances = allInstances.filter(function(title) {
+      var tiddler = $tw.wiki.getTiddler(title);
+      return tiddler && tiddler.fields['coffee-bag'] === coffeeBag;
+    });
 
     if (instances.length === 0) return '';
 
+    var allBrews = $tw.wiki.getTiddlersWithTag('BrewLog');
     var instanceAverages = [];
 
     // For each instance, calculate average rating
     instances.forEach(function(instance) {
-      var brews = $tw.wiki.filterTiddlers('[tag[BrewLog]coffee-bag-instance[' + instance + ']has[overall-rating]]');
+      var sum = 0;
+      var count = 0;
 
-      if (brews.length > 0) {
-        var sum = 0;
-        var count = 0;
-
-        brews.forEach(function(brew) {
-          var tiddler = $tw.wiki.getTiddler(brew);
-          if (tiddler) {
-            var rating = parseFloat(tiddler.fields['overall-rating']);
-            if (!isNaN(rating)) {
-              sum += rating;
-              count++;
-            }
+      allBrews.forEach(function(brew) {
+        var tiddler = $tw.wiki.getTiddler(brew);
+        if (
+          tiddler &&
+          tiddler.fields['coffee-bag-instance'] === instance &&
+          tiddler.fields['overall-rating'] !== undefined
+        ) {
+          var rating = parseFloat(tiddler.fields['overall-rating']);
+          if (!isNaN(rating)) {
+            sum += rating;
+            count++;
           }
-        });
-
-        if (count > 0) {
-          instanceAverages.push(parseFloat((sum / count).toFixed(1)));
         }
+      });
+
+      if (count > 0) {
+        instanceAverages.push(parseFloat((sum / count).toFixed(1)));
       }
     });
 

@@ -6,14 +6,13 @@ type: text/vnd.tiddlywiki
 \define save-actions()
 <$let
     bag-name={{{ [{$:/temp/new-coffee-bag-instance!!coffee-bag}] }}}
-    purchase-date={{{ [{$:/temp/new-coffee-bag-instance!!purchase-date}] }}}
-    title={{{ [<bag-name>addprefix[ - ]addprefix<purchase-date>] }}}
+    purchase-date={{{ [{$:/temp/new-coffee-bag-instance!!purchase-date}!is[blank]else<now "YYYY-0MM-0DD">] }}}
 >
 <$action-createtiddler
-    $basetitle=<<title>>
+    $basetitle={{{ [<bag-name>addsuffix[ - ]addsuffix<purchase-date>] }}}
     tags="CoffeeBagInstance"
-    coffee-bag={{$:/temp/new-coffee-bag-instance!!coffee-bag}}
-    purchase-date={{$:/temp/new-coffee-bag-instance!!purchase-date}}
+    coffee-bag=<<bag-name>>
+    purchase-date=<<purchase-date>>
     roast-date={{$:/temp/new-coffee-bag-instance!!roast-date}}
     cost={{$:/temp/new-coffee-bag-instance!!cost}}
     weight={{$:/temp/new-coffee-bag-instance!!weight}}
@@ -24,24 +23,20 @@ type: text/vnd.tiddlywiki
 <$action-deletetiddler $tiddler="$:/temp/new-coffee-bag-instance"/>
 <$action-sendmessage $message="tm-close-tiddler"/>
 <$action-navigate $to={{$:/temp/created-coffee-bag-instance}}/>
+<$action-deletetiddler $tiddler="$:/temp/created-coffee-bag-instance"/>
 \end
-
-<!-- Initialize default values -->
-<$list filter="[{$:/temp/new-coffee-bag-instance!!purchase-date}is[blank]]" variable="ignore">
-    <$action-setfield $tiddler="$:/temp/new-coffee-bag-instance" purchase-date=<<now "YYYY-0MM-0DD">>/>
-</$list>
 
 <div class="tc-modal-body">
 
-<div style="margin-bottom: 15px;">
-    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Coffee Type *</label>
-    <$select tiddler="$:/temp/new-coffee-bag-instance" field="coffee-bag" class="tc-edit-texteditor" style="width: 100%;">
+<div class="ct-mb-md">
+    <label class="ct-label">Coffee Type *</label>
+    <$select tiddler="$:/temp/new-coffee-bag-instance" field="coffee-bag" class="tc-edit-texteditor ct-input">
         <option value="">-- Select Coffee --</option>
         <$list filter="[tag[CoffeeBag]sort[title]]">
-            <option value=<<currentTiddler>>><$view field="coffee-name"/></option>
+            <option value=<<currentTiddler>>><$view field="coffee-name"><$view field="title"/></$view> (<$view field="roaster"/>)</option>
         </$list>
     </$select>
-    <div style="margin-top: 5px; font-size: 0.9em; color: <<colour muted-foreground>>;">
+    <div style="margin-top: 5px; font-size: 0.9em;" class="ct-muted-text">
         Don't see your coffee? <$button class="tc-btn-invisible ct-link" style="padding: 0; text-decoration: underline;">
             <$action-sendmessage $message="tm-close-tiddler"/>
             <$action-sendmessage $message="tm-modal" $param="$:/plugins/mblackman/coffee-tracker/modal/coffee-bag"/>
@@ -50,39 +45,41 @@ type: text/vnd.tiddlywiki
     </div>
 </div>
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+<div class="ct-setup-grid ct-mb-md">
     <div>
-        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Purchase Date *</label>
-        <$edit-text tiddler="$:/temp/new-coffee-bag-instance" field="purchase-date" type="date" class="tc-edit-texteditor" style="width: 100%;"/>
+        <label class="ct-label">Purchase Date *</label>
+        <$edit-text tiddler="$:/temp/new-coffee-bag-instance" field="purchase-date" type="date" default=<<now "YYYY-0MM-0DD">> class="tc-edit-texteditor ct-input"/>
     </div>
 
     <div>
-        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Roast Date</label>
-        <$edit-text tiddler="$:/temp/new-coffee-bag-instance" field="roast-date" type="date" class="tc-edit-texteditor" style="width: 100%;"/>
-    </div>
-</div>
-
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-    <div>
-        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Cost</label>
-        <$edit-text tiddler="$:/temp/new-coffee-bag-instance" field="cost" placeholder="$0.00" class="tc-edit-texteditor" style="width: 100%;"/>
-    </div>
-
-    <div>
-        <label style="display: block; font-weight: bold; margin-bottom: 5px;">Weight</label>
-        <$edit-text tiddler="$:/temp/new-coffee-bag-instance" field="weight" placeholder="e.g. 340g" class="tc-edit-texteditor" style="width: 100%;"/>
+        <label class="ct-label">Roast Date</label>
+        <$edit-text tiddler="$:/temp/new-coffee-bag-instance" field="roast-date" type="date" class="tc-edit-texteditor ct-input"/>
     </div>
 </div>
 
-<div style="margin-bottom: 15px;">
-    <label style="display: block; font-weight: bold; margin-bottom: 5px;">My Thoughts</label>
-    <$edit-text tiddler="$:/temp/new-coffee-bag-instance" field="my-thoughts" placeholder="Initial impressions, notes..." class="tc-edit-texteditor" style="width: 100%; min-height: 80px;"/>
+<div class="ct-setup-grid ct-mb-md">
+    <div>
+        <label class="ct-label">Cost</label>
+        <$edit-text tiddler="$:/temp/new-coffee-bag-instance" field="cost" placeholder="e.g. $20.00" class="tc-edit-texteditor ct-input"/>
+    </div>
+
+    <div>
+        <label class="ct-label">Weight (g)</label>
+        <$edit-text tiddler="$:/temp/new-coffee-bag-instance" field="weight" placeholder="e.g. 340g" class="tc-edit-texteditor ct-input"/>
+    </div>
+</div>
+
+<div class="ct-mb-md">
+    <label class="ct-label">My Thoughts</label>
+    <$edit-text tiddler="$:/temp/new-coffee-bag-instance" field="my-thoughts" placeholder="Initial impressions, notes..." class="tc-edit-texteditor ct-textarea" min-height="80px"/>
 </div>
 
 </div>
 
 <div class="tc-modal-footer">
-    <$button class="tc-btn-invisible" actions=<<save-actions>>>
-        ✓ Purchase Bag
-    </$button>
+    <$let isDisabled={{{ [{$:/temp/new-coffee-bag-instance!!coffee-bag}trim[]!is[blank]then[no]else[yes]] }}}>
+        <$button class="tc-btn-invisible ct-btn ct-btn-primary" actions=<<save-actions>> disabled=<<isDisabled>>>
+            ✓ Purchase Bag
+        </$button>
+    </$let>
 </div>

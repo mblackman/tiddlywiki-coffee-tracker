@@ -3,22 +3,97 @@ tags: $:/tags/ViewTemplate
 type: text/vnd.tiddlywiki
 
 <$list filter="[all[current]tag[CoffeeBag]]">
-    <h2>{{!!coffee-name}}</h2>
-
-    <div class="ct-grid-2col ct-info-box ct-section-margin-lg">
-        <div><strong>Roaster:</strong> <$link to={{!!roaster}}><$text text={{!!roaster}}/></$link></div>
-        <div><strong>Origin:</strong> {{!!coffee-origin}}</div>
-        <div><strong>Roast Level:</strong> {{!!coffee-roast-level}}</div>
-        <div><strong>Varietal:</strong> {{!!coffee-varietal}}</div>
-        <div><strong>Processing:</strong> {{!!coffee-processing}}</div>
+<$let editState={{{ [[$:/state/coffee-tracker/edit/]addsuffix<currentTiddler>] }}}>
+    <div class="ct-flex-row ct-mb-md">
+        <h2 class="ct-m-0"><$view field="coffee-name"><$view field="title"/></$view></h2>
+        <$list filter="[<editState>get[text]!match[yes]]" variable="ignore">
+            <$button class="tc-btn-invisible ct-btn ct-btn-secondary" aria-label="Edit coffee type details">
+                <$action-setfield $tiddler=<<editState>> text="yes"/>
+                ✏️ Edit
+            </$button>
+        </$list>
+        <$list filter="[<editState>get[text]match[yes]]" variable="ignore">
+            <$button class="tc-btn-invisible ct-btn ct-btn-primary" aria-label="Finish editing coffee type details">
+                <$action-deletetiddler $tiddler=<<editState>>/>
+                ✓ Done
+            </$button>
+        </$list>
     </div>
 
-    <div class="ct-section-margin-lg">
-        <strong>Tasting Notes:</strong>
-        <div class="ct-highlight-box">
-            <$view field="coffee-tasting-notes"><em class="ct-muted-text">No tasting notes</em></$view>
+    <$list filter="[<editState>get[text]!match[yes]]" variable="ignore">
+        <div class="ct-grid-2col ct-info-box ct-section-margin-lg">
+            <div><strong>Roaster:</strong> <$link to={{!!roaster}}><$text text={{!!roaster}}/></$link></div>
+            <div><strong>Origin:</strong> <$view field="coffee-origin"><em class="ct-muted-text">—</em></$view></div>
+            <div><strong>Roast Level:</strong> <$view field="coffee-roast-level"><em class="ct-muted-text">—</em></$view></div>
+            <div><strong>Varietal:</strong> <$view field="coffee-varietal"><em class="ct-muted-text">—</em></$view></div>
+            <div><strong>Processing:</strong> <$view field="coffee-processing"><em class="ct-muted-text">—</em></$view></div>
         </div>
-    </div>
+
+        <div class="ct-section-margin-lg">
+            <strong>Tasting Notes:</strong>
+            <div class="ct-highlight-box">
+                <$view field="coffee-tasting-notes"><em class="ct-muted-text">No tasting notes</em></$view>
+            </div>
+        </div>
+    </$list>
+
+    <$list filter="[<editState>get[text]match[yes]]" variable="ignore">
+        <div class="ct-info-box ct-section-margin-lg">
+            <div class="ct-setup-grid ct-mb-sm">
+                <div>
+                    <label class="ct-label">Coffee Name</label>
+                    <$edit-text field="coffee-name" class="tc-edit-texteditor ct-input"/>
+                </div>
+                <div>
+                    <label class="ct-label">Roaster</label>
+                    <$select field="roaster" class="tc-edit-texteditor ct-input">
+                        <option value="">-- Select Roaster --</option>
+                        <$list filter="[tag[Roaster]sort[title]]" variable="roasterItem">
+                            <option value=<<roasterItem>>><$view tiddler=<<roasterItem>> field="roaster-name"><$view tiddler=<<roasterItem>> field="title"/></$view></option>
+                        </$list>
+                    </$select>
+                </div>
+            </div>
+            <div class="ct-setup-grid ct-mb-sm">
+                <div>
+                    <label class="ct-label">Origin</label>
+                    <$edit-text field="coffee-origin" class="tc-edit-texteditor ct-input"/>
+                </div>
+                <div>
+                    <label class="ct-label">Roast Level</label>
+                    <$select field="coffee-roast-level" class="tc-edit-texteditor ct-input">
+                        <option value="">-- Select --</option>
+                        <option value="Light">Light</option>
+                        <option value="Medium-Light">Medium-Light</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Medium-Dark">Medium-Dark</option>
+                        <option value="Dark">Dark</option>
+                    </$select>
+                </div>
+            </div>
+            <div class="ct-setup-grid ct-mb-sm">
+                <div>
+                    <label class="ct-label">Varietal</label>
+                    <$edit-text field="coffee-varietal" class="tc-edit-texteditor ct-input"/>
+                </div>
+                <div>
+                    <label class="ct-label">Processing</label>
+                    <$select field="coffee-processing" class="tc-edit-texteditor ct-input">
+                        <option value="">-- Select --</option>
+                        <option value="Washed">Washed</option>
+                        <option value="Natural">Natural</option>
+                        <option value="Honey">Honey</option>
+                        <option value="Anaerobic">Anaerobic</option>
+                        <option value="Other">Other</option>
+                    </$select>
+                </div>
+            </div>
+            <div>
+                <label class="ct-label">Tasting Notes</label>
+                <$edit-text field="coffee-tasting-notes" class="tc-edit-texteditor ct-textarea" min-height="70px"/>
+            </div>
+        </div>
+    </$list>
 
     <hr>
 
@@ -26,7 +101,7 @@ type: text/vnd.tiddlywiki
     <$let
         total-bags={{{ [tag[CoffeeBagInstance]coffee-bag<currentTiddler>count[]] }}}
         active-bags={{{ [tag[CoffeeBagInstance]coffee-bag<currentTiddler>!tag[Finished]count[]] }}}
-        total-brews={{{ [tag[CoffeeBagInstance]coffee-bag<currentTiddler>] :map[tag[BrewLog]coffee-bag-instance<currentTiddler>] +[count[]] }}}
+        total-brews={{{ [tag[CoffeeBagInstance]coffee-bag<currentTiddler>] :map:flat[tag[BrewLog]coffee-bag-instance<currentTiddler>] +[count[]] }}}
     >
     <$wikify name="avg-rating" text="""<$macrocall $name="coffee-bag-avg-of-avgs" coffeeBag=<<currentTiddler>>/>""">
     <div class="ct-stats-grid">
@@ -68,14 +143,28 @@ type: text/vnd.tiddlywiki
                     <$list filter="[all[current]tag[Finished]]" variable="ignore">
                         <span class="ct-tag ct-badge-danger" style="margin-left: 10px;">FINISHED</span>
                     </$list>
+                    <$list filter="[all[current]!tag[Finished]has[roast-date]]" variable="ignore">
+                        <span style="margin-left: 8px;">
+                            <$macrocall $name="coffee-freshness-badge" roastDate={{!!roast-date}}/>
+                        </span>
+                    </$list>
                 </div>
                 <div style="text-align: right;">
-                    <div class="ct-card-subtitle">Purchased: <$view field="purchase-date"/></div>
-                    <$let brew-count={{{ [tag[BrewLog]coffee-bag-instance<currentTiddler>count[]] }}}>
-                        <div class="ct-card-subtitle"><$text text=<<brew-count>>/> brews</div>
+                    <div class="ct-card-subtitle ct-m-0">Purchased: <$view field="purchase-date"/></div>
+                    <$let
+                        brew-count={{{ [tag[BrewLog]coffee-bag-instance<currentTiddler>count[]] }}}
+                        bag-avg={{{ [tag[BrewLog]coffee-bag-instance<currentTiddler>get[overall-rating]average[]fixed[1]] }}}
+                    >
+                        <div class="ct-card-subtitle ct-m-0">
+                            <$text text=<<brew-count>>/> brews
+                            <$list filter="[<bag-avg>!is[blank]]" variable="ignore">
+                                • ★ <$text text=<<bag-avg>>/>
+                            </$list>
+                        </div>
                     </$let>
                 </div>
             </div>
         </div>
     </$list>
+</$let>
 </$list>

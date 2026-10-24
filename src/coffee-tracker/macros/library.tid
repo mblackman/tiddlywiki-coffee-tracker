@@ -3,28 +3,27 @@ type: text/vnd.tiddlywiki
 tags: $:/tags/Macro
 
 \define coffee-freshness-badge(roastDate)
-<$wikify name="roast-days" text="""<$macrocall $name="days-since-roast" roastDate="$roastDate$"/>""">
 <$let
+    roast-days={{{ [<__roastDate__>days-since-roast[]] }}}
     peak-start={{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-start}}
     peak-end={{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-end}}
     optimal-end={{$:/plugins/mblackman/coffee-tracker/config/freshness/optimal-end}}
 >
 <$list filter="[<roast-days>!is[blank]]" variable="ignore">
     <$list filter="[<roast-days>compare:number:lt<peak-start>]" variable="ignore">
-        <span class="ct-tag ct-badge-success">Fresh</span>
+        <span class="ct-tag ct-badge-info" title="Coffee is very fresh and still degassing">Fresh • <$text text=<<roast-days>>/>d</span>
     </$list>
     <$list filter="[<roast-days>compare:number:gteq<peak-start>compare:number:lt<peak-end>]" variable="ignore">
-        <span class="ct-tag ct-badge-warning">Peak</span>
+        <span class="ct-tag ct-badge-success" title="Optimal flavor development window">Peak • <$text text=<<roast-days>>/>d</span>
     </$list>
     <$list filter="[<roast-days>compare:number:gteq<peak-end>compare:number:lt<optimal-end>]" variable="ignore">
-        <span class="ct-tag ct-badge-warning">Good</span>
+        <span class="ct-tag ct-badge-warning" title="Well-integrated flavors, still enjoyable">Good • <$text text=<<roast-days>>/>d</span>
     </$list>
     <$list filter="[<roast-days>compare:number:gteq<optimal-end>]" variable="ignore">
-        <span class="ct-tag ct-badge-danger">Aging</span>
+        <span class="ct-tag ct-badge-danger" title="Past optimal freshness window">Aging • <$text text=<<roast-days>>/>d</span>
     </$list>
 </$list>
 </$let>
-</$wikify>
 \end
 
 \define coffee-stat-card(value, label)
@@ -42,23 +41,26 @@ tags: $:/tags/Macro
     coffee-bag-instance="$coffee-bag-instance$"
     brew-date=<<now "YYYY-0MM-0DD">>
     brew-time=<<now "0hh:0mm">>
+    $savetitle="$:/temp/created-brew-log"
 />
-<$action-navigate $to=<<newTitle>>/>
+<$action-setfield $tiddler={{{ [[$:/state/coffee-tracker/edit/]addsuffix{$:/temp/created-brew-log}] }}} text="yes"/>
+<$action-navigate $to={{$:/temp/created-brew-log}}/>
+<$action-deletetiddler $tiddler="$:/temp/created-brew-log"/>
 </$let>
 \end
 
 \define create-brew-log-from-last(lastBrew)
 <$let
     newTitle=<<now "Brew Log: YYYY-0MM-0DD 0hh:0mm">>
-    coffee-bag={{{ [[$lastBrew$]get[coffee-bag-instance]] }}}
-    dose={{{ [[$lastBrew$]get[dose]] }}}
-    water={{{ [[$lastBrew$]get[water]] }}}
-    yield={{{ [[$lastBrew$]get[yield]] }}}
-    water-temp={{{ [[$lastBrew$]get[water-temp]] }}}
-    grind-size={{{ [[$lastBrew$]get[grind-size]] }}}
-    brewer={{{ [[$lastBrew$]get[brewer]] }}}
-    grinder={{{ [[$lastBrew$]get[grinder]] }}}
-    brew-method={{{ [[$lastBrew$]get[brew-method]] }}}
+    coffee-bag={{{ [<__lastBrew__>get[coffee-bag-instance]] }}}
+    dose={{{ [<__lastBrew__>get[dose]] }}}
+    water={{{ [<__lastBrew__>get[water]] }}}
+    yield={{{ [<__lastBrew__>get[yield]] }}}
+    water-temp={{{ [<__lastBrew__>get[water-temp]] }}}
+    grind-size={{{ [<__lastBrew__>get[grind-size]] }}}
+    brewer={{{ [<__lastBrew__>get[brewer]] }}}
+    grinder={{{ [<__lastBrew__>get[grinder]] }}}
+    brew-method={{{ [<__lastBrew__>get[brew-method]] }}}
 >
 <$action-createtiddler
     $basetitle=<<newTitle>>
@@ -74,7 +76,35 @@ tags: $:/tags/Macro
     brewer=<<brewer>>
     grinder=<<grinder>>
     brew-method=<<brew-method>>
+    $savetitle="$:/temp/created-brew-log"
 />
-<$action-navigate $to=<<newTitle>>/>
+<$action-setfield $tiddler={{{ [[$:/state/coffee-tracker/edit/]addsuffix{$:/temp/created-brew-log}] }}} text="yes"/>
+<$action-navigate $to={{$:/temp/created-brew-log}}/>
+<$action-deletetiddler $tiddler="$:/temp/created-brew-log"/>
+</$let>
+\end
+
+\define copy-brew-log-settings(sourceBrew, targetBrew)
+<$let
+    dose={{{ [<__sourceBrew__>get[dose]] }}}
+    water={{{ [<__sourceBrew__>get[water]] }}}
+    yield={{{ [<__sourceBrew__>get[yield]] }}}
+    water-temp={{{ [<__sourceBrew__>get[water-temp]] }}}
+    grind-size={{{ [<__sourceBrew__>get[grind-size]] }}}
+    brewer={{{ [<__sourceBrew__>get[brewer]] }}}
+    grinder={{{ [<__sourceBrew__>get[grinder]] }}}
+    brew-method={{{ [<__sourceBrew__>get[brew-method]] }}}
+>
+<$action-setfield
+    $tiddler=<<__targetBrew__>>
+    dose=<<dose>>
+    water=<<water>>
+    yield=<<yield>>
+    water-temp=<<water-temp>>
+    grind-size=<<grind-size>>
+    brewer=<<brewer>>
+    grinder=<<grinder>>
+    brew-method=<<brew-method>>
+/>
 </$let>
 \end

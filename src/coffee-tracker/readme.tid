@@ -26,8 +26,9 @@ A comprehensive TiddlyWiki plugin for tracking your coffee journey - from roaste
 !!! ⏰ Freshness Tracking
 Automatic freshness indicators based on roast date:
 
+* ''Fresh'' (< 7 days): Coffee is resting / degassing
 * ''Peak'' (7-21 days): Optimal flavor development
-* ''Optimal'' (21-60 days): Prime drinking window
+* ''Good'' (21-60 days): Prime drinking window
 * ''Aging'' (60+ days): Still usable but past peak
 * Visual badges and helpful status messages
 
@@ -122,10 +123,11 @@ Click any entry to see its detailed view:
 
 !!! Freshness Tracking Tips
 
-The plugin automatically calculates freshness based on the `bag-roast-date`:
+The plugin automatically calculates freshness based on the `roast-date`:
 
+* ''Fresh'': < 7 days after roast - coffee is still resting/degassing
 * ''Peak'': 7-21 days after roast - flavors are developed and vibrant
-* ''Optimal'': 21-60 days after roast - well-integrated flavors, still excellent
+* ''Good'': 21-60 days after roast - well-integrated flavors, still excellent
 * ''Aging'': 60+ days after roast - past prime but still usable
 
 Different coffees peak at different times:
@@ -169,7 +171,7 @@ Use a consistent 1-10 scale:
 
 !! Technical Details
 
-* ''Version'': 0.0.1
+* ''Version'': 0.0.9
 * ''Requires'': TiddlyWiki >= 5.1.22
 * ''Author'': mblackman
 * ''License'': MIT

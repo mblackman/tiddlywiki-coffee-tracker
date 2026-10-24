@@ -24,9 +24,10 @@ Coffee Tracker plugin startup initialization
       '$:/config/PageControlButtons/Visibility/$:/plugins/mblackman/coffee-tracker/ui/toolbar-quick-brew': 'show',
     };
 
-    // Set defaults for any missing config values
+    // Set defaults only if neither a real nor a shadow tiddler exists,
+    // avoiding dirtying the wiki on startup when shadow defaults already exist.
     Object.keys(configDefaults).forEach(function(title) {
-      if (!$tw.wiki.getTiddler(title)) {
+      if (!$tw.wiki.tiddlerExists(title) && !$tw.wiki.isShadowTiddler(title)) {
         $tw.wiki.addTiddler(
           new $tw.Tiddler({
             title: title,

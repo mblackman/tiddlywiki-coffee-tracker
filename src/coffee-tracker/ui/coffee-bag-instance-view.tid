@@ -3,75 +3,163 @@ tags: $:/tags/ViewTemplate
 type: text/vnd.tiddlywiki
 
 <$list filter="[all[current]tag[CoffeeBagInstance]]">
+<$let editState={{{ [[$:/state/coffee-tracker/edit/]addsuffix<currentTiddler>] }}}>
     <div class="ct-flex-start ct-mb-md">
         <div>
-            <h3 style="margin: 0 0 5px 0;">Instance of <$link to={{!!coffee-bag}}>{{!!coffee-bag}}</$link></h3>
+            <h3 style="margin: 0 0 5px 0;">Bag of <$link to={{!!coffee-bag}}>{{!!coffee-bag}}</$link></h3>
             <$list filter="[all[current]tag[Finished]]" variable="ignore">
-                <span class="ct-tag" style="background: <<colour dirty-indicator>>;">FINISHED</span>
+                <span class="ct-tag ct-badge-danger">FINISHED</span>
             </$list>
         </div>
-        <$list filter="[all[current]!tag[Finished]]" variable="ignore">
-            <$button class="tc-btn-invisible ct-btn ct-btn-secondary" aria-label="Mark this coffee bag as finished">
-                <$action-listops $tags="+[append[Finished]]"/>
-                Mark as Finished
-            </$button>
-        </$list>
-        <$list filter="[all[current]tag[Finished]]" variable="ignore">
-            <$button class="tc-btn-invisible ct-btn ct-btn-primary" aria-label="Mark this coffee bag as active again">
-                <$action-listops $tags="-Finished"/>
-                Mark as Active
-            </$button>
-        </$list>
+        <div style="display: flex; gap: 8px;">
+            <$list filter="[<editState>get[text]!match[yes]]" variable="ignore">
+                <$button class="tc-btn-invisible ct-btn ct-btn-secondary" aria-label="Edit bag details">
+                    <$action-setfield $tiddler=<<editState>> text="yes"/>
+                    ✏️ Edit
+                </$button>
+            </$list>
+            <$list filter="[<editState>get[text]match[yes]]" variable="ignore">
+                <$button class="tc-btn-invisible ct-btn ct-btn-primary" aria-label="Finish editing bag details">
+                    <$action-deletetiddler $tiddler=<<editState>>/>
+                    ✓ Done
+                </$button>
+            </$list>
+            <$list filter="[all[current]!tag[Finished]]" variable="ignore">
+                <$button class="tc-btn-invisible ct-btn ct-btn-secondary" aria-label="Mark this coffee bag as finished">
+                    <$action-listops $tags="+[append[Finished]]"/>
+                    ✓ Mark Finished
+                </$button>
+            </$list>
+            <$list filter="[all[current]tag[Finished]]" variable="ignore">
+                <$button class="tc-btn-invisible ct-btn ct-btn-primary" aria-label="Mark this coffee bag as active again">
+                    <$action-listops $tags="-Finished"/>
+                    ↺ Reopen Bag
+                </$button>
+            </$list>
+        </div>
     </div>
 
-    <div class="ct-grid-2col ct-mb-md">
-        <div>
-            <strong>Purchase Date:</strong> {{!!purchase-date}}
+    <$list filter="[<editState>get[text]!match[yes]]" variable="ignore">
+        <div class="ct-grid-2col ct-info-box ct-mb-md">
+            <div>
+                <strong>Purchase Date:</strong> <$view field="purchase-date"><em class="ct-muted-text">—</em></$view>
+            </div>
+            <div>
+                <strong>Roast Date:</strong> <$view field="roast-date"><em class="ct-muted-text">—</em></$view>
+            </div>
+            <div>
+                <strong>Cost:</strong> <$view field="cost"><em class="ct-muted-text">—</em></$view>
+            </div>
+            <div>
+                <strong>Initial Weight:</strong> <$view field="weight"><em class="ct-muted-text">—</em></$view>
+            </div>
         </div>
-        <div>
-            <strong>Roast Date:</strong> {{!!roast-date}}
-        </div>
-        <div>
-            <strong>Cost:</strong> {{!!cost}}
-        </div>
-        <div>
-            <strong>Weight:</strong> {{!!weight}}
-        </div>
-    </div>
+    </$list>
 
-    <$let roast-date={{!!roast-date}}>
-    <$list filter="[<roast-date>!is[blank]]" variable="ignore">
-        <$wikify name="roast-days" text="""<$macrocall $name="days-since-roast" roastDate=<<roast-date>>/>""">
+    <$list filter="[<editState>get[text]match[yes]]" variable="ignore">
+        <div class="ct-info-box ct-mb-md">
+            <div class="ct-setup-grid ct-mb-sm">
+                <div>
+                    <label class="ct-label">Coffee Type</label>
+                    <$select field="coffee-bag" class="tc-edit-texteditor ct-input">
+                        <option value="">-- Select Coffee --</option>
+                        <$list filter="[tag[CoffeeBag]sort[title]]" variable="coffeeType">
+                            <option value=<<coffeeType>>><$view tiddler=<<coffeeType>> field="coffee-name"><$view tiddler=<<coffeeType>> field="title"/></$view></option>
+                        </$list>
+                    </$select>
+                </div>
+                <div>
+                    <label class="ct-label">Cost</label>
+                    <$edit-text field="cost" placeholder="$20.00" class="tc-edit-texteditor ct-input"/>
+                </div>
+            </div>
+            <div class="ct-setup-grid ct-mb-sm">
+                <div>
+                    <label class="ct-label">Purchase Date</label>
+                    <$edit-text field="purchase-date" type="date" class="tc-edit-texteditor ct-input"/>
+                </div>
+                <div>
+                    <label class="ct-label">Roast Date</label>
+                    <$edit-text field="roast-date" type="date" class="tc-edit-texteditor ct-input"/>
+                </div>
+            </div>
+            <div>
+                <label class="ct-label">Initial Weight (g)</label>
+                <$edit-text field="weight" placeholder="e.g. 340g" class="tc-edit-texteditor ct-input"/>
+            </div>
+        </div>
+    </$list>
+
+    <!-- Remaining Weight & Usage Tracker -->
+    <$let
+        rawWeight={{{ [{!!weight}split[g]first[]trim[]] }}}
+        remainingGrams={{{ [all[current]remaining-bag-weight[]] }}}
+        usedGrams={{{ [tag[BrewLog]coffee-bag-instance<currentTiddler>get[dose]sum[]round[]] ~[[0]] }}}
+        avgDose={{{ [tag[BrewLog]coffee-bag-instance<currentTiddler>get[dose]average[]] ~[[18]] }}}
+        pctRemaining={{{ [<remainingGrams>!is[blank]divide<rawWeight>multiply[100]round[]] }}}
+        estBrewsLeft={{{ [<remainingGrams>!is[blank]divide<avgDose>floor[]] }}}
+    >
+    <$list filter="[<remainingGrams>!is[blank]]" variable="ignore">
+        <div class="ct-info-box ct-mb-md">
+            <div class="ct-flex-row">
+                <span>
+                    <strong>Remaining Coffee:</strong>
+                    <span class="ct-emphasis-text"><$text text=<<remainingGrams>>/>g</span>
+                    <span class="ct-muted-text"> / <$text text=<<rawWeight>>/>g (<$text text=<<usedGrams>>/>g brewed)</span>
+                </span>
+                <$list filter="[all[current]!tag[Finished]]" variable="ignore">
+                    <span class="ct-text-sm ct-muted-text">
+                        ~<$text text=<<estBrewsLeft>>/> brews left
+                    </span>
+                </$list>
+            </div>
+            <div class="ct-progress-bar">
+                <div class="ct-progress-fill" style={{{ [[width: ]addsuffix<pctRemaining>addsuffix[%;]] }}}/>
+            </div>
+            <$list filter="[all[current]!tag[Finished]] [<remainingGrams>compare:number:lteq[0]] +[count[]match[2]]" variable="ignore">
+                <div class="ct-flex-row ct-mt-sm">
+                    <span class="ct-text-sm ct-text-warning">Looks like this bag is empty!</span>
+                    <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-text-sm">
+                        <$action-listops $tags="+[append[Finished]]"/>
+                        Mark Bag as Finished
+                    </$button>
+                </div>
+            </$list>
+        </div>
+    </$list>
+    </$let>
+
+    <!-- Freshness Banner (only shown while bag is active) -->
+    <$list filter="[all[current]!tag[Finished]has[roast-date]]" variable="ignore">
         <$let
+            roast-days={{{ [all[current]days-since-roast[roast-date]] }}}
             peak-start={{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-start}}
             peak-end={{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-end}}
             optimal-end={{$:/plugins/mblackman/coffee-tracker/config/freshness/optimal-end}}
         >
-        <div class="ct-highlight-box">
-            <strong>Days Since Roast:</strong> <span class="ct-emphasis-text"><$text text=<<roast-days>>/></span>
-            <$list filter="[<roast-days>compare:number:lt<peak-start>]" variable="ignore">
-                <span style="margin-left: 10px; color: <<colour primary>>;">✓ Very fresh (degassing)</span>
-            </$list>
-            <$list filter="[<roast-days>compare:number:gteq<peak-start>compare:number:lt<peak-end>]" variable="ignore">
-                <span style="margin-left: 10px; color: <<colour primary>>;">☕ Peak freshness!</span>
-            </$list>
-            <$list filter="[<roast-days>compare:number:gteq<peak-end>compare:number:lt<optimal-end>]" variable="ignore">
-                <span class="ct-muted-text" style="margin-left: 10px;">☕ Still good</span>
-            </$list>
-            <$list filter="[<roast-days>compare:number:gteq<optimal-end>]" variable="ignore">
-                <span style="margin-left: 10px; color: <<colour dirty-indicator>>;">⚠ Aging</span>
-            </$list>
-        </div>
+        <$list filter="[<roast-days>!is[blank]]" variable="ignore">
+            <div class="ct-highlight-box">
+                <strong>Days Since Roast:</strong> <span class="ct-emphasis-text"><$text text=<<roast-days>>/></span>
+                <$list filter="[<roast-days>compare:number:lt<peak-start>]" variable="ignore">
+                    <span style="margin-left: 10px;" class="ct-text-primary">✓ Very fresh (degassing)</span>
+                </$list>
+                <$list filter="[<roast-days>compare:number:gteq<peak-start>compare:number:lt<peak-end>]" variable="ignore">
+                    <span style="margin-left: 10px;" class="ct-text-primary">☕ Peak freshness!</span>
+                </$list>
+                <$list filter="[<roast-days>compare:number:gteq<peak-end>compare:number:lt<optimal-end>]" variable="ignore">
+                    <span class="ct-muted-text" style="margin-left: 10px;">☕ Still good</span>
+                </$list>
+                <$list filter="[<roast-days>compare:number:gteq<optimal-end>]" variable="ignore">
+                    <span style="margin-left: 10px;" class="ct-text-danger">⚠ Aging</span>
+                </$list>
+            </div>
+        </$list>
         </$let>
-        </$wikify>
     </$list>
-    </$let>
 
     <div class="ct-section-margin">
-        <strong>My Thoughts:</strong>
-        <div class="ct-text-box">
-            <$view field="my-thoughts"><em class="ct-muted-text">No thoughts recorded yet</em></$view>
-        </div>
+        <label class="ct-label">My Thoughts & Dial-In Notes</label>
+        <$edit-text field="my-thoughts" class="tc-edit-texteditor ct-textarea" min-height="60px" placeholder="Jot down dial-in tips, flavor evolution, or overall impressions of this bag..."/>
     </div>
 
     <hr>
@@ -81,6 +169,7 @@ type: text/vnd.tiddlywiki
     <$let
         brew-count={{{ [tag[BrewLog]coffee-bag-instance<currentTiddler>count[]] }}}
         avg-rating={{{ [tag[BrewLog]coffee-bag-instance<currentTiddler>get[overall-rating]average[]fixed[1]] }}}
+        lastBagBrew={{{ [tag[BrewLog]coffee-bag-instance<currentTiddler>sort[created]sort[brew-time]sort[brew-date]last[]] }}}
     >
     <div class="ct-flex-gap ct-mb-md">
         <div class="ct-stat-card ct-flex-1">
@@ -94,31 +183,57 @@ type: text/vnd.tiddlywiki
             </div>
         </$list>
     </div>
+
+    <div class="ct-flex-gap ct-mb-md">
+        <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-flex-1" aria-label="Add new brew log for this coffee bag">
+            <$macrocall $name="create-brew-log-actions" coffee-bag-instance=<<currentTiddler>>/>
+            ☕ Log New Brew
+        </$button>
+        <$list filter="[<lastBagBrew>!is[blank]]" variable="ignore">
+            <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-flex-1" aria-label="Log a new brew copying parameters from the last brew of this bag">
+                <$macrocall $name="create-brew-log-from-last" lastBrew=<<lastBagBrew>>/>
+                ⚡ Brew Again (Copy Last)
+            </$button>
+        </$list>
+    </div>
     </$let>
 
-    <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-w-full ct-mb-md" aria-label="Add new brew log for this coffee bag">
-        <$macrocall $name="create-brew-log-actions" coffee-bag-instance=<<currentTiddler>>/>
-        ☕ Add New Brew Log
-    </$button>
-
-    <table class="ct-table">
-        <thead>
-            <tr class="ct-table-header">
-                <th>Date</th>
-                <th>Method</th>
-                <th>Rating</th>
-            </tr>
-        </thead>
-        <tbody>
-        <$list filter="[tag[BrewLog]coffee-bag-instance<currentTiddler>!sort[brew-date]]" emptyMessage="<tr><td colspan='3' style='padding: 20px; text-align: center; color: <<colour muted-foreground>>;'>No brews logged yet</td></tr>">
-            <tr>
-                <td>
-                    <$link to=<<currentTiddler>>><$view field="brew-date"/></$link>
-                </td>
-                <td>{{!!brew-method}}</td>
-                <td style="font-weight: bold;">{{!!overall-rating}}/10</td>
-            </tr>
-        </$list>
-        </tbody>
-    </table>
+    <div class="ct-table-wrapper">
+        <table class="ct-table">
+            <thead>
+                <tr class="ct-table-header">
+                    <th>Date</th>
+                    <th>Method</th>
+                    <th>Recipe</th>
+                    <th>Grind</th>
+                    <th>Time</th>
+                    <th>Rating</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+            <$list filter="[tag[BrewLog]coffee-bag-instance<currentTiddler>sort[created]sort[brew-time]!sort[brew-date]]" emptyMessage="<tr><td colspan='7' style='padding: 20px; text-align: center;' class='ct-muted-text'>No brews logged yet</td></tr>">
+                <tr>
+                    <td style="white-space: nowrap;">
+                        <$link to=<<currentTiddler>>><$view field="brew-date"/></$link>
+                    </td>
+                    <td>{{!!brew-method}}</td>
+                    <td style="white-space: nowrap;">
+                        <$list filter="[all[current]has[dose]]" variable="ignore">
+                            {{!!dose}}g →
+                            <$text text={{{ [{!!water}!is[blank]addsuffix[g]] ~[{!!yield}!is[blank]addsuffix[g]] ~[[—]] }}}/>
+                        </$list>
+                    </td>
+                    <td><$text text={{{ [{!!grind-size}!is[blank]else[—]] }}}/></td>
+                    <td><$text text={{{ [{!!brew-time-seconds}!is[blank]else[—]] }}}/></td>
+                    <td style="font-weight: bold; white-space: nowrap;">
+                        <$text text={{{ [{!!overall-rating}!is[blank]addsuffix[/10]else[—]] }}}/>
+                    </td>
+                    <td class="ct-text-sm ct-muted-text">{{!!notes}}</td>
+                </tr>
+            </$list>
+            </tbody>
+        </table>
+    </div>
+</$let>
 </$list>

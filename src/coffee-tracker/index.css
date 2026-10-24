@@ -250,11 +250,6 @@
     margin-bottom: 15px;
 }
 
-.ct-flex-gap {
-    display: flex;
-    gap: 10px;
-}
-
 .ct-setup-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -644,6 +639,12 @@
 }
 
 /* Badge colors */
+.ct-badge-info {
+    background: <<colour message-background>> !important;
+    color: <<colour primary>> !important;
+    border: 1px solid <<colour message-border>>;
+}
+
 .ct-badge-success {
     background: <<colour positive-alert-banner-background>> !important;
     color: <<colour positive-alert-banner-foreground>> !important;
@@ -794,4 +795,90 @@
 .ct-equipment-stat-label {
     color: <<colour muted-foreground>>;
     font-size: 0.9em;
+}
+
+/* Brew Method Badges */
+.ct-brew-methods-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.ct-brew-method-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: <<colour tag-background>>;
+    color: <<colour tag-foreground>>;
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.ct-brew-method-remove {
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 0 2px;
+    font-size: 1.1em;
+    line-height: 1;
+    opacity: 0.7;
+}
+
+.ct-brew-method-remove:hover {
+    opacity: 1;
+}
+
+/* Weight Progress Bar */
+.ct-progress-container {
+    margin: 10px 0;
+}
+
+.ct-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: <<colour tiddler-editor-border>>;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 4px;
+}
+
+.ct-progress-fill {
+    height: 100%;
+    background: <<colour primary>>;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+/* Previous Brew Reference Banner */
+.ct-reference-banner {
+    padding: 12px 15px;
+    background: <<colour tiddler-background>>;
+    border: 1px dashed <<colour primary>>;
+    border-radius: 6px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+}
+
+/* Disabled Button State */
+.ct-btn:disabled,
+.tc-modal-footer button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* Search Bar */
+.ct-search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    background: <<colour tiddler-editor-background>>;
+    border: 1px solid <<colour tiddler-editor-border>>;
+    border-radius: 8px;
 }

@@ -17,7 +17,7 @@ description: "Access the Coffee Tracker Dashboard"
 <h4 class="ct-sidebar-heading">Actions</h4>
 <div class="ct-sidebar-actions">
     <!-- Quick log for last used coffee -->
-    <$let lastBrew={{{ [tag[BrewLog]!sort[brew-date]first[]] }}}>
+    <$let lastBrew={{{ [tag[BrewLog]sort[created]sort[brew-time]sort[brew-date]last[]] }}}>
     <$list filter="[<lastBrew>!is[blank]]" variable="ignore">
         <$let lastBag={{{ [<lastBrew>get[coffee-bag-instance]] }}}>
         <$list filter="[<lastBag>!is[blank]!tag[Finished]]" variable="ignore">
@@ -51,100 +51,96 @@ description: "Access the Coffee Tracker Dashboard"
     peakStart={{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-start}}
     peakEnd={{$:/plugins/mblackman/coffee-tracker/config/freshness/peak-end}}
     optimalEnd={{$:/plugins/mblackman/coffee-tracker/config/freshness/optimal-end}}
+    agingFilter="[days-since-roast[roast-date]compare:number:gteq<optimalEnd>]"
+    goodFilter="[days-since-roast[roast-date]compare:number:gteq<peakEnd>compare:number:lt<optimalEnd>]"
+    peakFilter="[days-since-roast[roast-date]compare:number:gteq<peakStart>compare:number:lt<peakEnd>]"
+    freshFilter="[days-since-roast[roast-date]compare:number:lt<peakStart>]"
 >
-    <!-- Coffees aging beyond optimal (60+ days) -->
-    <div class="ct-sidebar-alert ct-alert-warning" style="display: none;" data-alert="aging">
-        <div class="ct-sidebar-alert-title">Coffee Aging</div>
-    </div>
-    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]has[roast-date]]" variable="bag">
-        <$let roastDate={{{ [<bag>get[roast-date]] }}}>
-        <$wikify name="days" text="""<$macrocall $name="days-since-roast" roastDate=<<roastDate>>/>""">
-            <$list filter="[<days>compare:number:gteq<optimalEnd>]" variable="ignore">
-                <style>.ct-sidebar-alert[data-alert="aging"] { display: block !important; }</style>
-                <div class="ct-sidebar-alert-item">
-                    <$link to=<<bag>>><$view tiddler=<<bag>> field="title"/></$link>
-                    <span class="ct-sidebar-alert-detail">(<<days>> days)</span>
-                </div>
-            </$list>
-        </$wikify>
-        </$let>
-    </$list>
-
-    <!-- Coffees still good (21-60 days) -->
-    <div class="ct-sidebar-alert ct-alert-info" style="display: none;" data-alert="good">
-        <div class="ct-sidebar-alert-title">Still Good</div>
-    </div>
-    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]has[roast-date]]" variable="bag">
-        <$let roastDate={{{ [<bag>get[roast-date]] }}}>
-        <$wikify name="days" text="""<$macrocall $name="days-since-roast" roastDate=<<roastDate>>/>""">
-            <$list filter="[<days>compare:number:gteq<peakEnd>compare:number:lt<optimalEnd>]" variable="ignore">
-                <style>.ct-sidebar-alert[data-alert="good"] { display: block !important; }</style>
-                <div class="ct-sidebar-alert-item">
-                    <$link to=<<bag>>><$view tiddler=<<bag>> field="title"/></$link>
-                    <span class="ct-sidebar-alert-detail">(<<days>> days)</span>
-                </div>
-            </$list>
-        </$wikify>
-        </$let>
-    </$list>
-
     <!-- Coffees in peak freshness window (7-21 days) -->
-    <div class="ct-sidebar-alert ct-alert-info" style="display: none;" data-alert="peak">
-        <div class="ct-sidebar-alert-title">At Peak Freshness</div>
-    </div>
-    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]has[roast-date]]" variable="bag">
-        <$let roastDate={{{ [<bag>get[roast-date]] }}}>
-        <$wikify name="days" text="""<$macrocall $name="days-since-roast" roastDate=<<roastDate>>/>""">
-            <$list filter="[<days>compare:number:gteq<peakStart>compare:number:lt<peakEnd>]" variable="ignore">
-                <style>.ct-sidebar-alert[data-alert="peak"] { display: block !important; }</style>
-                <div class="ct-sidebar-alert-item">
-                    <$link to=<<bag>>><$view tiddler=<<bag>> field="title"/></$link>
-                    <span class="ct-sidebar-alert-detail">(<<days>> days)</span>
-                </div>
+    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]has[roast-date]] :filter[subfilter<peakFilter>] +[limit[1]]" variable="ignore">
+        <div class="ct-sidebar-alert ct-alert-success">
+            <div class="ct-sidebar-alert-title">☕ At Peak Freshness</div>
+            <$list filter="[tag[CoffeeBagInstance]!tag[Finished]has[roast-date]] :filter[subfilter<peakFilter>]" variable="bag">
+                <$let days={{{ [<bag>days-since-roast[roast-date]] }}}>
+                    <div class="ct-sidebar-alert-item">
+                        <$link to=<<bag>>><$view tiddler=<<bag>> field="title"/></$link>
+                        <span class="ct-sidebar-alert-detail">(<<days>>d)</span>
+                    </div>
+                </$let>
             </$list>
-        </$wikify>
-        </$let>
+        </div>
     </$list>
 
     <!-- Very fresh coffees (degassing, < 7 days) -->
-    <div class="ct-sidebar-alert ct-alert-success" style="display: none;" data-alert="fresh">
-        <div class="ct-sidebar-alert-title">Very Fresh (Degassing)</div>
-    </div>
-    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]has[roast-date]]" variable="bag">
-        <$let roastDate={{{ [<bag>get[roast-date]] }}}>
-        <$wikify name="days" text="""<$macrocall $name="days-since-roast" roastDate=<<roastDate>>/>""">
-            <$list filter="[<days>compare:number:lt<peakStart>]" variable="ignore">
-                <style>.ct-sidebar-alert[data-alert="fresh"] { display: block !important; }</style>
-                <div class="ct-sidebar-alert-item">
-                    <$link to=<<bag>>><$view tiddler=<<bag>> field="title"/></$link>
-                    <span class="ct-sidebar-alert-detail">(<<days>> days)</span>
-                </div>
+    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]has[roast-date]] :filter[subfilter<freshFilter>] +[limit[1]]" variable="ignore">
+        <div class="ct-sidebar-alert ct-alert-info">
+            <div class="ct-sidebar-alert-title">✨ Very Fresh (Degassing)</div>
+            <$list filter="[tag[CoffeeBagInstance]!tag[Finished]has[roast-date]] :filter[subfilter<freshFilter>]" variable="bag">
+                <$let days={{{ [<bag>days-since-roast[roast-date]] }}}>
+                    <div class="ct-sidebar-alert-item">
+                        <$link to=<<bag>>><$view tiddler=<<bag>> field="title"/></$link>
+                        <span class="ct-sidebar-alert-detail">(<<days>>d)</span>
+                    </div>
+                </$let>
             </$list>
-        </$wikify>
-        </$let>
+        </div>
     </$list>
 
-    <!-- Coffee bags with many brews (running low) -->
-    <$let heavyUseFilter="[tag[BrewLog]coffee-bag-instance<currentTiddler>count[]compare:number:gteq[10]]">
-        <$list filter="[tag[CoffeeBagInstance]!tag[Finished]] :filter[subfilter<heavyUseFilter>] +[limit[1]]" variable="ignore">
-            <div class="ct-sidebar-alert ct-alert-info">
-                <div class="ct-sidebar-alert-title">📉 Might Be Running Low</div>
-                <$list filter="[tag[CoffeeBagInstance]!tag[Finished]] :filter[subfilter<heavyUseFilter>]" variable="bag">
-                    <$let brewCount={{{ [tag[BrewLog]coffee-bag-instance<bag>count[]] }}}>
-                        <div class="ct-sidebar-alert-item">
-                            <$link to=<<bag>>><$view tiddler=<<bag>> field="title"/></$link>
-                            <span class="ct-sidebar-alert-detail">(<<brewCount>> brews)</span>
-                        </div>
-                    </$let>
-                </$list>
-            </div>
-        </$list>
-    </$let>
+    <!-- Coffees still good (21-60 days) -->
+    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]has[roast-date]] :filter[subfilter<goodFilter>] +[limit[1]]" variable="ignore">
+        <div class="ct-sidebar-alert ct-alert-info">
+            <div class="ct-sidebar-alert-title">👍 Still Good</div>
+            <$list filter="[tag[CoffeeBagInstance]!tag[Finished]has[roast-date]] :filter[subfilter<goodFilter>]" variable="bag">
+                <$let days={{{ [<bag>days-since-roast[roast-date]] }}}>
+                    <div class="ct-sidebar-alert-item">
+                        <$link to=<<bag>>><$view tiddler=<<bag>> field="title"/></$link>
+                        <span class="ct-sidebar-alert-detail">(<<days>>d)</span>
+                    </div>
+                </$let>
+            </$list>
+        </div>
+    </$list>
 
-    <!-- Show "All caught up" if no active bags with roast dates -->
-    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]has[roast-date]count[]match[0]]" variable="ignore">
+    <!-- Coffees aging beyond optimal (60+ days) -->
+    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]has[roast-date]] :filter[subfilter<agingFilter>] +[limit[1]]" variable="ignore">
+        <div class="ct-sidebar-alert ct-alert-warning">
+            <div class="ct-sidebar-alert-title">⚠️ Coffee Aging</div>
+            <$list filter="[tag[CoffeeBagInstance]!tag[Finished]has[roast-date]] :filter[subfilter<agingFilter>]" variable="bag">
+                <$let days={{{ [<bag>days-since-roast[roast-date]] }}}>
+                    <div class="ct-sidebar-alert-item">
+                        <$link to=<<bag>>><$view tiddler=<<bag>> field="title"/></$link>
+                        <span class="ct-sidebar-alert-detail">(<<days>>d)</span>
+                    </div>
+                </$let>
+            </$list>
+        </div>
+    </$list>
+
+    <!-- Coffee bags running low (<= 45g remaining or >= 10 brews) -->
+    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]bag-running-low[45]limit[1]]" variable="ignore">
+        <div class="ct-sidebar-alert ct-alert-warning">
+            <div class="ct-sidebar-alert-title">📉 Might Be Running Low</div>
+            <$list filter="[tag[CoffeeBagInstance]!tag[Finished]bag-running-low[45]]" variable="bag">
+                <$let
+                    remGrams={{{ [<bag>remaining-bag-weight[]] }}}
+                    brewCount={{{ [tag[BrewLog]coffee-bag-instance<bag>count[]] }}}
+                >
+                    <div class="ct-sidebar-alert-item">
+                        <$link to=<<bag>>><$view tiddler=<<bag>> field="title"/></$link>
+                        <span class="ct-sidebar-alert-detail">
+                            <$list filter="[<remGrams>!is[blank]]" variable="ignore">(<$text text=<<remGrams>>/>g left)</$list>
+                            <$list filter="[<remGrams>is[blank]]" variable="ignore">(<<brewCount>> brews)</$list>
+                        </span>
+                    </div>
+                </$let>
+            </$list>
+        </div>
+    </$list>
+
+    <!-- Show "No active bags" if no active bags -->
+    <$list filter="[tag[CoffeeBagInstance]!tag[Finished]count[]match[0]]" variable="ignore">
         <div class="ct-sidebar-alert-empty">
-            <span class="ct-muted-text">All caught up! ✨</span>
+            <span class="ct-muted-text">No active bags ✨</span>
         </div>
     </$list>
 </$let>
