@@ -6,8 +6,13 @@ type: text/vnd.tiddlywiki
 <$let
     currentBrew=<<currentTiddler>>
     selectedBag={{!!coffee-bag-instance}}
+    coffeeType={{{ [<selectedBag>!is[blank]get[coffee-bag]] }}}
+    roaster={{{ [<coffeeType>!is[blank]get[roaster]] }}}
     editState={{{ [[$:/state/coffee-tracker/edit/]addsuffix<currentTiddler>] }}}
+    sensoryState={{{ [[$:/state/coffee-tracker/sensory/]addsuffix<currentTiddler>] }}}
     isEditing={{{ [<editState>get[text]match[yes]then[yes]] ~[{!!overall-rating}is[blank]then[yes]] ~[[no]] }}}
+    hasSensoryScores={{{ [all[current]sensory-radar-points[]!is[blank]then[yes]else[no]] }}}
+    isSensoryOpen={{{ [<sensoryState>get[text]match[yes]then[yes]] ~[<sensoryState>get[text]match[no]then[no]] ~[<hasSensoryScores>match[yes]then[yes]] ~[[no]] }}}
     brewAge={{{ [all[current]brew-roast-age[]] }}}
     brewCost={{{ [all[current]brew-cost[]] }}}
     bagBestBrew={{{ [<selectedBag>!is[blank]bag-best-brew[]] }}}
@@ -16,38 +21,38 @@ type: text/vnd.tiddlywiki
 <div class="ct-brew-log-container">
 
     <!-- Top Mode Bar -->
-    <div class="ct-flex-row ct-mb-md">
-        <div class="ct-text-sm ct-muted-text" style="display: flex; align-items: center; gap: 8px;">
+    <div class="ct-mode-bar ct-mb-md">
+        <div class="ct-mode-status">
             <%if [<isEditing>match[yes]] %>
-                <span>📝 Editing Brew Log</span>
+                <span class="ct-status-pill">📝 Editing Brew Log</span>
             <%else%>
-                <span>🔒 Completed Brew Log</span>
+                <span class="ct-status-pill">🔒 Completed Brew Log</span>
             <%endif%>
             <%if [<bagBestBrew>match<currentBrew>] %>
                 <span class="ct-tag ct-badge-success">⭐ Best Brew</span>
             <%endif%>
         </div>
-        <div style="display: flex; gap: 8px;">
+        <div class="ct-mode-actions">
             <%if [<selectedBag>!is[blank]] %>
                 <%if [<bagPinnedBest>match<currentBrew>] %>
-                    <$button class="tc-btn-invisible ct-btn ct-btn-secondary" aria-label="Unpin as best brew for this bag">
+                    <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-btn-sm" aria-label="Unpin as best brew for this bag">
                         <$action-deletefield $tiddler=<<selectedBag>> $field="best-brew"/>
                         📌 Unpin Best
                     </$button>
                 <%else%>
-                    <$button class="tc-btn-invisible ct-btn ct-btn-secondary" aria-label="Pin this brew as the best reference brew for this bag">
+                    <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-btn-sm" aria-label="Pin this brew as the best reference brew for this bag">
                         <$action-setfield $tiddler=<<selectedBag>> best-brew=<<currentBrew>>/>
                         ⭐ Pin as Best
                     </$button>
                 <%endif%>
             <%endif%>
             <%if [<isEditing>match[yes]] %>
-                <$button class="tc-btn-invisible ct-btn ct-btn-primary" aria-label="Lock brew log">
+                <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-btn-sm" aria-label="Lock brew log">
                     <$action-setfield $tiddler=<<editState>> text="no"/>
                     ✓ Done Editing
                 </$button>
             <%else%>
-                <$button class="tc-btn-invisible ct-btn ct-btn-secondary" aria-label="Edit brew log">
+                <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-btn-sm" aria-label="Edit brew log">
                     <$action-setfield $tiddler=<<editState>> text="yes"/>
                     ✏️ Edit Brew
                 </$button>
@@ -58,19 +63,26 @@ type: text/vnd.tiddlywiki
     <!-- READ-ONLY VIEW MODE -->
     <%if [<isEditing>match[no]] %>
         <div class="ct-section">
-            <div class="ct-flex-row ct-mb-sm">
-                <div>
+            <div class="ct-header-summary ct-mb-sm">
+                <div class="ct-flex-1">
                     <div class="ct-text-bold" style="font-size: 1.2em;">
                         <$link to={{!!coffee-bag-instance}}><$view field="coffee-bag-instance"><em class="ct-muted-text">No coffee selected</em></$view></$link>
                     </div>
+                    <%if [<coffeeType>!is[blank]] %>
+                        <div class="ct-text-sm ct-muted-text ct-mb-xs">
+                            <$link to=<<coffeeType>>><$view tiddler=<<coffeeType>> field="coffee-name"><$text text=<<coffeeType>>/></$view></$link>
+                            <%if [<roaster>!is[blank]] %> • <$link to=<<roaster>>><$view tiddler=<<roaster>> field="roaster-name"><$text text=<<roaster>>/></$view></$link><%endif%>
+                        </div>
+                    <%endif%>
                     <div class="ct-card-subtitle ct-m-0">
                         <$view field="brew-date"/> <$view field="brew-time"/>
                         <%if [all[current]has[brew-method]] %> • {{!!brew-method}}<%endif%>
                         <%if [<brewAge>!is[blank]] %> • 🗓️ Day <$text text=<<brewAge>>/> off roast<%endif%>
                     </div>
                 </div>
-                <div class="ct-rating-box" style="margin-bottom: 0; padding: 8px 16px;">
-                    <span class="ct-rating-value"><$text text={{{ [{!!overall-rating}!is[blank]else[—]] }}}/> / 10</span>
+                <div class="ct-rating-badge">
+                    <span class="ct-rating-badge-score"><$text text={{{ [{!!overall-rating}!is[blank]else[—]] }}}/></span>
+                    <span class="ct-rating-badge-max">/ 10</span>
                 </div>
             </div>
 
@@ -117,18 +129,30 @@ type: text/vnd.tiddlywiki
                 yieldRatio={{{ [ct.yield-ratio<dose>,<yield>] }}}
             >
             <%if [<waterRatio>!is[blank]] [<yieldRatio>!is[blank]] [<brewCost>!is[blank]] +[limit[1]] %>
-                <div class="ct-calculated-metric">
+                <div class="ct-calculated-grid">
                     <%if [<waterRatio>!is[blank]] %>
-                        <span class="ct-calculated-metric-label">Brew Ratio (Water):</span>
-                        <span class="ct-calculated-metric-value">1:<$text text=<<waterRatio>>/></span>
+                        <div class="ct-calculated-pill">
+                            <span class="ct-calculated-metric-label">Brew Ratio (Water)</span>
+                            <span class="ct-calculated-metric-value">1:<$text text=<<waterRatio>>/></span>
+                        </div>
                     <%endif%>
                     <%if [<yieldRatio>!is[blank]] %>
-                        <span class="ct-calculated-metric-label" style="margin-left: 15px;">Output Ratio (Yield):</span>
-                        <span class="ct-calculated-metric-value">1:<$text text=<<yieldRatio>>/></span>
+                        <div class="ct-calculated-pill">
+                            <span class="ct-calculated-metric-label">Output Ratio (Yield)</span>
+                            <span class="ct-calculated-metric-value">1:<$text text=<<yieldRatio>>/></span>
+                        </div>
+                    <%endif%>
+                    <%if [<brewAge>!is[blank]] %>
+                        <div class="ct-calculated-pill">
+                            <span class="ct-calculated-metric-label">Bean Age</span>
+                            <span class="ct-calculated-metric-value">Day <$text text=<<brewAge>>/></span>
+                        </div>
                     <%endif%>
                     <%if [<brewCost>!is[blank]] %>
-                        <span class="ct-calculated-metric-label" style="margin-left: 15px;">Brew Cost:</span>
-                        <span class="ct-calculated-metric-value">$<$text text=<<brewCost>>/></span>
+                        <div class="ct-calculated-pill">
+                            <span class="ct-calculated-metric-label">Brew Cost</span>
+                            <span class="ct-calculated-metric-value">$<$text text=<<brewCost>>/></span>
+                        </div>
                     <%endif%>
                 </div>
             <%endif%>
@@ -140,10 +164,19 @@ type: text/vnd.tiddlywiki
             <div class="ct-sensory-layout">
                 <div class="ct-sensory-grid ct-flex-1">
                     <$list filter="aroma flavor acidity body sweetness aftertaste" variable="attribute">
-                        <$let fieldName={{{ [[rating-]addsuffix<attribute>] }}}>
-                            <div class="ct-sensory-row">
-                                <span class="ct-sensory-label"><<attribute>></span>
-                                <span class="ct-text-bold"><$text text={{{ [all[current]get<fieldName>!is[blank]else[—]] }}}/> / 10</span>
+                        <$let
+                            fieldName={{{ [[rating-]addsuffix<attribute>] }}}
+                            scoreVal={{{ [all[current]get<fieldName>!is[blank]] }}}
+                            pctWidth={{{ [<scoreVal>!is[blank]multiply[10]round[]] ~[[0]] }}}
+                        >
+                            <div class="ct-sensory-read-row">
+                                <div class="ct-flex-row ct-mb-xs">
+                                    <span class="ct-sensory-label"><<attribute>></span>
+                                    <span class="ct-text-bold"><$text text={{{ [<scoreVal>!is[blank]else[—]] }}}/> / 10</span>
+                                </div>
+                                <div class="ct-sensory-meter">
+                                    <div class="ct-sensory-meter-fill" style=`width: $(pctWidth)$%;`/>
+                                </div>
                             </div>
                         </$let>
                     </$list>
@@ -207,8 +240,25 @@ type: text/vnd.tiddlywiki
 
             <div class="ct-setup-row">
                 <label class="ct-label">Coffee Bag</label>
-                <div class="ct-flex-gap">
-                    <$select field="coffee-bag-instance" class="tc-edit-texteditor ct-input">
+                <div class="ct-bag-select-row">
+                    <$select field="coffee-bag-instance" class="tc-edit-texteditor ct-input ct-flex-1" actions="""
+                        <$let
+                            chosenBag={{{ [<actionValue>] }}}
+                            lastForBag={{{ [<chosenBag>!is[blank]then[ct.bag-last-brew<chosenBag>]] }}}
+                        >
+                            <%if [<lastForBag>!is[blank]] %>
+                                <%if [{!!brewer}is[blank]] %>
+                                    <$action-setfield brewer={{{ [<lastForBag>get[brewer]] }}}/>
+                                <%endif%>
+                                <%if [{!!grinder}is[blank]] %>
+                                    <$action-setfield grinder={{{ [<lastForBag>get[grinder]] }}}/>
+                                <%endif%>
+                                <%if [{!!brew-method}is[blank]] %>
+                                    <$action-setfield brew-method={{{ [<lastForBag>get[brew-method]] }}}/>
+                                <%endif%>
+                            <%endif%>
+                        </$let>
+                    """>
                         <option value="">-- Select Coffee Bag --</option>
                         <optgroup label="Active Bags">
                             <$list filter="[tag[CoffeeBagInstance]!tag[Finished]sort[title]]">
@@ -224,7 +274,7 @@ type: text/vnd.tiddlywiki
                         </$list>
                     </$select>
                     <%if [all[current]has[coffee-bag-instance]] %>
-                        <$button class="tc-btn-invisible ct-btn ct-btn-secondary" tooltip="Open Bag" aria-label="Navigate to coffee bag details">
+                        <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-btn-sm" tooltip="Open Bag" aria-label="Navigate to coffee bag details">
                             <$action-navigate $to={{!!coffee-bag-instance}}/>
                             🔗 Bag
                         </$button>
@@ -241,9 +291,9 @@ type: text/vnd.tiddlywiki
                 <!-- Case 1: Best Brew exists and differs from Last Brew -->
                 <%if [<bestBrew>!is[blank]!match<prevBrew>] %>
                     <div class="ct-reference-banner">
-                        <div class="ct-flex-row ct-mb-xs">
+                        <div class="ct-reference-header ct-mb-xs">
                             <strong>⭐ Best brew with this bag (<$link to=<<bestBrew>>><$view tiddler=<<bestBrew>> field="brew-date"/></$link>):</strong>
-                            <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-text-sm" style="padding: 3px 10px;">
+                            <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-btn-sm" aria-label="Copy best brew settings">
                                 <$macrocall $name="copy-brew-log-settings" sourceBrew=<<bestBrew>> targetBrew=<<currentBrew>>/>
                                 ⭐ Copy Best
                             </$button>
@@ -268,13 +318,13 @@ type: text/vnd.tiddlywiki
                 <!-- Last Brew Banner (shown whether same as Best Brew or distinct) -->
                 <%if [<prevBrew>!is[blank]] %>
                     <div class="ct-reference-banner">
-                        <div class="ct-flex-row ct-mb-xs">
+                        <div class="ct-reference-header ct-mb-xs">
                             <%if [<bestBrew>match<prevBrew>] %>
                                 <strong>⭐ Best & Last brew with this bag (<$link to=<<prevBrew>>><$view tiddler=<<prevBrew>> field="brew-date"/></$link>):</strong>
                             <%else%>
                                 <strong>💡 Last brew with this bag (<$link to=<<prevBrew>>><$view tiddler=<<prevBrew>> field="brew-date"/></$link>):</strong>
                             <%endif%>
-                            <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-text-sm" style="padding: 3px 10px;">
+                            <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-btn-sm" aria-label="Copy last brew settings">
                                 <$macrocall $name="copy-brew-log-settings" sourceBrew=<<prevBrew>> targetBrew=<<currentBrew>>/>
                                 ⚡ Copy Settings
                             </$button>
@@ -354,13 +404,13 @@ type: text/vnd.tiddlywiki
             >
             <%if [<prevBagBrew>is[blank]then<grinderHint>!is[blank]] %>
                 <div class="ct-grinder-hint-banner ct-mt-sm">
-                    <div class="ct-flex-row">
+                    <div class="ct-reference-header">
                         <span>
                             <strong>⚙️ Grinder Dial-In Memory (<$view field="grinder"/>):</strong>
                             <$text text=<<grinderHint>>/>
                         </span>
                         <%if [<suggestedGrind>!is[blank]] %>
-                            <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-text-sm" style="padding: 3px 10px;" aria-label="Apply suggested starting grind size">
+                            <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-btn-sm" aria-label="Apply suggested starting grind size">
                                 <$action-setfield $tiddler=<<currentBrew>> grind-size=<<suggestedGrind>>/>
                                 Use Grind (<$text text=<<suggestedGrind>>/>)
                             </$button>
@@ -371,37 +421,76 @@ type: text/vnd.tiddlywiki
             </$let>
         </div>
 
-        <!-- Metrics Section -->
+        <!-- Metrics Section (Tactile Steppers + Ratio Presets) -->
         <div class="ct-section-white">
-            <h3 class="ct-section-header">Brew Metrics</h3>
-            <div class="ct-metrics-grid">
-                <div class="ct-metric-item">
-                    <label class="ct-label">Dose (g)</label>
-                    <$edit-text field="dose" size="5" placeholder="18" class="ct-metric-input"/>
+            <div class="ct-reference-header ct-section-header">
+                <h3 class="ct-m-0">Brew Metrics</h3>
+                <!-- Quick Ratio Helper Chips -->
+                <$let effectiveDose={{{ [{!!dose}compare:number:gt[0]else[18]] }}}>
+                <div class="ct-ratio-presets" aria-label="Quick ratio presets">
+                    <span class="ct-text-sm ct-muted-text">Quick Ratio:</span>
+                    <$list filter="15 16 17" variable="rVal">
+                        <$let targetWater={{{ [<effectiveDose>multiply<rVal>round[]] }}}>
+                            <$button class="tc-btn-invisible ct-ratio-chip" tooltip=`Set Water to $(targetWater)$g (1:$(rVal)$)` aria-label=`Set water for 1 to $(rVal)$ ratio`>
+                                <%if [{!!dose}is[blank]] %>
+                                    <$action-setfield dose=<<effectiveDose>>/>
+                                <%endif%>
+                                <$action-setfield water=<<targetWater>>/>
+                                1:<<rVal>>
+                            </$button>
+                        </$let>
+                    </$list>
+                    <$list filter="2 2.5" variable="eVal">
+                        <$let targetYield={{{ [<effectiveDose>multiply<eVal>round[]] }}}>
+                            <$button class="tc-btn-invisible ct-ratio-chip" tooltip=`Set Espresso Yield to $(targetYield)$g (1:$(eVal)$)` aria-label=`Set yield for 1 to $(eVal)$ espresso ratio`>
+                                <%if [{!!dose}is[blank]] %>
+                                    <$action-setfield dose=<<effectiveDose>>/>
+                                <%endif%>
+                                <$action-setfield yield=<<targetYield>>/>
+                                ☕ 1:<<eVal>>
+                            </$button>
+                        </$let>
+                    </$list>
                 </div>
-                <div class="ct-metric-item">
-                    <label class="ct-label">Water (g)</label>
-                    <$edit-text field="water" size="5" placeholder="300" class="ct-metric-input"/>
-                </div>
-                <div class="ct-metric-item">
-                    <label class="ct-label">Yield (g)</label>
-                    <$edit-text field="yield" size="5" placeholder="260" class="ct-metric-input"/>
-                </div>
-                <div class="ct-metric-item">
-                    <label class="ct-label">Time (mm:ss)</label>
-                    <$edit-text field="brew-time-seconds" size="5" placeholder="02:45" class="ct-metric-input"/>
-                </div>
-                <div class="ct-metric-item">
-                    <label class="ct-label">Water Temp (°C)</label>
-                    <$edit-text field="water-temp" size="5" placeholder="93" class="ct-metric-input"/>
-                </div>
-                <div class="ct-metric-item">
-                    <label class="ct-label">Grind Size</label>
-                    <$edit-text field="grind-size" size="5" placeholder="e.g. 20" class="ct-metric-input"/>
-                </div>
+                </$let>
             </div>
 
-            <!-- Calculated Metrics -->
+            <div class="ct-metrics-grid">
+                <$ct.metric-stepper field="dose" label="Dose (g)" step="0.5" defaultVal="18" min="0" max="200" placeholder="18"/>
+                <$ct.metric-stepper field="water" label="Water (g)" step="10" defaultVal="300" min="0" max="2000" placeholder="300"/>
+                <$ct.metric-stepper field="yield" label="Yield (g)" step="5" defaultVal="36" min="0" max="2000" placeholder="260"/>
+
+                <!-- Brew Time with ±5s Stepper -->
+                <div class="ct-metric-item">
+                    <label class="ct-label">Time (mm:ss)</label>
+                    <div class="ct-stepper-control">
+                        <$button class="tc-btn-invisible ct-stepper-btn" aria-label="Decrease brew time by 5 seconds">
+                            <$let
+                                curTime={{!!brew-time-seconds}}
+                                nextTime={{{ [<curTime>step-brew-time[-5|165]] }}}
+                            >
+                                <$action-setfield brew-time-seconds=<<nextTime>>/>
+                            </$let>
+                            −
+                        </$button>
+                        <$edit-text field="brew-time-seconds" tag="input" size="5" placeholder="02:45" class="tc-edit-texteditor ct-metric-input"/>
+                        <$button class="tc-btn-invisible ct-stepper-btn" aria-label="Increase brew time by 5 seconds">
+                            <$let
+                                curTime={{!!brew-time-seconds}}
+                                nextTime={{{ [<curTime>step-brew-time[5|165]] }}}
+                            >
+                                <$action-setfield brew-time-seconds=<<nextTime>>/>
+                            </$let>
+                            +
+                        </$button>
+                    </div>
+                </div>
+
+                <$ct.metric-stepper field="water-temp" label="Water Temp (°C)" step="1" defaultVal="93" min="0" max="100" placeholder="93"/>
+                <$ct.metric-stepper field="grind-size" label="Grind Size" step="0.5" defaultVal="20" min="0" max="200" placeholder="e.g. 20"/>
+            </div>
+
+            <!-- Calculated Metrics Pill Bar -->
             <$let
                 dose={{!!dose}}
                 water={{!!water}}
@@ -410,48 +499,72 @@ type: text/vnd.tiddlywiki
                 yieldRatio={{{ [ct.yield-ratio<dose>,<yield>] }}}
             >
             <%if [<waterRatio>!is[blank]] [<yieldRatio>!is[blank]] [<brewAge>!is[blank]] [<brewCost>!is[blank]] +[limit[1]] %>
-                <div class="ct-calculated-metric">
+                <div class="ct-calculated-grid">
                     <%if [<waterRatio>!is[blank]] %>
-                        <span class="ct-calculated-metric-label">Brew Ratio (Water):</span>
-                        <span class="ct-calculated-metric-value">1:<$text text=<<waterRatio>>/></span>
+                        <div class="ct-calculated-pill">
+                            <span class="ct-calculated-metric-label">Brew Ratio (Water)</span>
+                            <span class="ct-calculated-metric-value">1:<$text text=<<waterRatio>>/></span>
+                        </div>
                     <%endif%>
                     <%if [<yieldRatio>!is[blank]] %>
-                        <span class="ct-calculated-metric-label" style="margin-left: 15px;">Output Ratio (Yield):</span>
-                        <span class="ct-calculated-metric-value">1:<$text text=<<yieldRatio>>/></span>
+                        <div class="ct-calculated-pill">
+                            <span class="ct-calculated-metric-label">Output Ratio (Yield)</span>
+                            <span class="ct-calculated-metric-value">1:<$text text=<<yieldRatio>>/></span>
+                        </div>
                     <%endif%>
                     <%if [<brewAge>!is[blank]] %>
-                        <span class="ct-calculated-metric-label" style="margin-left: 15px;">Bean Age:</span>
-                        <span class="ct-calculated-metric-value"><$text text=<<brewAge>>/>d</span>
+                        <div class="ct-calculated-pill">
+                            <span class="ct-calculated-metric-label">Bean Age</span>
+                            <span class="ct-calculated-metric-value"><$text text=<<brewAge>>/>d</span>
+                        </div>
                     <%endif%>
                     <%if [<brewCost>!is[blank]] %>
-                        <span class="ct-calculated-metric-label" style="margin-left: 15px;">Cost:</span>
-                        <span class="ct-calculated-metric-value">$<$text text=<<brewCost>>/></span>
+                        <div class="ct-calculated-pill">
+                            <span class="ct-calculated-metric-label">Cost</span>
+                            <span class="ct-calculated-metric-value">$<$text text=<<brewCost>>/></span>
+                        </div>
                     <%endif%>
                 </div>
             <%endif%>
             </$let>
         </div>
 
-        <!-- Sensory Section -->
+        <!-- Overall Rating & Quick Score Pills (Promoted for Countertop Speed) -->
         <div class="ct-section">
-            <h3 class="ct-section-header">Tasting Profile</h3>
-
-            <div class="ct-sensory-layout">
-                <div class="ct-sensory-grid ct-flex-1">
-                    <$list filter="aroma flavor acidity body sweetness aftertaste" variable="attribute">
-                        <$let fieldName={{{ [[rating-]addsuffix<attribute>] }}}>
-                            <div class="ct-sensory-row">
-                                <span class="ct-sensory-label"><<attribute>></span>
-                                <div class="ct-sensory-controls">
-                                    <$range field=<<fieldName>> min="0" max="10" increment="0.5" default="0" style="width: 100px;"/>
-                                    <span style="width: 30px; text-align: right; font-weight: bold;"><$text text={{{ [all[current]get<fieldName>!is[blank]else[0]] }}}/></span>
-                                </div>
-                            </div>
-                        </$let>
+            <div class="ct-rating-box">
+                <div class="ct-rating-box-header">
+                    <span class="ct-rating-title">Overall Rating</span>
+                    <span class="ct-rating-value"><$text text={{{ [{!!overall-rating}!is[blank]else[0]] }}}/> / 10</span>
+                </div>
+                <div class="ct-rating-slider-row">
+                    <$button class="tc-btn-invisible ct-stepper-btn" aria-label="Decrease overall rating by 0.5">
+                        <$action-setfield $tiddler=<<editState>> text="yes"/>
+                        <$action-setfield overall-rating={{{ [{!!overall-rating}step-metric[-0.5|7.5|0|10]] }}}/>
+                        −
+                    </$button>
+                    <$range field="overall-rating" min="0" max="10" increment="0.5" default="0" class="ct-range-full" actions="""<$action-setfield $tiddler=<<editState>> text="yes"/>"""/>
+                    <$button class="tc-btn-invisible ct-stepper-btn" aria-label="Increase overall rating by 0.5">
+                        <$action-setfield $tiddler=<<editState>> text="yes"/>
+                        <$action-setfield overall-rating={{{ [{!!overall-rating}step-metric[0.5|7.5|0|10]] }}}/>
+                        +
+                    </$button>
+                </div>
+                <div class="ct-quick-rating-pills" aria-label="Quick rating presets">
+                    <$list filter="6.0 7.0 7.5 8.0 8.5 9.0 9.5" variable="qScore">
+                        <$button
+                            class=`tc-btn-invisible ct-score-pill ${ [{!!overall-rating}match<qScore>then[ct-score-pill-active]else[]] }$`
+                            aria-label=`Set overall rating to $(qScore)$`
+                        >
+                            <$action-setfield $tiddler=<<editState>> text="yes"/>
+                            <$action-setfield overall-rating=<<qScore>>/>
+                            <<qScore>>
+                        </$button>
                     </$list>
                 </div>
-                <$ct.sensory-radar target=<<currentBrew>>/>
             </div>
+
+            <label class="ct-label">Notes</label>
+            <$edit-text field="notes" class="tc-edit-texteditor ct-textarea" min-height="80px" placeholder="Describe the nuances, flavor notes, or extraction observations..."/>
         </div>
 
         <!-- Interactive Coffee Compass & Dial-In Assistant -->
@@ -477,9 +590,9 @@ type: text/vnd.tiddlywiki
             <$let advice={{{ [all[current]compass-advice[]] }}}>
                 <%if [<advice>!is[blank]] %>
                     <div class="ct-compass-advice ct-mb-sm">
-                        <div class="ct-flex-row">
-                            <span><strong>🧭 Recommendation:</strong> <$text text=<<advice>>/></span>
-                            <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-text-sm" style="padding: 3px 10px; white-space: nowrap;" aria-label="Copy compass recommendation to next brew adjustment note">
+                        <div class="ct-compass-advice-layout">
+                            <span class="ct-flex-1"><strong>🧭 Recommendation:</strong> <$text text=<<advice>>/></span>
+                            <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-btn-sm" aria-label="Copy compass recommendation to next brew adjustment note">
                                 <$action-setfield $tiddler=<<currentBrew>> next-brew-adjustment=<<advice>>/>
                                 📋 Use as Next Target
                             </$button>
@@ -494,18 +607,60 @@ type: text/vnd.tiddlywiki
             </div>
         </div>
 
-        <!-- Overall & Notes -->
-        <div style="margin-bottom: 20px;">
-            <div class="ct-rating-box">
-                <span class="ct-rating-value">Overall Rating</span>
-                <div class="ct-rating-controls">
-                    <$range field="overall-rating" min="0" max="10" increment="0.5" default="0" style="width: 150px;"/>
-                    <span class="ct-rating-value" style="width: 40px; text-align: right;"><$text text={{{ [{!!overall-rating}!is[blank]else[0]] }}}/></span>
+        <!-- Collapsible 6-Axis Sensory Section -->
+        <div class="ct-section">
+            <div class="ct-reference-header">
+                <div>
+                    <h3 class="ct-m-0">Tasting Profile (6-Axis Sensory)</h3>
+                    <div class="ct-text-sm ct-muted-text">Optional detailed SCA attribute scoring & radar chart</div>
                 </div>
+                <%if [<isSensoryOpen>match[yes]] %>
+                    <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-btn-sm" aria-label="Collapse 6-axis sensory sliders">
+                        <$action-setfield $tiddler=<<sensoryState>> text="no"/>
+                        ▲ Hide Sliders
+                    </$button>
+                <%else%>
+                    <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-btn-sm" aria-label="Expand 6-axis sensory sliders">
+                        <$action-setfield $tiddler=<<sensoryState>> text="yes"/>
+                        ▼ Score Sensory Profile
+                    </$button>
+                <%endif%>
             </div>
 
-            <label class="ct-label">Notes</label>
-            <$edit-text field="notes" class="tc-edit-texteditor ct-textarea" min-height="100px" placeholder="Describe the nuances, extraction adjustments for next time..."/>
+            <%if [<isSensoryOpen>match[yes]] %>
+                <div class="ct-sensory-layout ct-mt-sm">
+                    <div class="ct-sensory-grid ct-flex-1">
+                        <$list filter="aroma flavor acidity body sweetness aftertaste" variable="attribute">
+                            <$let fieldName={{{ [[rating-]addsuffix<attribute>] }}}>
+                                <div class="ct-sensory-row">
+                                    <span class="ct-sensory-label"><<attribute>></span>
+                                    <div class="ct-sensory-controls">
+                                        <$button class="tc-btn-invisible ct-stepper-btn-sm" aria-label=`Decrease $(attribute)$ rating`>
+                                            <$action-setfield $field=<<fieldName>> $value={{{ [all[current]get<fieldName>step-metric[-0.5|6|0|10]] }}}/>
+                                            −
+                                        </$button>
+                                        <$range field=<<fieldName>> min="0" max="10" increment="0.5" default="0" class="ct-sensory-range"/>
+                                        <$button class="tc-btn-invisible ct-stepper-btn-sm" aria-label=`Increase $(attribute)$ rating`>
+                                            <$action-setfield $field=<<fieldName>> $value={{{ [all[current]get<fieldName>step-metric[0.5|6|0|10]] }}}/>
+                                            +
+                                        </$button>
+                                        <span class="ct-sensory-score-readout"><$text text={{{ [all[current]get<fieldName>!is[blank]else[0]] }}}/></span>
+                                    </div>
+                                </div>
+                            </$let>
+                        </$list>
+                    </div>
+                    <$ct.sensory-radar target=<<currentBrew>>/>
+                </div>
+            <%endif%>
+        </div>
+
+        <!-- Bottom Save / Finish Bar -->
+        <div class="ct-bottom-save-bar">
+            <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-w-full" aria-label="Finish editing and save brew log">
+                <$action-setfield $tiddler=<<editState>> text="no"/>
+                ✓ Done Editing Brew Log
+            </$button>
         </div>
     <%endif%>
 

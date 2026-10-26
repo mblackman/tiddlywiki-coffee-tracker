@@ -4,15 +4,15 @@ type: text/vnd.tiddlywiki
 
 <$list filter="[all[current]tag[CoffeeBag]]">
 <$let editState={{{ [[$:/state/coffee-tracker/edit/]addsuffix<currentTiddler>] }}}>
-    <div class="ct-flex-row ct-mb-md">
+    <div class="ct-mode-bar ct-mb-md">
         <h2 class="ct-m-0"><$view field="coffee-name"><$view field="title"/></$view></h2>
         <%if [<editState>get[text]match[yes]] %>
-            <$button class="tc-btn-invisible ct-btn ct-btn-primary" aria-label="Finish editing coffee type details">
+            <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-btn-sm" aria-label="Finish editing coffee type details">
                 <$action-deletetiddler $tiddler=<<editState>>/>
                 ✓ Done
             </$button>
         <%else%>
-            <$button class="tc-btn-invisible ct-btn ct-btn-secondary" aria-label="Edit coffee type details">
+            <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-btn-sm" aria-label="Edit coffee type details">
                 <$action-setfield $tiddler=<<editState>> text="yes"/>
                 ✏️ Edit
             </$button>
@@ -86,9 +86,15 @@ type: text/vnd.tiddlywiki
 
         <div class="ct-section-margin-lg">
             <strong>Tasting Notes:</strong>
-            <div class="ct-highlight-box">
-                <$view field="coffee-tasting-notes"><em class="ct-muted-text">No tasting notes</em></$view>
-            </div>
+            <%if [all[current]tasting-note-tokens[]limit[1]] %>
+                <div class="ct-mt-sm">
+                    <$macrocall $name="ct-tasting-note-pills" coffeeBag=<<currentTiddler>> limit="12"/>
+                </div>
+            <%else%>
+                <div class="ct-highlight-box ct-mt-sm">
+                    <$view field="coffee-tasting-notes"><em class="ct-muted-text">No tasting notes</em></$view>
+                </div>
+            <%endif%>
         </div>
     <%endif%>
 
@@ -98,7 +104,7 @@ type: text/vnd.tiddlywiki
     <$let
         total-bags={{{ [tag[CoffeeBagInstance]coffee-bag<currentTiddler>count[]] }}}
         active-bags={{{ [tag[CoffeeBagInstance]coffee-bag<currentTiddler>!tag[Finished]count[]] }}}
-        total-brews={{{ [tag[CoffeeBagInstance]coffee-bag<currentTiddler>] :map:flat[tag[BrewLog]coffee-bag-instance<currentTiddler>] +[count[]] }}}
+        total-brews={{{ [tag[CoffeeBagInstance]coffee-bag<currentTiddler>] :map:flat[all[tiddlers]tag[BrewLog]coffee-bag-instance<currentTiddler>] +[count[]] }}}
         avg-rating={{{ [ct.coffee-type-avg<currentTiddler>] }}}
     >
     <div class="ct-stats-grid">
@@ -139,7 +145,7 @@ type: text/vnd.tiddlywiki
 
     <$list filter="[tag[CoffeeBagInstance]coffee-bag<currentTiddler>!sort[purchase-date]]" emptyMessage="<div class='ct-empty-state'>No bags purchased yet</div>">
         <div class="ct-card">
-            <div class="ct-flex-row">
+            <div class="ct-reference-header">
                 <div>
                     <$link to=<<currentTiddler>> class="ct-text-bold" style="font-size: 1.1em;"><$view field="title"/></$link>
                     <%if [all[current]tag[Finished]] %>
@@ -155,9 +161,13 @@ type: text/vnd.tiddlywiki
                     <$let
                         brew-count={{{ [tag[BrewLog]coffee-bag-instance<currentTiddler>count[]] }}}
                         bag-avg={{{ [ct.bag-instance-avg<currentTiddler>] }}}
+                        remGrams={{{ [all[current]remaining-bag-weight[]] }}}
                     >
                         <div class="ct-card-subtitle ct-m-0">
                             <$text text=<<brew-count>>/> brews
+                            <%if [all[current]!tag[Finished]then<remGrams>!is[blank]] %>
+                                • <strong><$text text=<<remGrams>>/>g</strong> left
+                            <%endif%>
                             <%if [<bag-avg>!is[blank]] %>
                                 • ★ <$text text=<<bag-avg>>/>
                             <%endif%>

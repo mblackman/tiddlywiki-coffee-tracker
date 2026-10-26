@@ -167,14 +167,79 @@ tags: $:/tags/Macro
 </div>
 \end
 
+\widget $ct.metric-stepper(field, label, step:"1", defaultVal:"18", min:"0", max:"9999", placeholder:"")
+<div class="ct-metric-item">
+    <label class="ct-label"><$text text=<<label>>/></label>
+    <div class="ct-stepper-control">
+        <$button class="tc-btn-invisible ct-stepper-btn" aria-label=`Decrease $(label)$`>
+            <$let
+                curVal={{{ [all[current]get<field>] }}}
+                negOperand={{{ [[-]] [<step>] [[|]] [<defaultVal>] [[|]] [<min>] [[|]] [<max>] +[join[]] }}}
+                nextVal={{{ [<curVal>step-metric<negOperand>] }}}
+            >
+                <$action-setfield $field=<<field>> $value=<<nextVal>>/>
+            </$let>
+            −
+        </$button>
+        <$edit-text field=<<field>> tag="input" inputmode="decimal" size="5" placeholder=<<placeholder>> class="tc-edit-texteditor ct-metric-input"/>
+        <$button class="tc-btn-invisible ct-stepper-btn" aria-label=`Increase $(label)$`>
+            <$let
+                curVal={{{ [all[current]get<field>] }}}
+                posOperand={{{ [<step>] [[|]] [<defaultVal>] [[|]] [<min>] [[|]] [<max>] +[join[]] }}}
+                nextVal={{{ [<curVal>step-metric<posOperand>] }}}
+            >
+                <$action-setfield $field=<<field>> $value=<<nextVal>>/>
+            </$let>
+            +
+        </$button>
+    </div>
+</div>
+\end
+
+\procedure ct-tasting-note-pills(coffeeBag, limit:"6")
+<%if [<coffeeBag>!is[blank]tasting-note-tokens[]limit[1]] %>
+    <div class="ct-flavor-pills">
+        <$list filter="[<coffeeBag>tasting-note-tokens[]limit<limit>]" variable="noteToken">
+            <span class="ct-flavor-pill"><$text text=<<noteToken>>/></span>
+        </$list>
+    </div>
+<%endif%>
+\end
+
 \procedure create-brew-log-actions(coffee-bag-instance:"")
-<$let newTitle=<<now "Brew Log: YYYY-0MM-0DD 0hh:0mm">>>
+<$let
+    newTitle=<<now "Brew Log: YYYY-0MM-0DD 0hh:0mm">>
+    lastGlobalBrew={{{ [all[tiddlers]tag[BrewLog]sort[created]sort[brew-time]sort[brew-date]last[]] }}}
+    lastGlobalBag={{{ [<lastGlobalBrew>get[coffee-bag-instance]] :filter[!tag[Finished]] }}}
+    fallbackActiveBag={{{ [all[tiddlers]tag[CoffeeBagInstance]!tag[Finished]sort[purchase-date]last[]] }}}
+    effectiveBag={{{ [<coffee-bag-instance>!is[blank]] ~[<lastGlobalBag>!is[blank]] ~[<fallbackActiveBag>] }}}
+    bagLastBrew={{{ [<effectiveBag>!is[blank]then[ct.bag-last-brew<effectiveBag>]] }}}
+    singleBrewer={{{ [all[tiddlers]tag[Equipment]equipment-type[Brewer]count[]match[1]then[all[tiddlers]tag[Equipment]equipment-type[Brewer]]] }}}
+    singleGrinder={{{ [all[tiddlers]tag[Equipment]equipment-type[Grinder]count[]match[1]then[all[tiddlers]tag[Equipment]equipment-type[Grinder]]] }}}
+    defaultBrewer={{{ [<bagLastBrew>get[brewer]!is[blank]] ~[<lastGlobalBrew>get[brewer]!is[blank]] ~[<singleBrewer>] }}}
+    defaultGrinder={{{ [<bagLastBrew>get[grinder]!is[blank]] ~[<lastGlobalBrew>get[grinder]!is[blank]] ~[<singleGrinder>] }}}
+    singleMethod={{{ [<defaultBrewer>get[brew-methods]enlist-input[]count[]match[1]then<defaultBrewer>get[brew-methods]enlist-input[]] }}}
+    defaultMethod={{{ [<bagLastBrew>get[brew-method]!is[blank]] ~[<singleMethod>!is[blank]] ~[<lastGlobalBrew>get[brew-method]!is[blank]] }}}
+    defaultDose={{{ [<bagLastBrew>get[dose]] }}}
+    defaultWater={{{ [<bagLastBrew>get[water]] }}}
+    defaultYield={{{ [<bagLastBrew>get[yield]] }}}
+    defaultTemp={{{ [<bagLastBrew>get[water-temp]] }}}
+    defaultGrind={{{ [<bagLastBrew>get[grind-size]] }}}
+>
 <$action-createtiddler
     $basetitle=<<newTitle>>
     tags="BrewLog"
-    coffee-bag-instance=<<coffee-bag-instance>>
+    coffee-bag-instance=<<effectiveBag>>
     brew-date=<<now "YYYY-0MM-0DD">>
     brew-time=<<now "0hh:0mm">>
+    brewer=<<defaultBrewer>>
+    grinder=<<defaultGrinder>>
+    brew-method=<<defaultMethod>>
+    dose=<<defaultDose>>
+    water=<<defaultWater>>
+    yield=<<defaultYield>>
+    water-temp=<<defaultTemp>>
+    grind-size=<<defaultGrind>>
     $savetitle="$:/temp/created-brew-log"
 />
 <$action-setfield $tiddler={{{ [[$:/state/coffee-tracker/edit/]addsuffix{$:/temp/created-brew-log}] }}} text="yes"/>

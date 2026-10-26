@@ -907,4 +907,83 @@ Filter operators for roast age, freezer pause, bag weight depletion, cost econom
 
     return results;
   };
+
+  /*
+  Countertop Ergonomics: Numeric Stepper & mm:ss Time Stepper Operators
+  - step-metric: operand format "step|default|min|max" (e.g. "0.5|18|0|100" or "-1|93|0|100")
+  - step-brew-time: operand is delta seconds (e.g. "5" or "-5"), formats output as "mm:ss"
+  */
+  exports['step-metric'] = function(source, operator) {
+    var results = [];
+    var parts = String(operator.operand || '1').split('|');
+    var step = parseFloat(parts[0]);
+    if (isNaN(step)) step = 1;
+    var defaultVal = parts.length > 1 && parts[1] !== '' ? parseFloat(parts[1]) : null;
+    var minVal = parts.length > 2 && parts[2] !== '' ? parseFloat(parts[2]) : 0;
+    var maxVal = parts.length > 3 && parts[3] !== '' ? parseFloat(parts[3]) : null;
+
+    var inputs = [];
+    source(function(tiddler, title) {
+      inputs.push(title || '');
+    });
+    if (inputs.length === 0) {
+      inputs.push('');
+    }
+
+    for (var i = 0; i < inputs.length; i++) {
+      var raw = String(inputs[i]).trim();
+      var num = parseFloat(raw);
+      var next;
+      if (isNaN(num)) {
+        next = defaultVal !== null && !isNaN(defaultVal) ? defaultVal : Math.max(minVal, step);
+      } else {
+        next = num + step;
+      }
+      if (!isNaN(minVal) && next < minVal) {
+        next = minVal;
+      }
+      if (maxVal !== null && !isNaN(maxVal) && next > maxVal) {
+        next = maxVal;
+      }
+      var rounded = Math.round(next * 100) / 100;
+      results.push(String(rounded));
+    }
+
+    return results;
+  };
+
+  exports['step-brew-time'] = function(source, operator) {
+    var results = [];
+    var parts = String(operator.operand || '5').split('|');
+    var deltaSec = parseInt(parts[0], 10);
+    if (isNaN(deltaSec)) deltaSec = 5;
+    var defaultSec = parts.length > 1 && parts[1] !== '' ? parseInt(parts[1], 10) : 165;
+
+    var inputs = [];
+    source(function(tiddler, title) {
+      inputs.push(title || '');
+    });
+    if (inputs.length === 0) {
+      inputs.push('');
+    }
+
+    for (var i = 0; i < inputs.length; i++) {
+      var raw = String(inputs[i]).trim();
+      var totalSec = null;
+      var colonMatch = /^(\d+):(\d{1,2})$/.exec(raw);
+      if (colonMatch) {
+        totalSec = (parseInt(colonMatch[1], 10) * 60) + parseInt(colonMatch[2], 10);
+      } else if (/^\d+$/.test(raw)) {
+        totalSec = parseInt(raw, 10);
+      }
+
+      var nextSec = totalSec === null ? defaultSec : Math.max(0, totalSec + deltaSec);
+      var mm = Math.floor(nextSec / 60);
+      var ss = nextSec % 60;
+      var formatted = String(mm).padStart(2, '0') + ':' + String(ss).padStart(2, '0');
+      results.push(formatted);
+    }
+
+    return results;
+  };
 })();

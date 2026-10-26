@@ -590,8 +590,70 @@ describe('Coffee Tracker plugin tests', function() {
     expect(analyticsHtml).toContain('Coffee Insights &amp; Analytics');
     expect(analyticsHtml).toContain('Performance by Origin');
     expect(analyticsHtml).toContain('Ethiopia');
+    expect(analyticsHtml).toContain('/10</span>');
     expect(analyticsHtml).toContain('Jasmine (1)');
     expect(analyticsHtml).toContain('Bergamot (');
     expect(analyticsHtml).toContain('<svg');
+  });
+
+  it('should step numeric metrics and brew time strings via step-metric and step-brew-time', function() {
+    // step-metric: step|defaultVal|min|max
+    expect(
+      $tw.wiki.filterTiddlers('[[18]step-metric[0.5|18|0|100]]'),
+    ).toEqual(['18.5']);
+    expect(
+      $tw.wiki.filterTiddlers('[[18.5]step-metric[-0.5|18|0|100]]'),
+    ).toEqual(['18']);
+    expect(
+      $tw.wiki.filterTiddlers('[[]step-metric[0.5|18|0|100]]'),
+    ).toEqual(['18']);
+    expect(
+      $tw.wiki.filterTiddlers('[[0]step-metric[-5|18|0|100]]'),
+    ).toEqual(['0']);
+    expect(
+      $tw.wiki.filterTiddlers('[[9.8]step-metric[0.5|7|0|10]]'),
+    ).toEqual(['10']);
+
+    // step-brew-time: deltaSec|defaultSec
+    expect(
+      $tw.wiki.filterTiddlers('[[2:30]step-brew-time[5|150]]'),
+    ).toEqual(['02:35']);
+    expect(
+      $tw.wiki.filterTiddlers('[[2:30]step-brew-time[-5|150]]'),
+    ).toEqual(['02:25']);
+    expect(
+      $tw.wiki.filterTiddlers('[[]step-brew-time[5|150]]'),
+    ).toEqual(['02:30']);
+    expect(
+      $tw.wiki.filterTiddlers('[[0:03]step-brew-time[-5|150]]'),
+    ).toEqual(['00:00']);
+
+    // Render Brew Log in Edit Mode to verify $ct.metric-stepper, ratio chips, and collapsible sensory section
+    $tw.wiki.addTiddler(
+      new $tw.Tiddler({
+        title: 'Stepper Test Brew 1',
+        tags: ['BrewLog'],
+        'brew-date': '2026-03-05',
+        dose: '18',
+        water: '288',
+        'overall-rating': '8.5',
+      }),
+    );
+    $tw.wiki.addTiddler(
+      new $tw.Tiddler({
+        title: '$:/state/coffee-tracker/edit/Stepper Test Brew 1',
+        text: 'yes',
+      }),
+    );
+    $tw.wiki.addTiddler(
+      new $tw.Tiddler({
+        title: 'Render Wrapper Edit Brew Log',
+        text: '\\import [all[shadows+tiddlers]tag[$:/tags/Macro]!has[draft.of]]\n\n<$tiddler tiddler="Stepper Test Brew 1">\n\n<$transclude $tiddler="$:/plugins/mblackman/coffee-tracker/ui/brew-log/view" $mode="block"/>\n\n</$tiddler>',
+      }),
+    );
+    var editBrewHtml = $tw.wiki.renderTiddler('text/html', 'Render Wrapper Edit Brew Log');
+    expect(editBrewHtml).toContain('ct-stepper-control');
+    expect(editBrewHtml).toContain('ct-ratio-presets');
+    expect(editBrewHtml).toContain('Done Editing Brew Log');
   });
 });

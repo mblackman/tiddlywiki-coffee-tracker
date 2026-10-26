@@ -5,13 +5,29 @@ type: text/vnd.tiddlywiki
 <$list filter="[all[current]tag[CoffeeBagInstance]]">
 <$let
     currentBag=<<currentTiddler>>
+    coffeeType={{!!coffee-bag}}
+    roaster={{{ [<coffeeType>!is[blank]get[roaster]] }}}
+    origin={{{ [<coffeeType>!is[blank]get[coffee-origin]] }}}
+    roastLevel={{{ [<coffeeType>!is[blank]get[coffee-roast-level]] }}}
+    processing={{{ [<coffeeType>!is[blank]get[coffee-processing]] }}}
+    varietal={{{ [<coffeeType>!is[blank]get[coffee-varietal]] }}}
     editState={{{ [[$:/state/coffee-tracker/edit/]addsuffix<currentTiddler>] }}}
     calibrateState={{{ [[$:/temp/coffee-tracker/calibrate-weight/]addsuffix<currentTiddler>] }}}
 >
-    <div class="ct-flex-start ct-mb-md">
+    <div class="ct-mode-bar ct-mb-md">
         <div>
             <h3 style="margin: 0 0 5px 0;">Bag of <$link to={{!!coffee-bag}}>{{!!coffee-bag}}</$link></h3>
-            <div style="display: flex; gap: 6px; align-items: center;">
+            <%if [<roaster>!is[blank]] [<origin>!is[blank]] [<roastLevel>!is[blank]] [<processing>!is[blank]] +[limit[1]] %>
+                <div class="ct-bean-meta-row ct-mb-xs">
+                    <%if [<roaster>!is[blank]] %><span class="ct-meta-badge">🏪 <$link to=<<roaster>>><$view tiddler=<<roaster>> field="roaster-name"><$text text=<<roaster>>/></$view></$link></span><%endif%>
+                    <%if [<origin>!is[blank]] %><span class="ct-meta-badge">🌍 <$text text=<<origin>>/></span><%endif%>
+                    <%if [<processing>!is[blank]] %><span class="ct-meta-badge"><$text text=<<processing>>/></span><%endif%>
+                    <%if [<roastLevel>!is[blank]] %><span class="ct-meta-badge">🔥 <$text text=<<roastLevel>>/></span><%endif%>
+                    <%if [<varietal>!is[blank]] %><span class="ct-meta-badge">🌱 <$text text=<<varietal>>/></span><%endif%>
+                </div>
+            <%endif%>
+            <$macrocall $name="ct-tasting-note-pills" coffeeBag=<<coffeeType>> limit="8"/>
+            <div style="display: flex; gap: 6px; align-items: center; margin-top: 4px;">
                 <%if [all[current]tag[Finished]] %>
                     <span class="ct-tag ct-badge-danger">FINISHED</span>
                 <%endif%>
@@ -20,14 +36,14 @@ type: text/vnd.tiddlywiki
                 <%endif%>
             </div>
         </div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <div class="ct-mode-actions">
             <%if [<editState>get[text]match[yes]] %>
-                <$button class="tc-btn-invisible ct-btn ct-btn-primary" aria-label="Finish editing bag details">
+                <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-btn-sm" aria-label="Finish editing bag details">
                     <$action-deletetiddler $tiddler=<<editState>>/>
                     ✓ Done
                 </$button>
             <%else%>
-                <$button class="tc-btn-invisible ct-btn ct-btn-secondary" aria-label="Edit bag details">
+                <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-btn-sm" aria-label="Edit bag details">
                     <$action-setfield $tiddler=<<editState>> text="yes"/>
                     ✏️ Edit
                 </$button>
@@ -35,24 +51,24 @@ type: text/vnd.tiddlywiki
 
             <%if [all[current]!tag[Finished]] %>
                 <%if [all[current]!tag[Frozen]] %>
-                    <$button class="tc-btn-invisible ct-btn ct-btn-secondary" aria-label="Freeze this coffee bag to pause aging">
+                    <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-btn-sm" aria-label="Freeze this coffee bag to pause aging">
                         <$action-listops $tags="+[append[Frozen]]"/>
                         <$action-setfield frozen-date=<<now "YYYY-0MM-0DD">>/>
                         ❄️ Freeze Bag
                     </$button>
                 <%else%>
-                    <$button class="tc-btn-invisible ct-btn ct-btn-primary" aria-label="Unfreeze this coffee bag and resume aging">
+                    <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-btn-sm" aria-label="Unfreeze this coffee bag and resume aging">
                         <$macrocall $name="unfreeze-coffee-bag-actions" bag=<<currentTiddler>>/>
                         🔥 Unfreeze Bag
                     </$button>
                 <%endif%>
 
-                <$button class="tc-btn-invisible ct-btn ct-btn-secondary" aria-label="Mark this coffee bag as finished">
+                <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-btn-sm" aria-label="Mark this coffee bag as finished">
                     <$macrocall $name="finish-coffee-bag-actions" bag=<<currentTiddler>>/>
                     ✓ Mark Finished
                 </$button>
             <%else%>
-                <$button class="tc-btn-invisible ct-btn ct-btn-primary" aria-label="Mark this coffee bag as active again">
+                <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-btn-sm" aria-label="Mark this coffee bag as active again">
                     <$action-listops $tags="-Finished"/>
                     ↺ Reopen Bag
                 </$button>
@@ -90,7 +106,7 @@ type: text/vnd.tiddlywiki
             </div>
             <div>
                 <label class="ct-label">Initial Weight (g)</label>
-                <$edit-text field="weight" placeholder="e.g. 340g" class="tc-edit-texteditor ct-input"/>
+                <$edit-text field="weight" inputmode="decimal" placeholder="e.g. 340g" class="tc-edit-texteditor ct-input"/>
             </div>
         </div>
     <%else%>
@@ -127,7 +143,7 @@ type: text/vnd.tiddlywiki
     >
     <%if [<remainingGrams>!is[blank]] %>
         <div class="ct-info-box ct-mb-md">
-            <div class="ct-flex-row">
+            <div class="ct-reference-header">
                 <span>
                     <strong>Remaining Coffee:</strong>
                     <span class="ct-emphasis-text"><$text text=<<remainingGrams>>/>g</span>
@@ -135,14 +151,14 @@ type: text/vnd.tiddlywiki
                         / <$text text=<<rawWeight>>/>g (<$text text=<<usedGrams>>/>g brewed<%if [<weightAdj>!match[0]] %>, <$text text={{{ [<weightAdj>compare:number:gt[0]then[+]addsuffix<weightAdj>else<weightAdj>] }}}/>g adjusted<%endif%>)
                     </span>
                 </span>
-                <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                     <%if [all[current]!tag[Finished]] %>
                         <span class="ct-text-sm ct-muted-text">
                             ~<$text text=<<estBrewsLeft>>/> brews left
                         </span>
                     <%endif%>
                     <%if [<calibrateState>!is[tiddler]] %>
-                        <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-text-sm" style="padding: 3px 10px;" aria-label="Set actual remaining weight from scale">
+                        <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-btn-sm" aria-label="Set actual remaining weight from scale">
                             <$action-setfield $tiddler=<<calibrateState>> text=<<remainingGrams>>/>
                             ⚖️ Set Actual Weight
                         </$button>
@@ -153,26 +169,26 @@ type: text/vnd.tiddlywiki
             <%if [<calibrateState>is[tiddler]] %>
                 <div class="ct-calibrate-row ct-mt-sm">
                     <span class="ct-text-sm"><strong>Scale remaining weight (g):</strong></span>
-                    <$edit-text tiddler=<<calibrateState>> field="text" tag="input" size="6" class="tc-edit-texteditor ct-input" style="width: 90px; padding: 4px 8px;"/>
+                    <$edit-text tiddler=<<calibrateState>> field="text" tag="input" inputmode="decimal" size="6" class="tc-edit-texteditor ct-input" style="width: 90px; padding: 6px 10px;"/>
                     <$let
                         enteredWeight={{{ [<calibrateState>get[text]trim[]] }}}
                         expectedUnadjusted={{{ [<rawWeight>subtract<usedGrams>] }}}
                         computedAdj={{{ [<enteredWeight>regexp[^\d+(\.\d+)?$]subtract<expectedUnadjusted>round[]] }}}
                     >
-                    <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-text-sm" style="padding: 4px 12px;" disabled={{{ [<computedAdj>is[blank]then[yes]else[no]] }}} aria-label="Save calibrated remaining weight">
+                    <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-btn-sm" disabled={{{ [<computedAdj>is[blank]then[yes]else[no]] }}} aria-label="Save calibrated remaining weight">
                         <$action-setfield $tiddler=<<currentBag>> weight-adjustment=<<computedAdj>>/>
                         <$action-deletetiddler $tiddler=<<calibrateState>>/>
                         ✓ Save
                     </$button>
                     </$let>
                     <%if [<weightAdj>!match[0]] %>
-                        <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-text-sm" style="padding: 4px 10px;" aria-label="Reset manual weight adjustment">
+                        <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-btn-sm" aria-label="Reset manual weight adjustment">
                             <$action-deletefield $tiddler=<<currentBag>> $field="weight-adjustment"/>
                             <$action-deletetiddler $tiddler=<<calibrateState>>/>
                             ↺ Reset Offset
                         </$button>
                     <%endif%>
-                    <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-text-sm" style="padding: 4px 10px;" aria-label="Cancel weight calibration">
+                    <$button class="tc-btn-invisible ct-btn ct-btn-secondary ct-btn-sm" aria-label="Cancel weight calibration">
                         <$action-deletetiddler $tiddler=<<calibrateState>>/>
                         Cancel
                     </$button>
@@ -184,9 +200,9 @@ type: text/vnd.tiddlywiki
             </div>
 
             <%if [all[current]!tag[Finished]] :filter[<remainingGrams>compare:number:lteq[0]] %>
-                <div class="ct-flex-row ct-mt-sm">
+                <div class="ct-reference-header ct-mt-sm">
                     <span class="ct-text-sm ct-text-warning">Looks like this bag is empty!</span>
-                    <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-text-sm">
+                    <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-btn-sm">
                         <$macrocall $name="finish-coffee-bag-actions" bag=<<currentTiddler>>/>
                         Mark Bag as Finished
                     </$button>
@@ -248,19 +264,19 @@ type: text/vnd.tiddlywiki
         bestBagBrew={{{ [all[current]bag-best-brew[]] }}}
         pinnedBest={{!!best-brew}}
     >
-    <div class="ct-flex-gap ct-mb-md">
-        <div class="ct-stat-card ct-flex-1">
+    <div class="ct-stats-grid ct-mb-md">
+        <div class="ct-stat-card">
             <div class="ct-stat-value"><$text text=<<brew-count>>/></div>
             <div class="ct-stat-label">Total Brews</div>
         </div>
         <%if [<avg-rating>!is[blank]] %>
-            <div class="ct-stat-card ct-flex-1">
+            <div class="ct-stat-card">
                 <div class="ct-stat-value"><$text text=<<avg-rating>>/> /10</div>
                 <div class="ct-stat-label">Avg Rating</div>
             </div>
         <%endif%>
         <%if [<avg-brew-cost>!is[blank]] %>
-            <div class="ct-stat-card ct-flex-1">
+            <div class="ct-stat-card">
                 <div class="ct-stat-value">$<$text text=<<avg-brew-cost>>/></div>
                 <div class="ct-stat-label">Avg Cost / Cup</div>
             </div>
@@ -269,8 +285,14 @@ type: text/vnd.tiddlywiki
 
     <!-- Best / Reference Brew Callout -->
     <%if [<bestBagBrew>!is[blank]] %>
+        <$let
+            bDose={{{ [<bestBagBrew>get[dose]] }}}
+            bWater={{{ [<bestBagBrew>get[water]] }}}
+            bYield={{{ [<bestBagBrew>get[yield]] }}}
+            bRatio={{{ [ct.water-ratio<bDose>,<bWater>] ~[ct.yield-ratio<bDose>,<bYield>] }}}
+        >
         <div class="ct-reference-banner ct-mb-md">
-            <div class="ct-flex-row ct-mb-xs">
+            <div class="ct-reference-header ct-mb-xs">
                 <span>
                     <%if [<pinnedBest>match<bestBagBrew>] %>
                         <strong>📌 Pinned Best Brew (<$link to=<<bestBagBrew>>><$view tiddler=<<bestBagBrew>> field="brew-date"/></$link>):</strong>
@@ -279,18 +301,29 @@ type: text/vnd.tiddlywiki
                     <%endif%>
                 </span>
                 <span class="ct-text-bold ct-text-primary">
-                    <$view tiddler=<<bestBagBrew>> field="overall-rating">—</$view>/10
+                    ★ <$view tiddler=<<bestBagBrew>> field="overall-rating">—</$view>/10
                 </span>
             </div>
             <div class="ct-text-sm ct-muted-text">
                 Method: <strong><$view tiddler=<<bestBagBrew>> field="brew-method">—</$view></strong> •
                 Dose: <strong><$view tiddler=<<bestBagBrew>> field="dose">—</$view>g</strong> •
-                Water/Yield: <strong><$text text={{{ [<bestBagBrew>get[water]!is[blank]addsuffix[g]] ~[<bestBagBrew>get[yield]!is[blank]addsuffix[g]] ~[[—]] }}}/></strong> •
+                Water/Yield: <strong><$text text={{{ [<bestBagBrew>get[water]!is[blank]addsuffix[g]] ~[<bestBagBrew>get[yield]!is[blank]addsuffix[g]] ~[[—]] }}}/></strong><%if [<bRatio>!is[blank]] %> (<strong>1:<$text text=<<bRatio>>/></strong>)<%endif%> •
                 Grind: <strong><$view tiddler=<<bestBagBrew>> field="grind-size">—</$view></strong> •
                 Temp: <strong><$view tiddler=<<bestBagBrew>> field="water-temp">—</$view>°C</strong> •
                 Time: <strong><$view tiddler=<<bestBagBrew>> field="brew-time-seconds">—</$view></strong>
             </div>
+            <%if [<lastBagBrew>!is[blank]!match<bestBagBrew>] %>
+                <div class="ct-text-sm ct-muted-text ct-mt-sm" style="border-top: 1px dashed var(--tpc-tiddler-editor-border, rgba(128,128,128,0.3)); padding-top: 6px;">
+                    <strong>💡 Latest Brew (<$link to=<<lastBagBrew>>><$view tiddler=<<lastBagBrew>> field="brew-date"/></$link>):</strong>
+                    <$view tiddler=<<lastBagBrew>> field="dose">—</$view>g →
+                    <$text text={{{ [<lastBagBrew>get[water]!is[blank]addsuffix[g]] ~[<lastBagBrew>get[yield]!is[blank]addsuffix[g]] ~[[—]] }}}/> •
+                    Grind <strong><$view tiddler=<<lastBagBrew>> field="grind-size">—</$view></strong> •
+                    Temp <strong><$view tiddler=<<lastBagBrew>> field="water-temp">—</$view>°C</strong> •
+                    ★ <strong><$view tiddler=<<lastBagBrew>> field="overall-rating">—</$view>/10</strong>
+                </div>
+            <%endif%>
         </div>
+        </$let>
     <%endif%>
 
     <%if [<lastBagBrew>has[next-brew-adjustment]] %>
@@ -316,7 +349,7 @@ type: text/vnd.tiddlywiki
         </div>
     <%endif%>
 
-    <div class="ct-flex-gap ct-mb-md">
+    <div class="ct-action-buttons-row ct-mb-md">
         <$button class="tc-btn-invisible ct-btn ct-btn-primary ct-flex-1" aria-label="Add new brew log for this coffee bag">
             <$macrocall $name="create-brew-log-actions" coffee-bag-instance=<<currentTiddler>>/>
             ☕ Log New Brew
@@ -336,10 +369,10 @@ type: text/vnd.tiddlywiki
     </div>
 
     <div class="ct-table-wrapper">
-        <table class="ct-table">
+        <table class="ct-table ct-table-responsive">
             <thead>
                 <tr class="ct-table-header">
-                    <th style="width: 36px; text-align: center;" title="Pin as Best / Reference Brew">⭐</th>
+                    <th style="width: 44px; text-align: center;" title="Pin as Best / Reference Brew">⭐</th>
                     <th>Date / Age</th>
                     <th>Method</th>
                     <th>Recipe</th>
@@ -351,9 +384,15 @@ type: text/vnd.tiddlywiki
             </thead>
             <tbody>
             <$list filter="[tag[BrewLog]coffee-bag-instance<currentTiddler>sort[created]sort[brew-time]!sort[brew-date]]" emptyMessage="<tr><td colspan='8' style='padding: 20px; text-align: center;' class='ct-muted-text'>No brews logged yet</td></tr>">
-                <$let brewAge={{{ [all[current]brew-roast-age[]] }}}>
+                <$let
+                    brewAge={{{ [all[current]brew-roast-age[]] }}}
+                    rDose={{!!dose}}
+                    rWater={{!!water}}
+                    rYield={{!!yield}}
+                    rRatio={{{ [ct.water-ratio<rDose>,<rWater>] ~[ct.yield-ratio<rDose>,<rYield>] }}}
+                >
                 <tr class=`${ [<bestBagBrew>match<currentTiddler>then[ct-best-brew-row]else[]] }$`>
-                    <td style="text-align: center;">
+                    <td data-label="Best" style="text-align: center;">
                         <%if [<pinnedBest>match<currentTiddler>] %>
                             <$button class="tc-btn-invisible ct-pin-btn ct-pin-active" tooltip="Unpin as Best Brew" aria-label="Unpin as Best Brew">
                                 <$action-deletefield $tiddler=<<currentBag>> $field="best-brew"/>
@@ -371,27 +410,30 @@ type: text/vnd.tiddlywiki
                             </$button>
                         <%endif%>
                     </td>
-                    <td style="white-space: nowrap;">
+                    <td data-label="Date / Age" style="white-space: nowrap;">
                         <$link to=<<currentTiddler>>><$view field="brew-date"/></$link>
                         <%if [<brewAge>!is[blank]] %>
                             <span class="ct-muted-text ct-text-sm"> (<$text text=<<brewAge>>/>d)</span>
                         <%endif%>
                     </td>
-                    <td>{{!!brew-method}}</td>
-                    <td style="white-space: nowrap;">
+                    <td data-label="Method">{{!!brew-method}}</td>
+                    <td data-label="Recipe" style="white-space: nowrap;">
                         <%if [all[current]has[dose]] %>
                             {{!!dose}}g →
                             <$text text={{{ [{!!water}!is[blank]addsuffix[g]] ~[{!!yield}!is[blank]addsuffix[g]] ~[[—]] }}}/>
+                            <%if [<rRatio>!is[blank]] %>
+                                <span class="ct-muted-text ct-text-sm"> (1:<$text text=<<rRatio>>/>)</span>
+                            <%endif%>
                         <%endif%>
                     </td>
-                    <td><$text text={{{ [{!!grind-size}!is[blank]else[—]] }}}/></td>
-                    <td><$text text={{{ [{!!brew-time-seconds}!is[blank]else[—]] }}}/></td>
-                    <td style="font-weight: bold; white-space: nowrap;">
+                    <td data-label="Grind"><$text text={{{ [{!!grind-size}!is[blank]else[—]] }}}/></td>
+                    <td data-label="Time"><$text text={{{ [{!!brew-time-seconds}!is[blank]else[—]] }}}/></td>
+                    <td data-label="Rating" style="font-weight: bold; white-space: nowrap;">
                         <$text text={{{ [{!!overall-rating}!is[blank]addsuffix[/10]else[—]] }}}/>
                     </td>
-                    <td class="ct-text-sm ct-muted-text">
+                    <td data-label="Notes" class="ct-text-sm ct-muted-text ct-notes-cell">
                         <%if [list[!!extraction-notes]limit[1]] %>
-                            <div style="margin-bottom: 2px;">
+                            <div style="margin-bottom: 4px;">
                                 <$list filter="[list[!!extraction-notes]]" variable="extTag">
                                     <span class="ct-tag" style="margin-right: 4px;"><$text text=<<extTag>>/></span>
                                 </$list>
