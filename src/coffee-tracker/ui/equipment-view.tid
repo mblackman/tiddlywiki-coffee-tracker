@@ -5,7 +5,7 @@ type: text/vnd.tiddlywiki
 <$list filter="[all[current]tag[Equipment]]">
 <$let editState={{{ [[$:/state/coffee-tracker/edit/]addsuffix<currentTiddler>] }}}>
     <div class="ct-flex-row ct-mb-md">
-        <h2 class="ct-m-0"><$view field="equipment-name"><$view field="title"/></$view></h2>
+        <span class="ct-status-pill">⚙️ <$view field="equipment-type">Equipment</$view></span>
         <%if [<editState>get[text]match[yes]] %>
             <$button class="tc-btn-invisible ct-btn ct-btn-primary" aria-label="Finish editing equipment details">
                 <$action-deletetiddler $tiddler=<<editState>>/>

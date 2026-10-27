@@ -1,7 +1,97 @@
+\rules only filteredtranscludeinline transcludeinline macrodef macrocallinline
+
+/* Standalone-safe fallback contract (specificity 0,0,0 via :where).
+   Automatically overridden when Slipstream ($:/plugins/mblackman/slipstream) is active. */
+:where(:root, .tc-page-container) {
+    --suite-bg-canvas: var(--mn-bg-app, var(--tpc-page-background, <<colour page-background>>));
+    --suite-surface-primary: var(--mn-bg-surface, var(--tpc-tiddler-background, <<colour tiddler-background>>));
+    --suite-surface-card: var(--mn-bg-card, color-mix(in srgb, var(--tpc-tiddler-background, <<colour tiddler-background>>) 96.5%, var(--tpc-foreground, <<colour foreground>>) 3.5%));
+    --suite-surface-subtle: var(--mn-bg-subtle, color-mix(in srgb, var(--tpc-tiddler-background, <<colour tiddler-background>>) 93%, var(--tpc-foreground, <<colour foreground>>) 7%));
+    --suite-surface-elevated: var(--mn-bg-elevated, color-mix(in srgb, var(--tpc-tiddler-background, <<colour tiddler-background>>) 90%, var(--tpc-foreground, <<colour foreground>>) 10%));
+    --suite-surface-input: var(--tpc-tiddler-background, <<colour tiddler-background>>);
+    --suite-surface-hover: var(--mn-bg-hover, color-mix(in srgb, var(--tpc-foreground, <<colour foreground>>) 5.5%, var(--tpc-tiddler-background, <<colour tiddler-background>>)));
+    --suite-surface-active: var(--mn-bg-active, color-mix(in srgb, var(--tpc-foreground, <<colour foreground>>) 9%, var(--tpc-tiddler-background, <<colour tiddler-background>>)));
+    --suite-surface-selected: var(--mn-accent-soft, color-mix(in srgb, var(--tpc-primary, <<colour primary>>) 12%, var(--tpc-tiddler-background, <<colour tiddler-background>>)));
+    --suite-surface-dropzone: color-mix(in srgb, var(--tpc-primary, <<colour primary>>) 8%, var(--suite-surface-subtle));
+
+    --suite-fg-primary: var(--mn-fg-primary, var(--tpc-foreground, <<colour foreground>>));
+    --suite-fg-secondary: var(--mn-fg-secondary, color-mix(in srgb, var(--tpc-foreground, <<colour foreground>>) 72%, var(--tpc-muted-foreground, <<colour muted-foreground>>) 28%));
+    --suite-fg-muted: var(--mn-fg-muted, color-mix(in srgb, var(--tpc-foreground, <<colour foreground>>) 58%, var(--tpc-muted-foreground, <<colour muted-foreground>>) 42%));
+    --suite-fg-on-accent: #ffffff;
+
+    --suite-border-hairline: var(--mn-border-hairline, color-mix(in srgb, var(--suite-fg-primary) 7%, transparent));
+    --suite-border-subtle: var(--mn-border-subtle, color-mix(in srgb, var(--suite-fg-primary) 12%, transparent));
+    --suite-border-strong: var(--mn-border-strong, color-mix(in srgb, var(--suite-fg-primary) 22%, transparent));
+
+    --suite-radius-xs: 6px;
+    --suite-radius-sm: 8px;
+    --suite-radius-md: 10px;
+    --suite-radius-lg: 14px;
+    --suite-radius-pill: 9999px;
+
+    --suite-shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --suite-shadow-sm: var(--mn-shadow-card, 0 2px 8px -2px rgba(15, 23, 42, 0.06), 0 1px 3px -1px rgba(15, 23, 42, 0.04));
+
+    --suite-control-height-sm: 30px;
+    --suite-control-height-md: 36px;
+    --suite-touch-target: 36px;
+
+    --suite-font-sans: var(--mn-font-sans, -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif);
+    --suite-font-mono: var(--mn-font-mono, "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace);
+
+    --suite-accent: var(--mn-accent, var(--tpc-primary, <<colour primary>>));
+    --suite-accent-hover: var(--mn-accent-hover, color-mix(in srgb, var(--suite-accent) 86%, var(--suite-fg-primary)));
+    --suite-accent-bg: var(--mn-accent-soft, color-mix(in srgb, var(--suite-accent) 12%, var(--suite-surface-primary)));
+    --suite-accent-border: color-mix(in srgb, var(--suite-accent) 30%, transparent);
+
+    --suite-status-success-accent: #10b981;
+    --suite-status-success-fg: color-mix(in srgb, #059669 82%, var(--suite-fg-primary));
+    --suite-status-success-bg: color-mix(in srgb, #10b981 13%, var(--suite-surface-primary));
+    --suite-status-success-border: color-mix(in srgb, #10b981 32%, transparent);
+
+    --suite-status-warning-accent: #f59e0b;
+    --suite-status-warning-fg: color-mix(in srgb, #d97706 82%, var(--suite-fg-primary));
+    --suite-status-warning-bg: color-mix(in srgb, #f59e0b 14%, var(--suite-surface-primary));
+    --suite-status-warning-border: color-mix(in srgb, #f59e0b 35%, transparent);
+
+    --suite-status-danger-accent: var(--mn-danger, var(--tpc-alert-highlight, #ef4444));
+    --suite-status-danger-fg: color-mix(in srgb, var(--suite-status-danger-accent) 85%, var(--suite-fg-primary));
+    --suite-status-danger-bg: color-mix(in srgb, var(--suite-status-danger-accent) 12%, var(--suite-surface-primary));
+    --suite-status-danger-border: color-mix(in srgb, var(--suite-status-danger-accent) 32%, transparent);
+
+    --suite-status-info-accent: #3b82f6;
+    --suite-status-info-fg: color-mix(in srgb, #2563eb 82%, var(--suite-fg-primary));
+    --suite-status-info-bg: color-mix(in srgb, #3b82f6 12%, var(--suite-surface-primary));
+    --suite-status-info-border: color-mix(in srgb, #3b82f6 30%, transparent);
+
+    --suite-focus-ring: 0 0 0 3px color-mix(in srgb, var(--suite-accent) 28%, transparent);
+}
+
+@media (max-width: 640px) {
+    :where(:root, .tc-page-container) {
+        --suite-control-height-sm: 36px;
+        --suite-control-height-md: 44px;
+        --suite-touch-target: 44px;
+    }
+}
+
+/* Hide Raw System Titles & Redundant Structural Tags */
+.tc-tiddler-frame[data-tiddler-title^="$:/plugins/mblackman/coffee-tracker/ui/"] .tc-tiddler-title .tc-title,
+.tc-tiddler-frame[data-tiddler-title="$:/plugins/mblackman/coffee-tracker/config"] .tc-tiddler-title .tc-title,
+[data-tiddler-title^="$:/plugins/mblackman/coffee-tracker/ui/"] .tc-titlebar h2.tc-title,
+[data-tiddler-title="$:/plugins/mblackman/coffee-tracker/config"] .tc-titlebar h2.tc-title,
+.tc-tiddler-frame.tc-tagged-CoffeeBag .tc-tags-wrapper .tc-tag-list-item[data-tag-title="CoffeeBag"],
+.tc-tiddler-frame.tc-tagged-CoffeeBagInstance .tc-tags-wrapper .tc-tag-list-item[data-tag-title="CoffeeBagInstance"],
+.tc-tiddler-frame.tc-tagged-BrewLog .tc-tags-wrapper .tc-tag-list-item[data-tag-title="BrewLog"],
+.tc-tiddler-frame.tc-tagged-Equipment .tc-tags-wrapper .tc-tag-list-item[data-tag-title="Equipment"],
+.tc-tiddler-frame.tc-tagged-Roaster .tc-tags-wrapper .tc-tag-list-item[data-tag-title="Roaster"] {
+    display: none;
+}
+
 /* Dashboard Styles */
 .ct-dashboard-container {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    color: <<colour foreground>>;
+    font-family: var(--suite-font-sans);
+    color: var(--suite-fg-primary, <<colour foreground>>);
 }
 
 .ct-dashboard-header {
@@ -9,19 +99,20 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-    border-bottom: 2px solid <<colour tiddler-editor-border>>;
+    border-bottom: 1px solid var(--suite-border-subtle, <<colour tiddler-editor-border>>);
     padding-bottom: 10px;
 }
 
 .ct-dashboard-title {
     margin: 0;
     font-size: 1.8em;
-    color: <<colour tiddler-title-foreground>>;
+    color: var(--suite-fg-primary, <<colour tiddler-title-foreground>>);
 }
 
 .ct-dashboard-date {
     font-size: 0.9em;
-    color: <<colour tiddler-subtitle-foreground>>;
+    font-variant-numeric: tabular-nums;
+    color: var(--suite-fg-muted, <<colour tiddler-subtitle-foreground>>);
 }
 
 .ct-action-toolbar {
@@ -29,10 +120,10 @@
     gap: 10px;
     flex-wrap: wrap;
     margin-bottom: 30px;
-    background: <<colour message-background>>;
+    background: var(--suite-surface-subtle, <<colour message-background>>);
     padding: 15px;
-    border-radius: 8px;
-    border: 1px solid <<colour message-border>>;
+    border-radius: var(--suite-radius-md, 10px);
+    border: 1px solid var(--suite-border-subtle, <<colour message-border>>);
 }
 
 .ct-btn {
@@ -40,23 +131,28 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    border-radius: 20px;
-    padding: 8px 16px;
-    min-height: 44px;
-    font-weight: bold;
+    border-radius: var(--suite-radius-sm, 8px);
+    padding: 6px 14px;
+    min-height: var(--suite-control-height-md, 36px);
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.16s ease;
     border: 1px solid transparent;
-    font-size: 0.95em;
+    font-size: 0.9em;
     box-sizing: border-box;
     text-decoration: none;
 }
 
+.ct-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--suite-focus-ring);
+}
+
 .ct-btn-sm {
-    min-height: 36px;
-    padding: 6px 12px;
-    font-size: 0.85em;
-    border-radius: 16px;
+    min-height: var(--suite-control-height-sm, 30px);
+    padding: 4px 10px;
+    font-size: 0.82em;
+    border-radius: var(--suite-radius-sm, 8px);
 }
 
 .ct-btn:active {
@@ -64,24 +160,25 @@
 }
 
 .ct-btn-primary {
-    background-color: <<colour primary>>;
-    color: <<colour tiddler-background>>;
-    border-color: <<colour primary>>;
+    background-color: var(--suite-accent, <<colour primary>>);
+    color: var(--suite-fg-on-accent, <<colour tiddler-background>>);
+    border-color: var(--suite-accent, <<colour primary>>);
 }
 
 .ct-btn-primary:hover {
-    opacity: 0.9;
+    background-color: var(--suite-accent-hover, <<colour primary>>);
+    border-color: var(--suite-accent-hover, <<colour primary>>);
 }
 
 .ct-btn-secondary {
-    background-color: <<colour tiddler-background>>;
-    color: <<colour foreground>>;
-    border-color: <<colour tiddler-editor-border>>;
+    background-color: var(--suite-surface-card, <<colour tiddler-background>>);
+    color: var(--suite-fg-primary, <<colour foreground>>);
+    border-color: var(--suite-border-subtle, <<colour tiddler-editor-border>>);
 }
 
 .ct-btn-secondary:hover {
-    background-color: <<colour tiddler-editor-background>>;
-    border-color: <<colour primary>>;
+    background-color: var(--suite-surface-hover, <<colour tiddler-editor-background>>);
+    border-color: var(--suite-border-strong, <<colour primary>>);
 }
 
 .ct-dashboard-grid {
@@ -91,25 +188,26 @@
 }
 
 .ct-section-title {
-    border-bottom: 1px solid <<colour tiddler-editor-border>>;
+    border-bottom: 1px solid var(--suite-border-subtle, <<colour tiddler-editor-border>>);
     padding-bottom: 5px;
     margin-top: 0;
-    color: <<colour tiddler-title-foreground>>;
+    color: var(--suite-fg-primary, <<colour tiddler-title-foreground>>);
 }
 
 .ct-card {
-    background: <<colour tiddler-background>>;
-    border: 1px solid <<colour tiddler-editor-border>>;
+    background: var(--suite-surface-card, <<colour tiddler-background>>);
+    border: 1px solid var(--suite-border-subtle, <<colour tiddler-editor-border>>);
     padding: 15px;
     margin-bottom: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    transition: transform 0.2s;
+    border-radius: var(--suite-radius-md, 10px);
+    box-shadow: var(--suite-shadow-xs, 0 2px 4px rgba(0,0,0,0.05));
+    transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
 }
 
 .ct-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+    border-color: var(--suite-border-strong);
+    box-shadow: var(--suite-shadow-sm, 0 4px 8px rgba(0,0,0,0.1));
 }
 
 .ct-card-header {
@@ -130,42 +228,43 @@
     gap: 4px;
     font-size: 0.78em;
     font-weight: 600;
-    background: <<colour message-background>>;
-    color: <<colour foreground>>;
-    border: 1px solid <<colour tiddler-editor-border>>;
+    font-variant-numeric: tabular-nums;
+    background: var(--suite-surface-subtle, <<colour message-background>>);
+    color: var(--suite-fg-secondary, <<colour foreground>>);
+    border: 1px solid var(--suite-border-subtle, <<colour tiddler-editor-border>>);
     padding: 3px 8px;
     border-radius: 999px;
     white-space: nowrap;
 }
 
 .ct-card-subtitle {
-    color: <<colour tiddler-subtitle-foreground>>;
+    color: var(--suite-fg-muted, <<colour tiddler-subtitle-foreground>>);
     font-size: 0.9em;
     margin-bottom: 10px;
 }
 
 .ct-card-action-btn {
     width: 100%;
-    min-height: 44px;
+    min-height: var(--suite-control-height-md, 36px);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
     text-align: center;
-    background: <<colour message-background>>;
-    color: <<colour primary>>;
-    padding: 10px 12px;
-    border-radius: 6px;
-    font-weight: bold;
-    border: 1px solid <<colour message-border>>;
+    background: var(--suite-surface-subtle, <<colour message-background>>);
+    color: var(--suite-accent, <<colour primary>>);
+    padding: 8px 12px;
+    border-radius: var(--suite-radius-sm, 8px);
+    font-weight: 600;
+    border: 1px solid var(--suite-border-subtle, <<colour message-border>>);
     cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
+    transition: background 0.16s ease, border-color 0.16s ease;
     box-sizing: border-box;
 }
 
 .ct-card-action-btn:hover {
-    background: <<colour tiddler-editor-background>>;
-    border-color: <<colour primary>>;
+    background: var(--suite-surface-hover, <<colour tiddler-editor-background>>);
+    border-color: var(--suite-accent, <<colour primary>>);
 }
 
 .ct-table-wrapper {
@@ -216,10 +315,10 @@
 
 /* Brew Log View Styles */
 .ct-brew-log-container {
-    max-width: 800px;
+    max-width: var(--suite-width-reading, 840px);
     margin: 0 auto;
-    font-family: sans-serif;
-    color: <<colour foreground>>;
+    font-family: var(--suite-font-sans);
+    color: var(--suite-fg-primary, <<colour foreground>>);
 }
 
 .ct-form-row {
@@ -235,44 +334,77 @@
 
 .ct-label {
     display: block;
-    font-weight: bold;
+    font-weight: 600;
     margin-bottom: 5px;
-    color: <<colour tiddler-subtitle-foreground>>;
+    color: var(--suite-fg-secondary, <<colour tiddler-subtitle-foreground>>);
 }
 
+.tc-tiddler-frame input.ct-input,
+.tc-tiddler-frame select.ct-input,
+input.ct-input,
+select.ct-input,
 .ct-input {
     width: 100%;
-    min-height: 44px;
-    padding: 8px 10px;
-    border: 1px solid <<colour tiddler-editor-border>>;
-    border-radius: 6px;
+    min-height: var(--suite-control-height-md, 36px);
+    padding: 6px 10px;
+    border: 1px solid var(--suite-border-subtle, <<colour tiddler-editor-border>>);
+    border-radius: var(--suite-radius-sm, 8px);
     box-sizing: border-box;
-    background: <<colour tiddler-background>>;
-    color: <<colour foreground>>;
+    box-shadow: none;
+    background-color: var(--suite-surface-input, <<colour tiddler-background>>);
+    color: var(--suite-fg-primary, <<colour foreground>>);
+    font-family: inherit;
     font-size: 0.95em;
+    transition: border-color 0.14s ease, box-shadow 0.14s ease, background-color 0.14s ease;
+}
+
+.tc-tiddler-frame input.ct-input:focus,
+.tc-tiddler-frame select.ct-input:focus,
+input.ct-input:focus,
+select.ct-input:focus,
+.ct-input:focus {
+    outline: none;
+    border-color: var(--suite-accent, <<colour primary>>);
+    box-shadow: var(--suite-focus-ring);
+}
+
+.tc-tiddler-frame select.ct-input,
+select.ct-input {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: var(--suite-surface-input, <<colour tiddler-background>>);
+    background-image: linear-gradient(45deg, transparent 50%, var(--suite-fg-muted, #888888) 50%),
+                      linear-gradient(135deg, var(--suite-fg-muted, #888888) 50%, transparent 50%);
+    background-position:
+        calc(100% - 16px) calc(50% - 2px),
+        calc(100% - 11px) calc(50% - 2px);
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    padding: 6px 30px 6px 10px;
+    cursor: pointer;
 }
 
 .ct-section {
-    background: <<colour message-background>>;
+    background: var(--suite-surface-subtle, <<colour message-background>>);
     padding: 20px;
-    border-radius: 8px;
-    border: 1px solid <<colour message-border>>;
+    border-radius: var(--suite-radius-md, 10px);
+    border: 1px solid var(--suite-border-subtle, <<colour message-border>>);
     margin-bottom: 20px;
 }
 
 .ct-section-white {
-    background: <<colour tiddler-background>>;
+    background: var(--suite-surface-card, <<colour tiddler-background>>);
     padding: 20px;
-    border-radius: 8px;
-    border: 1px solid <<colour tiddler-editor-border>>;
+    border-radius: var(--suite-radius-md, 10px);
+    border: 1px solid var(--suite-border-subtle, <<colour tiddler-editor-border>>);
     margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: var(--suite-shadow-xs, 0 2px 4px rgba(0,0,0,0.05));
 }
 
 .ct-section-header {
     margin-top: 0;
-    color: <<colour tiddler-title-foreground>>;
-    border-bottom: 1px solid <<colour tiddler-editor-border>>;
+    color: var(--suite-fg-primary, <<colour tiddler-title-foreground>>);
+    border-bottom: 1px solid var(--suite-border-subtle, <<colour tiddler-editor-border>>);
     padding-bottom: 10px;
 }
 
@@ -296,18 +428,29 @@
     text-align: center;
 }
 
+.tc-tiddler-frame input.ct-metric-input,
 .ct-metric-input {
     width: 100%;
     min-height: 44px;
+    font-family: inherit;
     font-size: 1.15em;
     font-weight: 600;
+    font-variant-numeric: tabular-nums;
     text-align: center;
     padding: 8px 6px;
-    border: 1px solid <<colour tiddler-editor-border>>;
-    border-radius: 6px;
+    border: 1px solid var(--suite-border-subtle, <<colour tiddler-editor-border>>);
+    border-radius: var(--suite-radius-sm, 8px);
     box-sizing: border-box;
-    background: <<colour tiddler-background>>;
-    color: <<colour foreground>>;
+    box-shadow: none;
+    background-color: var(--suite-surface-input, <<colour tiddler-background>>);
+    color: var(--suite-fg-primary, <<colour foreground>>);
+}
+
+.tc-tiddler-frame input.ct-metric-input:focus,
+.ct-metric-input:focus {
+    outline: none;
+    border-color: var(--suite-accent, <<colour primary>>);
+    box-shadow: var(--suite-focus-ring);
 }
 
 .ct-sensory-grid {
@@ -341,11 +484,12 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    background: <<colour message-background>>;
-    color: <<colour foreground>>;
-    border: 2px solid <<colour primary>>;
+    background: var(--suite-surface-subtle, <<colour message-background>>);
+    color: var(--suite-fg-primary, <<colour foreground>>);
+    border: 1px solid var(--suite-accent-border, <<colour primary>>);
+    border-left: 3px solid var(--suite-accent, <<colour primary>>);
     padding: 16px;
-    border-radius: 10px;
+    border-radius: var(--suite-radius-md, 10px);
     margin-bottom: 16px;
 }
 
@@ -358,18 +502,28 @@
 .ct-rating-value {
     font-size: 1.5em;
     font-weight: bold;
-    color: <<colour primary>>;
+    font-variant-numeric: tabular-nums;
+    color: var(--suite-accent, <<colour primary>>);
 }
 
+.tc-tiddler-frame textarea.ct-textarea,
 .ct-textarea {
     width: 100%;
     padding: 10px;
-    border: 1px solid <<colour tiddler-editor-border>>;
-    border-radius: 6px;
+    border: 1px solid var(--suite-border-subtle, <<colour tiddler-editor-border>>);
+    border-radius: var(--suite-radius-sm, 8px);
     font-family: inherit;
     box-sizing: border-box;
-    background: <<colour tiddler-background>>;
-    color: <<colour foreground>>;
+    box-shadow: none;
+    background-color: var(--suite-surface-input, <<colour tiddler-background>>);
+    color: var(--suite-fg-primary, <<colour foreground>>);
+}
+
+.tc-tiddler-frame textarea.ct-textarea:focus,
+.ct-textarea:focus {
+    outline: none;
+    border-color: var(--suite-accent, <<colour primary>>);
+    box-shadow: var(--suite-focus-ring);
 }
 
 /* Statistics Grid */
@@ -382,31 +536,33 @@
 
 .ct-stat-card {
     padding: 16px 12px;
-    background: <<colour message-background>>;
-    border: 2px solid <<colour primary>>;
-    border-radius: 12px;
+    background: var(--suite-surface-card, <<colour message-background>>);
+    border: 1px solid var(--suite-border-subtle, <<colour primary>>);
+    border-radius: var(--suite-radius-md, 10px);
     text-align: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: var(--suite-shadow-xs, 0 2px 4px rgba(0,0,0,0.08));
+    transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
 }
 
 .ct-stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+    transform: translateY(-1px);
+    border-color: var(--suite-border-strong);
+    box-shadow: var(--suite-shadow-sm, 0 4px 8px rgba(0,0,0,0.12));
 }
 
 .ct-stat-value {
     font-size: clamp(1.5em, 3.8vw, 2.2em);
     line-height: 1.15;
     font-weight: bold;
-    color: <<colour primary>>;
+    font-variant-numeric: tabular-nums;
+    color: var(--suite-accent, <<colour primary>>);
     margin-bottom: 6px;
     white-space: nowrap;
 }
 
 .ct-stat-label {
     font-size: 0.85em;
-    color: <<colour muted-foreground>>;
+    color: var(--suite-fg-muted, <<colour muted-foreground>>);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     line-height: 1.25;
@@ -414,7 +570,7 @@
 
 /* Theme-aware link colors */
 .ct-link {
-    color: <<colour primary>>;
+    color: var(--suite-accent, <<colour primary>>);
     text-decoration: none;
 }
 
@@ -424,28 +580,29 @@
 
 /* Theme-aware button */
 .ct-theme-button {
-    background: <<colour tiddler-background>>;
-    color: <<colour foreground>>;
-    border: 1px solid <<colour tiddler-editor-border>>;
+    background: var(--suite-surface-card, <<colour tiddler-background>>);
+    color: var(--suite-fg-primary, <<colour foreground>>);
+    border: 1px solid var(--suite-border-subtle, <<colour tiddler-editor-border>>);
     padding: 8px 16px;
-    border-radius: 4px;
-    font-weight: bold;
+    border-radius: var(--suite-radius-sm, 8px);
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.16s ease;
 }
 
 .ct-theme-button:hover {
-    background: <<colour tiddler-editor-background>>;
-    border-color: <<colour primary>>;
+    background: var(--suite-surface-hover, <<colour tiddler-editor-background>>);
+    border-color: var(--suite-accent, <<colour primary>>);
 }
 
 /* Empty state styling */
 .ct-empty-state {
     padding: 30px;
     text-align: center;
-    background: <<colour tiddler-editor-background>>;
-    border-radius: 8px;
-    color: <<colour muted-foreground>>;
+    background: var(--suite-surface-subtle, <<colour tiddler-editor-background>>);
+    border: 1.5px dashed var(--suite-border-strong, transparent);
+    border-radius: var(--suite-radius-lg, 14px);
+    color: var(--suite-fg-muted, <<colour muted-foreground>>);
 }
 
 .ct-empty-state-icon {
@@ -463,14 +620,14 @@
 .ct-quick-stats {
     margin-top: 30px;
     padding: 20px;
-    background: <<colour message-background>>;
-    border: 1px solid <<colour message-border>>;
-    border-radius: 12px;
+    background: var(--suite-surface-subtle, <<colour message-background>>);
+    border: 1px solid var(--suite-border-subtle, <<colour message-border>>);
+    border-radius: var(--suite-radius-md, 10px);
 }
 
 .ct-quick-stats-title {
     margin: 0 0 15px 0;
-    color: <<colour tiddler-title-foreground>>;
+    color: var(--suite-fg-primary, <<colour tiddler-title-foreground>>);
     font-size: 1.1em;
 }
 
@@ -483,12 +640,13 @@
 .ct-quick-stat-value {
     font-size: 1.5em;
     font-weight: bold;
-    color: <<colour primary>>;
+    font-variant-numeric: tabular-nums;
+    color: var(--suite-accent, <<colour primary>>);
 }
 
 .ct-quick-stat-label {
     font-size: 0.85em;
-    color: <<colour muted-foreground>>;
+    color: var(--suite-fg-muted, <<colour muted-foreground>>);
 }
 
 /* Sidebar Styles */
@@ -503,7 +661,7 @@
 
 .ct-sidebar-heading {
     margin: 5px 0;
-    color: <<colour muted-foreground>>;
+    color: var(--suite-fg-muted, <<colour muted-foreground>>);
     font-size: 0.9em;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -520,18 +678,18 @@
     min-height: 40px;
     padding: 8px 10px;
     text-align: left;
-    background: <<colour message-background>>;
-    color: <<colour foreground>>;
-    border: 1px solid <<colour message-border>>;
-    border-radius: 6px;
+    background: var(--suite-surface-subtle, <<colour message-background>>);
+    color: var(--suite-fg-primary, <<colour foreground>>);
+    border: 1px solid var(--suite-border-subtle, <<colour message-border>>);
+    border-radius: var(--suite-radius-sm, 8px);
     cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
+    transition: background 0.16s ease, border-color 0.16s ease;
     box-sizing: border-box;
 }
 
 .ct-sidebar-button:hover {
-    background: <<colour tiddler-editor-background>>;
-    border-color: <<colour primary>>;
+    background: var(--suite-surface-hover, <<colour tiddler-editor-background>>);
+    border-color: var(--suite-accent, <<colour primary>>);
 }
 
 .ct-sidebar-list {
@@ -550,23 +708,25 @@
 .ct-sidebar-alert {
     margin-bottom: 10px;
     padding: 8px;
-    border-radius: 6px;
+    border-radius: var(--suite-radius-sm, 8px);
     border-left: 3px solid;
 }
 
 .ct-sidebar-alert.ct-alert-success {
-    background: <<colour positive-alert-banner-background>>;
-    border-left-color: <<colour positive-alert-banner-foreground>>;
+    background: var(--suite-status-success-bg);
+    border-left-color: var(--suite-status-success-accent);
+    color: var(--suite-fg-primary);
 }
 
 .ct-sidebar-alert.ct-alert-info {
-    background: <<colour message-background>>;
-    border-left-color: <<colour primary>>;
+    background: var(--suite-surface-subtle);
+    border-left-color: var(--suite-accent);
 }
 
 .ct-sidebar-alert.ct-alert-warning {
-    background: <<colour alert-banner-background>>;
-    border-left-color: <<colour dirty-indicator>>;
+    background: var(--suite-status-warning-bg);
+    border-left-color: var(--suite-status-warning-accent);
+    color: var(--suite-fg-primary);
 }
 
 .ct-sidebar-alert-title {
@@ -628,36 +788,37 @@
 
 .ct-info-box {
     padding: 15px;
-    background: <<colour tiddler-editor-background>>;
-    border: 1px solid <<colour tiddler-editor-border>>;
-    border-radius: 8px;
+    background: var(--suite-surface-subtle, <<colour tiddler-editor-background>>);
+    border: 1px solid var(--suite-border-subtle, <<colour tiddler-editor-border>>);
+    border-radius: var(--suite-radius-sm, 8px);
 }
 
 .ct-highlight-box {
-    padding: 10px;
-    background: <<colour message-background>>;
-    border-left: 4px solid <<colour primary>>;
-    border-radius: 4px;
+    padding: 10px 12px;
+    background: var(--suite-surface-subtle, <<colour message-background>>);
+    border-left: 3px solid var(--suite-accent, <<colour primary>>);
+    border-radius: var(--suite-radius-xs, 6px);
     margin-bottom: 15px;
 }
 
 .ct-text-box {
     margin-top: 5px;
     padding: 10px;
-    background: <<colour tiddler-editor-background>>;
-    border-radius: 4px;
+    background: var(--suite-surface-subtle, <<colour tiddler-editor-background>>);
+    border-radius: var(--suite-radius-xs, 6px);
     min-height: 40px;
-    border: 1px solid <<colour tiddler-editor-border>>;
+    border: 1px solid var(--suite-border-subtle, <<colour tiddler-editor-border>>);
 }
 
 .ct-emphasis-text {
     font-size: 1.2em;
     font-weight: bold;
-    color: <<colour primary>>;
+    font-variant-numeric: tabular-nums;
+    color: var(--suite-accent, <<colour primary>>);
 }
 
 .ct-muted-text {
-    color: <<colour muted-foreground>>;
+    color: var(--suite-fg-muted, <<colour muted-foreground>>);
 }
 
 .ct-section-margin {
@@ -685,36 +846,36 @@
 
 /* Badge colors (theme-safe contrast across Light and Dark palettes) */
 .ct-badge-info {
-    background: <<colour message-background>> !important;
-    color: <<colour primary>> !important;
-    border: 1px solid <<colour message-border>>;
+    background: var(--suite-accent-bg) !important;
+    color: var(--suite-accent) !important;
+    border: 1px solid var(--suite-accent-border);
 }
 
 .ct-badge-success {
-    background: <<colour message-background>> !important;
-    color: <<colour foreground>> !important;
-    border: 1.5px solid <<colour primary>>;
+    background: var(--suite-status-success-bg) !important;
+    color: var(--suite-status-success-fg) !important;
+    border: 1px solid var(--suite-status-success-border);
     font-weight: 700;
 }
 
 .ct-badge-warning {
-    background: <<colour tiddler-editor-background>> !important;
-    color: <<colour foreground>> !important;
-    border: 1.5px solid <<colour dirty-indicator>>;
+    background: var(--suite-status-warning-bg) !important;
+    color: var(--suite-status-warning-fg) !important;
+    border: 1px solid var(--suite-status-warning-border);
     font-weight: 700;
 }
 
 .ct-badge-danger {
-    background: <<colour dirty-indicator>> !important;
-    color: #ffffff !important;
-    border: 1px solid <<colour dirty-indicator>>;
+    background: var(--suite-status-danger-bg) !important;
+    color: var(--suite-status-danger-fg) !important;
+    border: 1px solid var(--suite-status-danger-border);
     font-weight: 700;
 }
 
 .ct-badge-frozen {
-    background: <<colour message-background>> !important;
-    color: <<colour primary>> !important;
-    border: 1.5px solid <<colour primary>>;
+    background: var(--suite-status-info-bg) !important;
+    color: var(--suite-status-info-fg) !important;
+    border: 1px solid var(--suite-status-info-border);
     font-weight: 700;
 }
 
@@ -724,9 +885,9 @@
     gap: 10px;
     flex-wrap: wrap;
     padding: 10px;
-    background: <<colour message-background>>;
-    border: 1px dashed <<colour primary>>;
-    border-radius: 6px;
+    background: var(--suite-surface-subtle, <<colour message-background>>);
+    border: 1px dashed var(--suite-accent, <<colour primary>>);
+    border-radius: var(--suite-radius-sm, 8px);
     margin-bottom: 8px;
 }
 
@@ -812,52 +973,53 @@
 
 /* Background color utilities */
 .ct-bg-subtle {
-    background: <<colour tiddler-editor-background>>;
+    background: var(--suite-surface-subtle, <<colour tiddler-editor-background>>);
 }
 
 .ct-bg-info {
-    background: <<colour message-background>>;
+    background: var(--suite-accent-bg, <<colour message-background>>);
 }
 
 .ct-bg-warning {
-    background: <<colour alert-banner-background>>;
+    background: var(--suite-status-warning-bg);
 }
 
 /* Text color utilities */
 .ct-text-primary {
-    color: <<colour primary>>;
+    color: var(--suite-accent, <<colour primary>>);
 }
 
 .ct-text-secondary {
-    color: <<colour muted-foreground>>;
+    color: var(--suite-fg-muted, <<colour muted-foreground>>);
 }
 
 .ct-text-warning {
-    color: <<colour alert-banner-foreground>>;
+    color: var(--suite-status-warning-fg);
 }
 
 .ct-text-danger {
-    color: <<colour dirty-indicator>>;
+    color: var(--suite-status-danger-fg);
 }
 
 /* Calculated metric display box */
 .ct-calculated-metric {
     margin-top: 15px;
     padding: 10px;
-    background: <<colour message-background>>;
-    border-radius: 4px;
+    background: var(--suite-surface-subtle, <<colour message-background>>);
+    border-radius: var(--suite-radius-sm, 8px);
     text-align: center;
 }
 
 .ct-calculated-metric-label {
     font-weight: bold;
-    color: <<colour muted-foreground>>;
+    color: var(--suite-fg-muted, <<colour muted-foreground>>);
 }
 
 .ct-calculated-metric-value {
     font-size: 1.3em;
     font-weight: bold;
-    color: <<colour primary>>;
+    font-variant-numeric: tabular-nums;
+    color: var(--suite-accent, <<colour primary>>);
     margin-left: 10px;
 }
 
@@ -870,30 +1032,31 @@
 
 .ct-equipment-stat-box {
     padding: 15px;
-    border-radius: 8px;
+    border-radius: var(--suite-radius-sm, 8px);
     text-align: center;
     flex: 1;
 }
 
 .ct-equipment-stat-box.primary {
-    background: <<colour message-background>>;
+    background: var(--suite-surface-subtle, <<colour message-background>>);
 }
 
 .ct-equipment-stat-box.secondary {
-    background: <<colour alert-banner-background>>;
+    background: var(--suite-status-warning-bg);
 }
 
 .ct-equipment-stat-value {
     font-size: 2em;
     font-weight: bold;
+    font-variant-numeric: tabular-nums;
 }
 
 .ct-equipment-stat-value.primary {
-    color: <<colour primary>>;
+    color: var(--suite-accent, <<colour primary>>);
 }
 
 .ct-equipment-stat-value.secondary {
-    color: <<colour alert-banner-foreground>>;
+    color: var(--suite-status-warning-fg);
 }
 
 .ct-equipment-stat-label {
@@ -982,9 +1145,9 @@
     gap: 10px;
     margin-bottom: 20px;
     padding: 10px 15px;
-    background: <<colour tiddler-editor-background>>;
-    border: 1px solid <<colour tiddler-editor-border>>;
-    border-radius: 8px;
+    background: var(--suite-surface-subtle, <<colour tiddler-editor-background>>);
+    border: 1px solid var(--suite-border-subtle, <<colour tiddler-editor-border>>);
+    border-radius: var(--suite-radius-md, 10px);
 }
 
 .ct-mt-0 {
@@ -1002,13 +1165,13 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 44px;
+    min-height: var(--suite-control-height-lg, 44px);
     gap: 6px;
     padding: 8px 16px;
-    border-radius: 999px;
-    border: 1px solid <<colour tiddler-editor-border>>;
-    background: <<colour tiddler-editor-background>>;
-    color: <<colour foreground>>;
+    border-radius: var(--suite-radius-pill, 999px);
+    border: 1px solid var(--suite-border-subtle, <<colour tiddler-editor-border>>);
+    background: var(--suite-surface-card, <<colour tiddler-editor-background>>);
+    color: var(--suite-fg-primary, <<colour foreground>>);
     font-size: 0.9em;
     font-weight: 600;
     cursor: pointer;
@@ -1017,14 +1180,14 @@
 }
 
 .ct-compass-pill:hover {
-    border-color: <<colour primary>>;
+    border-color: var(--suite-accent, <<colour primary>>);
+    background: var(--suite-surface-hover, <<colour tiddler-editor-background>>);
 }
 
 .ct-compass-pill-active {
-    background: <<colour message-background>>;
-    color: <<colour foreground>>;
-    border: 2px solid <<colour dirty-indicator>>;
-    font-weight: 700;
+    background: var(--suite-accent-bg, <<colour message-background>>);
+    border-color: var(--suite-accent-border, <<colour primary>>);
+    color: var(--suite-accent, <<colour foreground>>);
 }
 
 .ct-compass-pill-active.ct-compass-pill-balanced {
@@ -1246,10 +1409,10 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: <<colour message-background>>;
-    color: <<colour primary>>;
-    border: 1px solid <<colour tiddler-editor-border>>;
-    border-radius: 6px;
+    background: var(--suite-surface-subtle, <<colour message-background>>);
+    color: var(--suite-accent, <<colour primary>>);
+    border: 1px solid var(--suite-border-subtle, <<colour tiddler-editor-border>>);
+    border-radius: var(--suite-radius-sm, 8px);
     font-size: 1.25em;
     font-weight: 700;
     line-height: 1;
@@ -1260,8 +1423,8 @@
 }
 
 .ct-stepper-btn:hover {
-    background: <<colour tiddler-editor-background>>;
-    border-color: <<colour primary>>;
+    background: var(--suite-surface-hover, <<colour tiddler-editor-background>>);
+    border-color: var(--suite-accent, <<colour primary>>);
 }
 
 .ct-stepper-btn:active {
@@ -1290,18 +1453,19 @@
     min-height: 38px;
     padding: 6px 12px;
     border-radius: 999px;
-    background: <<colour tiddler-background>>;
-    color: <<colour primary>>;
-    border: 1px solid <<colour primary>>;
+    background: var(--suite-surface-card, <<colour tiddler-background>>);
+    color: var(--suite-accent, <<colour primary>>);
+    border: 1px solid var(--suite-accent-border, <<colour primary>>);
     font-size: 0.85em;
     font-weight: 600;
+    font-variant-numeric: tabular-nums;
     cursor: pointer;
     transition: all 0.15s ease;
 }
 
 .ct-ratio-chip:hover {
-    background: <<colour primary>>;
-    color: <<colour tiddler-background>>;
+    background: var(--suite-accent, <<colour primary>>);
+    color: var(--suite-fg-on-accent, <<colour tiddler-background>>);
 }
 
 /* Calculated Metrics Strip (Ratio, Roast Age, Est. Cost) */
@@ -1320,10 +1484,11 @@
     justify-content: center;
     gap: 3px;
     padding: 10px 12px;
-    background: <<colour message-background>>;
-    border: 1px solid <<colour message-border>>;
-    border-radius: 8px;
+    background: var(--suite-surface-subtle, <<colour message-background>>);
+    border: 1px solid var(--suite-border-subtle, <<colour message-border>>);
+    border-radius: var(--suite-radius-sm, 8px);
     text-align: center;
+    font-variant-numeric: tabular-nums;
 }
 
 /* Rating Badges & Promoted Overall Rating Controls */
@@ -1333,20 +1498,22 @@
     gap: 2px;
     padding: 6px 12px;
     border-radius: 999px;
-    background: <<colour message-background>>;
-    border: 2px solid <<colour primary>>;
-    color: <<colour primary>>;
+    background: var(--suite-accent-bg, <<colour message-background>>);
+    border: 1.5px solid var(--suite-accent, <<colour primary>>);
+    color: var(--suite-accent, <<colour primary>>);
     font-weight: 800;
+    font-variant-numeric: tabular-nums;
     white-space: nowrap;
 }
 
 .ct-rating-badge-score {
     font-size: 1.25em;
+    font-variant-numeric: tabular-nums;
 }
 
 .ct-rating-badge-max {
     font-size: 0.8em;
-    color: <<colour muted-foreground>>;
+    color: var(--suite-fg-muted, <<colour muted-foreground>>);
     font-weight: 600;
 }
 
@@ -1355,11 +1522,12 @@
     align-items: center;
     padding: 2px 8px;
     border-radius: 999px;
-    background: <<colour message-background>>;
-    border: 1px solid <<colour primary>>;
-    color: <<colour primary>>;
+    background: var(--suite-accent-bg, <<colour message-background>>);
+    border: 1px solid var(--suite-accent-border, <<colour primary>>);
+    color: var(--suite-accent, <<colour primary>>);
     font-weight: 700;
     font-size: 0.88em;
+    font-variant-numeric: tabular-nums;
     white-space: nowrap;
 }
 
@@ -1373,7 +1541,7 @@
 .ct-rating-title {
     font-size: 1.15em;
     font-weight: 700;
-    color: <<colour tiddler-title-foreground>>;
+    color: var(--suite-fg-primary, <<colour tiddler-title-foreground>>);
 }
 
 .ct-rating-slider-row {
@@ -1387,7 +1555,7 @@
     flex: 1;
     min-height: 36px;
     cursor: pointer;
-    accent-color: <<colour primary>>;
+    accent-color: var(--suite-accent, <<colour primary>>);
 }
 
 .ct-quick-rating-pills {
@@ -1401,24 +1569,25 @@
     flex: 1 1 42px;
     min-height: 38px;
     padding: 4px 8px;
-    border-radius: 8px;
-    background: <<colour tiddler-background>>;
-    color: <<colour foreground>>;
-    border: 1px solid <<colour tiddler-editor-border>>;
+    border-radius: var(--suite-radius-sm, 8px);
+    background: var(--suite-surface-card, <<colour tiddler-background>>);
+    color: var(--suite-fg-primary, <<colour foreground>>);
+    border: 1px solid var(--suite-border-subtle, <<colour tiddler-editor-border>>);
     font-size: 0.88em;
     font-weight: 600;
+    font-variant-numeric: tabular-nums;
     cursor: pointer;
     transition: all 0.15s ease;
 }
 
 .ct-score-pill:hover {
-    border-color: <<colour primary>>;
+    border-color: var(--suite-accent, <<colour primary>>);
 }
 
 .ct-score-pill-active {
-    background: <<colour primary>>;
-    color: <<colour tiddler-background>>;
-    border-color: <<colour primary>>;
+    background: var(--suite-accent, <<colour primary>>);
+    color: var(--suite-fg-on-accent, <<colour tiddler-background>>);
+    border-color: var(--suite-accent, <<colour primary>>);
     font-weight: 700;
 }
 
@@ -1426,7 +1595,7 @@
 .ct-sensory-range {
     width: 110px;
     cursor: pointer;
-    accent-color: <<colour primary>>;
+    accent-color: var(--suite-accent, <<colour primary>>);
 }
 
 .ct-sensory-score-readout {
@@ -1434,7 +1603,8 @@
     text-align: center;
     font-weight: 700;
     font-size: 1.05em;
-    color: <<colour primary>>;
+    font-variant-numeric: tabular-nums;
+    color: var(--suite-accent, <<colour primary>>);
 }
 
 .ct-sensory-read-row {
@@ -1492,12 +1662,13 @@
     align-items: center;
     gap: 4px;
     padding: 2px 8px;
-    border-radius: 6px;
-    background: <<colour tiddler-editor-background>>;
-    color: <<colour foreground>>;
-    border: 1px solid <<colour tiddler-editor-border>>;
+    border-radius: var(--suite-radius-pill, 999px);
+    background: var(--suite-surface-subtle, <<colour tiddler-editor-background>>);
+    color: var(--suite-fg-secondary, <<colour foreground>>);
+    border: 1px solid var(--suite-border-subtle, <<colour tiddler-editor-border>>);
     font-size: 0.78em;
     font-weight: 600;
+    font-variant-numeric: tabular-nums;
 }
 
 .ct-flavor-pills {
@@ -1513,9 +1684,9 @@
     align-items: center;
     padding: 3px 10px;
     border-radius: 999px;
-    background: <<colour message-background>>;
-    color: <<colour primary>>;
-    border: 1px solid <<colour message-border>>;
+    background: var(--suite-accent-bg, <<colour message-background>>);
+    color: var(--suite-accent, <<colour primary>>);
+    border: 1px solid var(--suite-accent-border, <<colour message-border>>);
     font-size: 0.78em;
     font-weight: 600;
     letter-spacing: 0.1px;
@@ -1523,15 +1694,17 @@
 
 .ct-bean-card-stats {
     font-size: 0.9em;
+    font-variant-numeric: tabular-nums;
     margin-bottom: 4px;
 }
 
 .ct-card-recipe-summary {
     padding: 8px 10px;
-    background: <<colour tiddler-editor-background>>;
-    border-left: 3px solid <<colour primary>>;
-    border-radius: 4px;
+    background: var(--suite-surface-subtle, <<colour tiddler-editor-background>>);
+    border-left: 3px solid var(--suite-accent, <<colour primary>>);
+    border-radius: var(--suite-radius-xs, 6px);
     font-size: 0.85em;
+    font-variant-numeric: tabular-nums;
     margin-bottom: 6px;
 }
 
@@ -1645,6 +1818,11 @@
     .ct-section,
     .ct-section-white {
         padding: 14px;
+    }
+
+    .ct-stepper-btn-sm {
+        min-width: var(--suite-touch-target, 44px);
+        min-height: var(--suite-touch-target, 44px);
     }
 
     /* Responsive Stacked Cards for Brew History Table on Mobile */

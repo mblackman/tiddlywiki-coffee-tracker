@@ -11,9 +11,9 @@ A TiddlyWiki plugin to help track your coffee habits.
 Configure when coffee is considered at peak freshness:
 
 |!Setting |!Days After Roast |
-|Peak Freshness Starts |<$edit-text tiddler="$:/plugins/mblackman/coffee-tracker/config/freshness/peak-start" tag="input" default="7"/> days |
-|Peak Freshness Ends |<$edit-text tiddler="$:/plugins/mblackman/coffee-tracker/config/freshness/peak-end" tag="input" default="21"/> days |
-|Still Good Until |<$edit-text tiddler="$:/plugins/mblackman/coffee-tracker/config/freshness/optimal-end" tag="input" default="60"/> days |
+|Peak Freshness Starts |<$edit-text tiddler="$:/plugins/mblackman/coffee-tracker/config/freshness/peak-start" tag="input" default="7" class="ct-input" style="width: 90px;"/> days |
+|Peak Freshness Ends |<$edit-text tiddler="$:/plugins/mblackman/coffee-tracker/config/freshness/peak-end" tag="input" default="21" class="ct-input" style="width: 90px;"/> days |
+|Still Good Until |<$edit-text tiddler="$:/plugins/mblackman/coffee-tracker/config/freshness/optimal-end" tag="input" default="60" class="ct-input" style="width: 90px;"/> days |
 
 ''Guidelines:''
 
